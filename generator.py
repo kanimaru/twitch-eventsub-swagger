@@ -3,10 +3,11 @@ from bs4 import BeautifulSoup
 import yaml
 import re
 import unicodedata
+import json
 
 # Configuration
 DOC_URL = "https://dev.twitch.tv/docs/eventsub/eventsub-reference/"
-OUTPUT_FILE = "twitch_eventsub_swagger.yaml"
+OUTPUT_FILE = "twitch_eventsub_swagger.json"
 
 # Some fields are frequently described as arrays but the "Type" column is inconsistent.
 # We'll use name-based heuristics as a safety net.
@@ -84,13 +85,11 @@ def _force_array_if_needed(field_name: str, type_text: str, desc_text: str, sche
             or "[]" in type_l
     )
     if implied_array and schema.get("type") != "array":
-        # Best-effort: if schema is a $ref, make it the item type; else keep as object item.
         if "$ref" in schema:
             items = {"$ref": schema["$ref"]}
         else:
             items = schema if schema.get("type") else {"type": "object"}
         fixed = {"type": "array", "items": items}
-        # Preserve description/nullable
         if "description" in schema:
             fixed["description"] = schema["description"]
         return fixed
@@ -101,12 +100,10 @@ def _force_array_if_needed(field_name: str, type_text: str, desc_text: str, sche
 def map_type(twitch_type_raw: str, *, field_name: str | None = None, desc_text: str = "") -> dict:
     """Maps Twitch documentation types to OpenAPI types (best-effort)."""
     t_clean = _normalize_ws(twitch_type_raw).lower()
-    # Remove parentheticals like (or null)
     t_base = re.sub(r"\(.*?\)", "", t_clean).strip()
 
     # Arrays (handle: "array", "array of X", "X[]")
     if "[]" in t_base or t_base.startswith("array") or "array of" in t_base:
-        # Extract inner type name
         inner = (
             t_base.replace("array of", "")
             .replace("array", "")
@@ -123,18 +120,16 @@ def map_type(twitch_type_raw: str, *, field_name: str | None = None, desc_text: 
     # Primitives
     res = None
     if any(x in t_base for x in ["timestamp", "date", "datetime", "rfc3339"]):
-        res = {"type": "string"}  # could be format: date-time, but Twitch uses RFC3339 with varying precision
-    elif any(x in t_base for x in ["string"]):
+        res = {"type": "string"}
+    elif "string" in t_base:
         res = {"type": "string"}
     elif any(x in t_base for x in ["bool", "boolean"]):
         res = {"type": "boolean"}
     elif any(x in t_base for x in ["int", "integer", "number", "float", "counter"]):
-        # Twitch docs often say "integer"/"number" loosely; keep integer to match most payloads.
         res = {"type": "integer"}
     elif t_base in {"object", ""}:
         res = {"type": "object"}
 
-    # ID is not always explicitly typed; if "id" appears in the type text, prefer string.
     if res is None and "id" in t_base:
         res = {"type": "string"}
 
@@ -143,7 +138,6 @@ def map_type(twitch_type_raw: str, *, field_name: str | None = None, desc_text: 
             res["nullable"] = True
         return res
 
-    # Otherwise, treat it as a potential reference
     ref_name = to_pascal_case(t_base)
     if not ref_name or ref_name.lower() == "object":
         out = {"type": "object"}
@@ -151,8 +145,6 @@ def map_type(twitch_type_raw: str, *, field_name: str | None = None, desc_text: 
         out = {"$ref": f"#/components/schemas/{ref_name}"}
 
     if _looks_nullable(twitch_type_raw, desc_text):
-        # OpenAPI doesn't allow nullable next to $ref in a clean way without allOf; keep it simple:
-        # wrap refs when needed.
         if "$ref" in out:
             out = {"allOf": [out], "nullable": True}
         else:
@@ -168,7 +160,6 @@ def _ensure_object_schema(prop_schema: dict) -> dict:
     if prop_schema.get("type") == "array":
         items = prop_schema.setdefault("items", {"type": "object"})
         if items.get("type") != "object" and "properties" not in items:
-            # If items is a $ref or primitive, we can't nest safely; fall back to object.
             prop_schema["items"] = {"type": "object"}
         prop_schema["items"].setdefault("type", "object")
         prop_schema["items"].setdefault("properties", {})
@@ -184,7 +175,7 @@ def parse_twitch_docs() -> dict:
     response = requests.get(
         DOC_URL,
         timeout=30,
-        headers={"User-Agent": "eventsub-swagger-generator/1.1"},
+        headers={"User-Agent": "eventsub-swagger-generator/1.2"},
     )
     response.encoding = "utf-8"
     soup = BeautifulSoup(response.text, "html.parser")
@@ -211,7 +202,6 @@ def parse_twitch_docs() -> dict:
         if not rows:
             continue
 
-        # Identify columns
         thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
         try:
             name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v))
@@ -229,7 +219,6 @@ def parse_twitch_docs() -> dict:
         root_schema = {"type": "object", "properties": {}}
         required_fields: list[str] = []
 
-        # Stack of (indent, current_object_schema, last_property_name_on_that_level)
         stack: list[tuple[int, dict, str | None]] = [(0, root_schema, None)]
 
         for row in rows[1:]:
@@ -237,11 +226,10 @@ def parse_twitch_docs() -> dict:
             if len(cells) <= max(name_idx, type_idx, desc_idx):
                 continue
 
-            raw_name = cells[name_idx].get_text()  # keep indentation
+            raw_name = cells[name_idx].get_text()
             indent = _leading_indent(raw_name)
             f_name = _normalize_ws(raw_name)
 
-            # Some tables have empty separators; skip those
             if not f_name or f_name.lower() in {"-", "—"}:
                 continue
 
@@ -253,20 +241,17 @@ def parse_twitch_docs() -> dict:
                 req_val = _normalize_ws(cells[required_idx].get_text()).lower()
                 is_required = req_val in {"yes", "true", "required"}
 
-            # Adjust stack based on indentation
             while stack and indent < stack[-1][0]:
                 stack.pop()
             if not stack:
                 stack = [(0, root_schema, None)]
 
-            # If indent increased, nest under the last property at previous level
             if indent > stack[-1][0]:
-                prev_indent, prev_obj, prev_last_name = stack[-1]
+                _prev_indent, prev_obj, prev_last_name = stack[-1]
                 if prev_last_name and prev_last_name in prev_obj.get("properties", {}):
                     parent_prop_schema = prev_obj["properties"][prev_last_name]
                     nested_obj = _ensure_object_schema(parent_prop_schema)
                     stack.append((indent, nested_obj, None))
-                # If we can't determine a parent, keep at current level (best effort).
 
             _, current_obj, _last = stack[-1]
 
@@ -274,7 +259,6 @@ def parse_twitch_docs() -> dict:
             field_schema["description"] = f_desc
             field_schema = _force_array_if_needed(f_name, f_type, f_desc, field_schema)
 
-            # If nullable is implied by description, ensure it is set
             if _looks_nullable(f_type, f_desc):
                 if "$ref" in field_schema:
                     field_schema = {"allOf": [{"$ref": field_schema["$ref"]}], "nullable": True, "description": f_desc}
@@ -284,7 +268,6 @@ def parse_twitch_docs() -> dict:
             current_obj.setdefault("properties", {})
             current_obj["properties"][f_name] = field_schema
 
-            # record last property name for potential nesting
             stack[-1] = (stack[-1][0], current_obj, f_name)
 
             if is_required:
@@ -292,21 +275,19 @@ def parse_twitch_docs() -> dict:
 
         if root_schema["properties"]:
             if required_fields:
-                # Deduplicate but keep order
                 seen = set()
                 root_schema["required"] = [x for x in required_fields if not (x in seen or seen.add(x))]
             schemas[component_name] = root_schema
 
-    # Post-process refs: if a $ref points to a component we didn't find, fallback to object.
     valid_components = set(schemas.keys())
 
     def fix_schema(node: object) -> object:
         if isinstance(node, dict):
-            # Fix $ref and allOf[$ref]
             if "$ref" in node:
                 ref_target = node["$ref"].split("/")[-1]
                 if ref_target not in valid_components:
                     return {"type": "object", "description": node.get("description", "")}
+
             if "allOf" in node and isinstance(node["allOf"], list):
                 fixed_allof = []
                 for part in node["allOf"]:
@@ -328,8 +309,7 @@ def parse_twitch_docs() -> dict:
 
     schemas = {k: fix_schema(v) for k, v in schemas.items()}
 
-    # Add missing fields that the docs/examples guarantee exist in notification payloads:
-    # Subscription.transport is present in webhook/websocket examples.
+    # Ensure Subscription.transport exists if Transport is present (matches Twitch examples)
     if "Subscription" in schemas and "Transport" in schemas:
         sub_props = schemas["Subscription"].setdefault("properties", {})
         if "transport" not in sub_props:
@@ -345,7 +325,7 @@ def main() -> None:
         "openapi": "3.0.0",
         "info": {
             "title": "Twitch EventSub Reference",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "description": "Best-effort OpenAPI components generated from Twitch EventSub Reference tables.",
         },
         "paths": {},
@@ -353,7 +333,7 @@ def main() -> None:
     }
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        yaml.dump(spec, f, sort_keys=False, default_flow_style=False, allow_unicode=True)
+        json.dump(spec, f, ensure_ascii=False, indent=2)
 
     print(f"Done! Created {OUTPUT_FILE} with {len(schemas)} schemas.")
 
