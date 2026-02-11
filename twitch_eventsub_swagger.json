@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Twitch EventSub Reference",
-    "version": "1.2.0",
+    "version": "1.4.0",
     "description": "Best-effort OpenAPI components generated from Twitch EventSub Reference tables."
   },
   "paths": {},
@@ -19,7 +19,9 @@
             "type": "integer",
             "description": "Not used; will be set to 0."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#bits-voting",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#bits-voting"
       },
       "ChannelPointsVoting": {
         "type": "object",
@@ -32,7 +34,9 @@
             "type": "integer",
             "description": "Number of Channel Points required to vote once with Channel Points."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-voting",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-voting"
       },
       "Choices": {
         "type": "object",
@@ -57,7 +61,9 @@
             "type": "integer",
             "description": "Total number of votes received for the choice across all methods of voting."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#choices",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#choices"
       },
       "AutomodMessageHoldCondition": {
         "type": "object",
@@ -74,7 +80,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-condition"
       },
       "AutomodMessageUpdateCondition": {
         "type": "object",
@@ -91,7 +99,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-condition"
       },
       "AutomodSettingsUpdateCondition": {
         "type": "object",
@@ -108,7 +118,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-settings-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-settings-update-condition"
       },
       "AutomodTermsUpdateCondition": {
         "type": "object",
@@ -125,7 +137,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-terms-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-terms-update-condition"
       },
       "ChannelAdBreakBeginCondition": {
         "type": "object",
@@ -137,7 +151,9 @@
         },
         "required": [
           "broadcaster_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ad-break-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ad-break-begin-condition"
       },
       "ChannelBanCondition": {
         "type": "object",
@@ -149,7 +165,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ban-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ban-condition"
       },
       "ChannelBitsUseCondition": {
         "type": "object",
@@ -161,7 +179,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-bits-use-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-bits-use-condition"
       },
       "ChannelChatClearCondition": {
         "type": "object",
@@ -178,7 +198,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-condition"
       },
       "ChannelChatClearUserMessagesCondition": {
         "type": "object",
@@ -195,7 +217,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-user-messages-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-user-messages-condition"
       },
       "ChannelChatMessageCondition": {
         "type": "object",
@@ -212,7 +236,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-condition"
       },
       "ChannelChatMessageDeleteCondition": {
         "type": "object",
@@ -229,7 +255,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-delete-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-delete-condition"
       },
       "ChannelChatNotificationCondition": {
         "type": "object",
@@ -246,7 +274,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-notification-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-notification-condition"
       },
       "ChannelChatSettingsUpdateCondition": {
         "type": "object",
@@ -263,7 +293,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-settings-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-settings-update-condition"
       },
       "ChannelChatUserMessageHoldCondition": {
         "type": "object",
@@ -280,7 +312,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-hold-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-hold-condition"
       },
       "ChannelChatUserMessageUpdateCondition": {
         "type": "object",
@@ -297,7 +331,9 @@
         "required": [
           "broadcaster_user_id",
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-update-condition"
       },
       "ChannelSubscribeCondition": {
         "type": "object",
@@ -309,7 +345,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscribe-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscribe-condition"
       },
       "ChannelSubscriptionEndCondition": {
         "type": "object",
@@ -321,7 +359,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-end-condition"
       },
       "ChannelSubscriptionGiftCondition": {
         "type": "object",
@@ -333,7 +373,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-gift-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-gift-condition"
       },
       "ChannelSubscriptionMessageCondition": {
         "type": "object",
@@ -345,7 +387,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-message-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-message-condition"
       },
       "ChannelCheerCondition": {
         "type": "object",
@@ -357,7 +401,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-cheer-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-cheer-condition"
       },
       "ChannelUpdateCondition": {
         "type": "object",
@@ -369,7 +415,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-update-condition"
       },
       "ChannelFollowCondition": {
         "type": "object",
@@ -386,7 +434,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-follow-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-follow-condition"
       },
       "ChannelUnbanCondition": {
         "type": "object",
@@ -398,7 +448,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-condition"
       },
       "ChannelUnbanRequestCreateCondition": {
         "type": "object",
@@ -415,7 +467,9 @@
         "required": [
           "moderator_user_id",
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-create-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-create-condition"
       },
       "ChannelUnbanRequestResolveCondition": {
         "type": "object",
@@ -432,7 +486,9 @@
         "required": [
           "moderator_user_id",
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-resolve-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-resolve-condition"
       },
       "ChannelRaidCondition": {
         "type": "object",
@@ -445,7 +501,9 @@
             "type": "string",
             "description": "The broadcaster user ID that received the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster is raided by another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-raid-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-raid-condition"
       },
       "ChannelModerateCondition": {
         "type": "object",
@@ -462,7 +520,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-condition"
       },
       "ChannelModerateV2Condition": {
         "type": "object",
@@ -479,7 +539,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-v2-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-v2-condition"
       },
       "ChannelModeratorAddCondition": {
         "type": "object",
@@ -491,7 +553,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-add-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-add-condition"
       },
       "ChannelModeratorRemoveCondition": {
         "type": "object",
@@ -503,7 +567,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-remove-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-remove-condition"
       },
       "ChannelGuestStarSessionBeginCondition": {
         "type": "object",
@@ -520,7 +586,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-begin-condition"
       },
       "ChannelGuestStarSessionEndCondition": {
         "type": "object",
@@ -537,7 +605,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-end-condition"
       },
       "ChannelGuestStarGuestUpdateCondition": {
         "type": "object",
@@ -554,7 +624,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-guest-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-guest-update-condition"
       },
       "ChannelGuestStarSettingsUpdateCondition": {
         "type": "object",
@@ -571,7 +643,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-settings-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-settings-update-condition"
       },
       "ChannelPointsAutomaticRewardRedemptionAddCondition": {
         "type": "object",
@@ -583,7 +657,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-condition"
       },
       "ChannelPointsAutomaticRewardRedemptionAddV2Condition": {
         "type": "object",
@@ -595,7 +671,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-v2-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-v2-condition"
       },
       "ChannelPointsCustomRewardAddCondition": {
         "type": "object",
@@ -607,7 +685,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-add-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-add-condition"
       },
       "ChannelPointsCustomRewardUpdateCondition": {
         "type": "object",
@@ -623,7 +703,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-update-condition"
       },
       "ChannelPointsCustomRewardRemoveCondition": {
         "type": "object",
@@ -639,7 +721,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-remove-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-remove-condition"
       },
       "ChannelPointsCustomRewardRedemptionAddCondition": {
         "type": "object",
@@ -655,7 +739,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-add-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-add-condition"
       },
       "ChannelPointsCustomRewardRedemptionUpdateCondition": {
         "type": "object",
@@ -671,7 +757,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-update-condition"
       },
       "ChannelPollBeginCondition": {
         "type": "object",
@@ -683,7 +771,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-begin-condition"
       },
       "ChannelPollProgressCondition": {
         "type": "object",
@@ -695,7 +785,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-progress-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-progress-condition"
       },
       "ChannelPollEndCondition": {
         "type": "object",
@@ -707,7 +799,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-end-condition"
       },
       "ChannelPredictionBeginCondition": {
         "type": "object",
@@ -719,7 +813,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-begin-condition"
       },
       "ChannelPredictionProgressCondition": {
         "type": "object",
@@ -731,7 +827,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-progress-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-progress-condition"
       },
       "ChannelPredictionLockCondition": {
         "type": "object",
@@ -743,7 +841,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-lock-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-lock-condition"
       },
       "ChannelPredictionEndCondition": {
         "type": "object",
@@ -755,7 +855,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-end-condition"
       },
       "ChannelSharedChatSessionBeginCondition": {
         "type": "object",
@@ -767,7 +869,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-begin-condition"
       },
       "ChannelSharedChatSessionUpdateCondition": {
         "type": "object",
@@ -779,7 +883,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-update-condition"
       },
       "ChannelSharedChatSessionEndCondition": {
         "type": "object",
@@ -791,7 +897,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-end-condition"
       },
       "ChannelSuspiciousUserMessageCondition": {
         "type": "object",
@@ -808,7 +916,9 @@
         "required": [
           "moderator_user_id",
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-message-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-message-condition"
       },
       "ChannelSuspiciousUserUpdateCondition": {
         "type": "object",
@@ -825,7 +935,9 @@
         "required": [
           "moderator_user_id",
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-update-condition"
       },
       "ChannelVipAddCondition": {
         "type": "object",
@@ -837,7 +949,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-add-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-add-condition"
       },
       "ChannelVipRemoveCondition": {
         "type": "object",
@@ -849,7 +963,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-remove-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-remove-condition"
       },
       "ChannelWarningAcknowledgeCondition": {
         "type": "object",
@@ -866,7 +982,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-acknowledge-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-acknowledge-condition"
       },
       "ChannelWarningSendCondition": {
         "type": "object",
@@ -883,7 +1001,9 @@
         "required": [
           "broadcaster_user_id",
           "moderator_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-send-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-send-condition"
       },
       "ConduitShardDisabledCondition": {
         "type": "object",
@@ -899,7 +1019,9 @@
         },
         "required": [
           "client_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#conduit-shard-disabled-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#conduit-shard-disabled-condition"
       },
       "DropEntitlementGrantCondition": {
         "type": "object",
@@ -919,7 +1041,9 @@
         },
         "required": [
           "organization_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#drop-entitlement-grant-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#drop-entitlement-grant-condition"
       },
       "ExtensionBitsTransactionCreateCondition": {
         "type": "object",
@@ -931,7 +1055,9 @@
         },
         "required": [
           "extension_client_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#extension-bits-transaction-create-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#extension-bits-transaction-create-condition"
       },
       "GoalsCondition": {
         "type": "object",
@@ -943,7 +1069,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#goals-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#goals-condition"
       },
       "HypeTrainBeginCondition": {
         "type": "object",
@@ -955,7 +1083,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-begin-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-begin-condition"
       },
       "HypeTrainProgressCondition": {
         "type": "object",
@@ -967,7 +1097,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-progress-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-progress-condition"
       },
       "HypeTrainEndCondition": {
         "type": "object",
@@ -979,7 +1111,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-end-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#hype-train-end-condition"
       },
       "StreamOnlineCondition": {
         "type": "object",
@@ -991,7 +1125,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-online-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-online-condition"
       },
       "StreamOfflineCondition": {
         "type": "object",
@@ -1003,7 +1139,9 @@
         },
         "required": [
           "broadcaster_user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-offline-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-offline-condition"
       },
       "UserAuthorizationGrantCondition": {
         "type": "object",
@@ -1015,7 +1153,9 @@
         },
         "required": [
           "client_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-grant-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-grant-condition"
       },
       "UserAuthorizationRevokeCondition": {
         "type": "object",
@@ -1027,7 +1167,9 @@
         },
         "required": [
           "client_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-revoke-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-revoke-condition"
       },
       "UserUpdateCondition": {
         "type": "object",
@@ -1039,7 +1181,9 @@
         },
         "required": [
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-update-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-update-condition"
       },
       "WhisperReceivedCondition": {
         "type": "object",
@@ -1051,7 +1195,9 @@
         },
         "required": [
           "user_id"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#whisper-received-condition",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#whisper-received-condition"
       },
       "Emotes": {
         "type": "object",
@@ -1068,7 +1214,9 @@
             "type": "string",
             "description": "The emote ID."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#emotes",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#emotes"
       },
       "AutomodMessageHoldEvent": {
         "type": "object",
@@ -1168,7 +1316,9 @@
             "type": "string",
             "description": "The timestamp of when automod saved the message."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-event"
       },
       "AutomodMessageHoldEventV2": {
         "type": "object",
@@ -1344,7 +1494,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-event-v2",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-hold-event-v2"
       },
       "AutomodMessageUpdateEvent": {
         "type": "object",
@@ -1460,7 +1612,9 @@
             "type": "string",
             "description": "The timestamp of when automod saved the message."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-event"
       },
       "AutomodMessageUpdateEventV2": {
         "type": "object",
@@ -1652,7 +1806,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-event-v2",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-message-update-event-v2"
       },
       "AutomodSettingsUpdateEvent": {
         "type": "object",
@@ -1718,7 +1874,9 @@
             "type": "integer",
             "description": "The Automod level for profanity."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-settings-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-settings-update-event"
       },
       "AutomodTermsUpdateEvent": {
         "type": "object",
@@ -1762,7 +1920,9 @@
             },
             "description": "The list of terms that had a status change."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-terms-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#automod-terms-update-event"
       },
       "ChannelAdBreakBeginEvent": {
         "type": "object",
@@ -1803,7 +1963,9 @@
             "type": "string",
             "description": "The display name of the user that requested the ad."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ad-break-begin-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ad-break-begin-event"
       },
       "ChannelBanEvent": {
         "type": "object",
@@ -1861,7 +2023,9 @@
             "type": "boolean",
             "description": "Indicates whether the ban is permanent (true) or a timeout (false). If true, ends_at will be null."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ban-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ban-event"
       },
       "ChannelBitsUseEvent": {
         "type": "object",
@@ -1996,7 +2160,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-bits-use-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-bits-use-event"
       },
       "ChannelChatClearEvent": {
         "type": "object",
@@ -2013,7 +2179,9 @@
             "type": "string",
             "description": "The broadcaster login."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-event"
       },
       "ChannelChatClearUserMessagesEvent": {
         "type": "object",
@@ -2042,7 +2210,9 @@
             "type": "string",
             "description": "The user login of the user that was banned or put in a timeout."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-user-messages-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-clear-user-messages-event"
       },
       "ChannelChatMessageEvent": {
         "type": "object",
@@ -2291,7 +2461,9 @@
             "type": "boolean",
             "description": "Optional. Determines if a message delivered during a shared chat session is only sent to the source channel. Has no effect if the message is not sent during a shared chat session."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-event"
       },
       "ChannelChatMessageDeleteEvent": {
         "type": "object",
@@ -2324,7 +2496,9 @@
             "type": "string",
             "description": "A UUID that identifies the message that was removed."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-delete-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-message-delete-event"
       },
       "ChannelChatNotificationEvent": {
         "type": "object",
@@ -2832,7 +3006,9 @@
             "nullable": true,
             "description": "Optional. Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement. This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-notification-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-notification-event"
       },
       "ChannelChatSettingsUpdateEvent": {
         "type": "object",
@@ -2879,7 +3055,9 @@
             "type": "boolean",
             "description": "A Boolean value that determines whether the broadcaster requires users to post only unique messages in the chat room.True if the broadcaster requires unique messages only; otherwise false."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-settings-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-settings-update-event"
       },
       "ChannelChatUserMessageHoldEvent": {
         "type": "object",
@@ -2967,7 +3145,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-hold-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-hold-event"
       },
       "ChannelChatUserMessageUpdateEvent": {
         "type": "object",
@@ -3059,7 +3239,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-user-message-update-event"
       },
       "ChannelSubscribeEvent": {
         "type": "object",
@@ -3096,7 +3278,9 @@
             "type": "boolean",
             "description": "Whether the subscription is a gift."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscribe-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscribe-event"
       },
       "ChannelCheerEvent": {
         "type": "object",
@@ -3140,7 +3324,9 @@
             "type": "integer",
             "description": "The number of Bits cheered."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-cheer-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-cheer-event"
       },
       "ChannelUpdateEvent": {
         "type": "object",
@@ -3180,7 +3366,9 @@
             },
             "description": "Array of content classification label IDs currently applied on the Channel. To retrieve a list of all possible IDs, use the Get Content Classification Labels API endpoint."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-update-event"
       },
       "ChannelUnbanEvent": {
         "type": "object",
@@ -3221,7 +3409,9 @@
             "type": "string",
             "description": "The user name of the issuer of the unban."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-event"
       },
       "ChannelUnbanRequestCreateEvent": {
         "type": "object",
@@ -3262,7 +3452,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the unban request was created."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-create-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-create-event"
       },
       "ChannelUnbanRequestResolveEvent": {
         "type": "object",
@@ -3315,7 +3507,9 @@
             "type": "string",
             "description": "Dictates whether the unban request was approved or denied. Can be the following: approvedcanceleddenied"
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-resolve-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-unban-request-resolve-event"
       },
       "ChannelFollowEvent": {
         "type": "object",
@@ -3348,7 +3542,9 @@
             "type": "string",
             "description": "RFC3339 timestamp of when the follow occurred."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-follow-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-follow-event"
       },
       "ChannelRaidEvent": {
         "type": "object",
@@ -3381,7 +3577,9 @@
             "type": "integer",
             "description": "The number of viewers in the raid."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-raid-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-raid-event"
       },
       "ChannelModerateEvent": {
         "type": "object",
@@ -3745,7 +3943,9 @@
             "nullable": true,
             "description": "Optional. Information about the shared_chat_delete event. Is null if action is not shared_chat_delete. This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-event"
       },
       "ChannelModerateEventV2": {
         "type": "object",
@@ -4138,7 +4338,9 @@
             "nullable": true,
             "description": "Optional. Information about the shared_chat_delete event. Is null if action is not shared_chat_delete. This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-event-v2",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderate-event-v2"
       },
       "ChannelModeratorAddEvent": {
         "type": "object",
@@ -4167,7 +4369,9 @@
             "type": "string",
             "description": "The display name of the new moderator."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-add-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-add-event"
       },
       "ChannelModeratorRemoveEvent": {
         "type": "object",
@@ -4196,7 +4400,9 @@
             "type": "string",
             "description": "The display name of the removed moderator."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-remove-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-moderator-remove-event"
       },
       "ChannelGuestStarSessionBeginEvent": {
         "type": "object",
@@ -4221,7 +4427,9 @@
             "type": "string",
             "description": "RFC3339 timestamp indicating the time the session began."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-begin-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-begin-event"
       },
       "ChannelGuestStarSessionEndEvent": {
         "type": "object",
@@ -4262,7 +4470,9 @@
             "type": "string",
             "description": "The host login."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-end-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-session-end-event"
       },
       "ChannelGuestStarGuestUpdateEvent": {
         "type": "object",
@@ -4350,7 +4560,9 @@
             "nullable": true,
             "description": "Value between 0-100 that represents the slot’s audio level as heard by participants within the session. null if the guest is not slotted."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-guest-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-guest-update-event"
       },
       "ChannelGuestStarSettingsUpdateEvent": {
         "type": "object",
@@ -4383,7 +4595,9 @@
             "type": "string",
             "description": "This setting determines how the guests within a session should be laid out within a group browser source. Can be one of the following values: tiled — All live guests are tiled within the browser source with the same size. screenshare — All live guests are tiled within the browser source with the same size. If there is an active screen share, it is sized larger than the other guests.horizontal_top — Indicates the group layout will contain all participants in a top-aligned horizontal stack.horizontal_bottom — Indicates the group layout will contain all participants in a bottom-aligned horizontal stack.vertical_left — Indicates the group layout will contain all participants in a left-aligned vertical stack.vertical_right — Indicates the group layout will contain all participants in a right-aligned vertical stack."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-settings-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-guest-star-settings-update-event"
       },
       "ChannelPollBeginEvent": {
         "type": "object",
@@ -4431,7 +4645,9 @@
             "type": "string",
             "description": "The time the poll will end."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-begin-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-begin-event"
       },
       "ChannelPollProgressEvent": {
         "type": "object",
@@ -4479,7 +4695,9 @@
             "type": "string",
             "description": "The time the poll will end."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-progress-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-progress-event"
       },
       "ChannelPollEndEvent": {
         "type": "object",
@@ -4531,7 +4749,9 @@
             "type": "string",
             "description": "The time the poll ended."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-end-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-end-event"
       },
       "ChannelPointsAutomaticRewardRedemptionAddEvent": {
         "type": "object",
@@ -4631,7 +4851,9 @@
             "type": "string",
             "description": "The UTC date and time (in RFC3339 format) of when the reward was redeemed."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-event"
       },
       "ChannelPointsAutomaticRewardRedemptionAddV2Event": {
         "type": "object",
@@ -4733,7 +4955,9 @@
             "type": "string",
             "description": "The UTC date and time (in RFC3339 format) of when the reward was redeemed."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-v2-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-automatic-reward-redemption-add-v2-event"
       },
       "ChannelPointsCustomRewardAddEvent": {
         "type": "object",
@@ -4825,7 +5049,9 @@
             "nullable": true,
             "description": "The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn’t live or max_per_stream isn’t enabled."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-add-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-add-event"
       },
       "ChannelPointsCustomRewardUpdateEvent": {
         "type": "object",
@@ -4917,7 +5143,9 @@
             "nullable": true,
             "description": "The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn’t live or max_per_stream isn’t enabled."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-update-event"
       },
       "ChannelPointsCustomRewardRemoveEvent": {
         "type": "object",
@@ -5009,7 +5237,9 @@
             "nullable": true,
             "description": "The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn’t live or max_per_stream isn’t enabled."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-remove-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-remove-event"
       },
       "ChannelPointsCustomRewardRedemptionAddEvent": {
         "type": "object",
@@ -5058,7 +5288,9 @@
             "type": "string",
             "description": "RFC3339 timestamp of when the reward was redeemed."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-add-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-add-event"
       },
       "ChannelPointsCustomRewardRedemptionUpdateEvent": {
         "type": "object",
@@ -5107,7 +5339,9 @@
             "type": "string",
             "description": "RFC3339 timestamp of when the reward was redeemed."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-points-custom-reward-redemption-update-event"
       },
       "ChannelPredictionBeginEvent": {
         "type": "object",
@@ -5147,7 +5381,9 @@
             "type": "string",
             "description": "The time the Channel Points Prediction will automatically lock."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-begin-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-begin-event"
       },
       "ChannelPredictionProgressEvent": {
         "type": "object",
@@ -5187,7 +5423,9 @@
             "type": "string",
             "description": "The time the Channel Points Prediction will automatically lock."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-progress-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-progress-event"
       },
       "ChannelPredictionLockEvent": {
         "type": "object",
@@ -5227,7 +5465,9 @@
             "type": "string",
             "description": "The time the Channel Points Prediction was locked."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-lock-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-lock-event"
       },
       "ChannelPredictionEndEvent": {
         "type": "object",
@@ -5275,7 +5515,9 @@
             "type": "string",
             "description": "The time the Channel Points Prediction ended."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-end-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-prediction-end-event"
       },
       "ChannelSharedChatSessionBeginEvent": {
         "type": "object",
@@ -5330,7 +5572,9 @@
             },
             "description": "The list of participants in the session."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-begin-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-begin-event"
       },
       "ChannelSharedChatSessionUpdateEvent": {
         "type": "object",
@@ -5385,7 +5629,9 @@
             },
             "description": "The list of participants in the session."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-update-event"
       },
       "ChannelSharedChatSessionEndEvent": {
         "type": "object",
@@ -5418,7 +5664,9 @@
             "type": "string",
             "description": "The user login of the host channel."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-end-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-shared-chat-session-end-event"
       },
       "ChannelSubscriptionEndEvent": {
         "type": "object",
@@ -5455,7 +5703,9 @@
             "type": "boolean",
             "description": "Whether the subscription was a gift."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-end-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-end-event"
       },
       "ChannelSubscriptionGiftEvent": {
         "type": "object",
@@ -5504,7 +5754,9 @@
             "type": "boolean",
             "description": "Whether the subscription gift was anonymous."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-gift-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-gift-event"
       },
       "ChannelSubscriptionMessageEvent": {
         "type": "object",
@@ -5554,7 +5806,9 @@
             "type": "integer",
             "description": "The month duration of the subscription."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-message-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-subscription-message-event"
       },
       "ChannelSuspiciousUserUpdateEvent": {
         "type": "object",
@@ -5599,7 +5853,9 @@
             "type": "string",
             "description": "The status set for the suspicious user. Can be the following: “none”, “active_monitoring”, or “restricted”."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-update-event"
       },
       "ChannelSuspiciousUserMessageEvent": {
         "type": "object",
@@ -5713,7 +5969,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-message-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-suspicious-user-message-event"
       },
       "ChannelVipAddEvent": {
         "type": "object",
@@ -5742,7 +6000,9 @@
             "type": "string",
             "description": "The display name of the broadcaster."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-add-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-add-event"
       },
       "ChannelVipRemoveEvent": {
         "type": "object",
@@ -5771,7 +6031,9 @@
             "type": "string",
             "description": "The display name of the broadcaster."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-remove-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-vip-remove-event"
       },
       "ChannelWarningAcknowledgeEvent": {
         "type": "object",
@@ -5800,7 +6062,9 @@
             "type": "string",
             "description": "The user name of the user that has acknowledged their warning."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-acknowledge-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-acknowledge-event"
       },
       "ChannelWarningSendEvent": {
         "type": "object",
@@ -5852,7 +6116,9 @@
             },
             "description": "Optional. The chat rules cited for the warning."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-send-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-warning-send-event"
       },
       "CharityDonationEvent": {
         "type": "object",
@@ -5923,7 +6189,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-donation-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-donation-event"
       },
       "CharityCampaignStartEvent": {
         "type": "object",
@@ -6000,7 +6268,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the broadcaster started the campaign."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-start-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-start-event"
       },
       "CharityCampaignProgressEvent": {
         "type": "object",
@@ -6073,7 +6343,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-progress-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-progress-event"
       },
       "CharityCampaignStopEvent": {
         "type": "object",
@@ -6150,7 +6422,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the broadcaster stopped the campaign."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-stop-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#charity-campaign-stop-event"
       },
       "ConduitShardDisabledEvent": {
         "type": "object",
@@ -6195,7 +6469,9 @@
             "nullable": true,
             "description": "Optional. Time that the WebSocket session disconnected. Null if method is set to webhook."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#conduit-shard-disabled-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#conduit-shard-disabled-event"
       },
       "DropEntitlementGrantEvent": {
         "type": "object",
@@ -6211,7 +6487,9 @@
             },
             "description": "Entitlement object."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#drop-entitlement-grant-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#drop-entitlement-grant-event"
       },
       "ExtensionBitsTransactionCreateEvent": {
         "type": "object",
@@ -6252,7 +6530,9 @@
             "$ref": "#/components/schemas/Product",
             "description": "Additional extension product information."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#extension-bits-transaction-create-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#extension-bits-transaction-create-event"
       },
       "GoalsEvent": {
         "type": "object",
@@ -6301,7 +6581,9 @@
             "type": "string",
             "description": "The UTC timestamp in RFC 3339 format, which indicates when the broadcaster ended the goal.Only the channel.goal.end event includes this field."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#goals-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#goals-event"
       },
       "StreamOnlineEvent": {
         "type": "object",
@@ -6330,7 +6612,9 @@
             "type": "string",
             "description": "The timestamp at which the stream went online at."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-online-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-online-event"
       },
       "StreamOfflineEvent": {
         "type": "object",
@@ -6347,7 +6631,9 @@
             "type": "string",
             "description": "The broadcaster’s user display name."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-offline-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-offline-event"
       },
       "UserAuthorizationGrantEvent": {
         "type": "object",
@@ -6368,7 +6654,9 @@
             "type": "string",
             "description": "The user display name for the user who has granted authorization for your client id."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-grant-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-grant-event"
       },
       "UserAuthorizationRevokeEvent": {
         "type": "object",
@@ -6391,7 +6679,9 @@
             "nullable": true,
             "description": "The user display name for the user who has revoked authorization for your client id. This is null if the user no longer exists."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-revoke-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-authorization-revoke-event"
       },
       "UserUpdateEvent": {
         "type": "object",
@@ -6420,7 +6710,9 @@
             "type": "string",
             "description": "The user’s description."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-update-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#user-update-event"
       },
       "WhisperReceivedEvent": {
         "type": "object",
@@ -6463,7 +6755,9 @@
               }
             }
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#whisper-received-event",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#whisper-received-event"
       },
       "GlobalCooldown": {
         "type": "object",
@@ -6476,7 +6770,9 @@
             "type": "integer",
             "description": "The cooldown in seconds."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#global-cooldown",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#global-cooldown"
       },
       "Image": {
         "type": "object",
@@ -6493,7 +6789,9 @@
             "type": "string",
             "description": "URL for the image at 4x size."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#image",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#image"
       },
       "LastContribution": {
         "type": "object",
@@ -6518,7 +6816,9 @@
             "type": "integer",
             "description": "The total amount contributed. If type is bits, total represents the amount of Bits used. If type is subscription, total is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#last-contribution",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#last-contribution"
       },
       "MaxPerStream": {
         "type": "object",
@@ -6531,7 +6831,9 @@
             "type": "integer",
             "description": "The max per stream limit."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#max-per-stream",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#max-per-stream"
       },
       "MaxPerUserPerStream": {
         "type": "object",
@@ -6544,7 +6846,9 @@
             "type": "integer",
             "description": "The max per user per stream limit."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#max-per-user-per-stream",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#max-per-user-per-stream"
       },
       "Message": {
         "type": "object",
@@ -6560,7 +6864,9 @@
             },
             "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#message",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#message"
       },
       "Outcomes": {
         "type": "object",
@@ -6592,7 +6898,9 @@
             },
             "description": "An array of users who used the most Channel Points on this outcome."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#outcomes",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#outcomes"
       },
       "Product": {
         "type": "object",
@@ -6613,7 +6921,9 @@
             "type": "boolean",
             "description": "Flag indicating if the product is in development. If in_development is true, bits will be 0."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#product",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#product"
       },
       "Reward": {
         "type": "object",
@@ -6634,7 +6944,9 @@
             "type": "string",
             "description": "The reward description."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#reward",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#reward"
       },
       "ShieldMode": {
         "type": "object",
@@ -6671,7 +6983,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the moderator deactivated Shield Mode. The object includes this field only for channel.shield_mode.end events."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shield-mode",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shield-mode"
       },
       "ShoutoutCreate": {
         "type": "object",
@@ -6728,7 +7042,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the broadcaster may send another Shoutout to the broadcaster in to_broadcaster_user_id."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shoutout-create",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shoutout-create"
       },
       "ShoutoutReceived": {
         "type": "object",
@@ -6765,7 +7081,9 @@
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the moderator sent the Shoutout."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shoutout-received",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#shoutout-received"
       },
       "Subscription": {
         "type": "object",
@@ -6802,7 +7120,9 @@
             "$ref": "#/components/schemas/Transport",
             "description": "Transport details."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#subscription",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#subscription"
       },
       "TopContributions": {
         "type": "object",
@@ -6827,7 +7147,9 @@
             "type": "integer",
             "description": "The total amount contributed. If type is bits, total represents the amount of Bits used. If type is subscription, total is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#top-contributions",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#top-contributions"
       },
       "TopPredictors": {
         "type": "object",
@@ -6853,7 +7175,9 @@
             "type": "integer",
             "description": "The number of Channel Points used to participate in the Prediction."
           }
-        }
+        },
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#top-predictors",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#top-predictors"
       },
       "Transport": {
         "type": "object",
@@ -6885,7 +7209,9 @@
         },
         "required": [
           "method"
-        ]
+        ],
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#transport",
+        "description": "Source: https://dev.twitch.tv/docs/eventsub/eventsub-reference/#transport"
       }
     }
   }

@@ -1,9 +1,10 @@
-import requests
-from bs4 import BeautifulSoup
-import yaml
+import json
 import re
 import unicodedata
-import json
+from dataclasses import dataclass
+
+import requests
+from bs4 import BeautifulSoup
 
 # Configuration
 DOC_URL = "https://dev.twitch.tv/docs/eventsub/eventsub-reference/"
@@ -170,172 +171,259 @@ def _ensure_object_schema(prop_schema: dict) -> dict:
     return prop_schema
 
 
-def parse_twitch_docs() -> dict:
-    print(f"Fetching {DOC_URL}...")
-    response = requests.get(
-        DOC_URL,
-        timeout=30,
-        headers={"User-Agent": "eventsub-swagger-generator/1.2"},
-    )
-    response.encoding = "utf-8"
-    soup = BeautifulSoup(response.text, "html.parser")
+def _append_source(schema: dict, permalink: str | None) -> None:
+    """
+    Appends the source URL to description and stores it in x-docs-url.
+    Safe to call multiple times (won't duplicate).
+    """
+    if not permalink:
+        return
 
-    schemas: dict[str, dict] = {}
+    schema["x-docs-url"] = permalink
+    source_line = f"Source: {permalink}"
 
-    headers = soup.find_all(["h2", "h3"])
-    skip_titles = {"Contents", "Overview", "Request fields", "Response fields"}
+    existing = schema.get("description", "")
+    existing = existing if isinstance(existing, str) else ""
+    existing = existing.strip()
 
-    for header in headers:
-        title = _normalize_ws(header.get_text())
-        if title in skip_titles:
-            continue
+    if source_line in existing:
+        schema["description"] = existing
+        return
 
-        table = header.find_next("table")
-        if not table or table.find_previous(["h2", "h3"]) != header:
-            continue
+    if existing:
+        schema["description"] = f"{existing}\n\n{source_line}"
+    else:
+        schema["description"] = source_line
 
-        component_name = to_pascal_case(title)
-        if not component_name:
-            continue
 
-        rows = table.find_all("tr")
-        if not rows:
-            continue
+def _header_permalink(header_tag) -> str | None:
+    """
+    Returns an absolute permalink to the header section, if we can determine it.
+    """
+    if header_tag is None:
+        return None
 
-        thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
-        try:
-            name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v))
-            type_idx = next(i for i, v in enumerate(thead) if "type" in v)
-            desc_idx = next(i for i, v in enumerate(thead) if "description" in v)
-        except StopIteration:
-            continue
+    def to_abs(href: str) -> str | None:
+        href = (href or "").strip()
+        if href.startswith("#") and len(href) > 1:
+            return f"{DOC_URL.rstrip('/')}/{href}"
+        if href.startswith(DOC_URL):
+            return href
+        return None
 
-        required_idx = None
-        for i, v in enumerate(thead):
-            if "required" in v:
-                required_idx = i
-                break
+    hid = header_tag.get("id")
+    if hid:
+        return f"{DOC_URL.rstrip('/')}/#{hid}"
 
-        root_schema = {"type": "object", "properties": {}}
-        required_fields: list[str] = []
+    # Look for a hash-link within the header
+    a = header_tag.find(lambda t: t.name == "a" and isinstance(t.get("href"), str) and t.get("href", "").startswith("#"))
+    if a:
+        abs_link = to_abs(a.get("href"))
+        if abs_link:
+            return abs_link
 
-        stack: list[tuple[int, dict, str | None]] = [(0, root_schema, None)]
+    # Defensive: sometimes anchors appear in a nearby sibling
+    sib = header_tag.find_next_sibling()
+    if sib:
+        a2 = sib.find(lambda t: t.name == "a" and isinstance(t.get("href"), str) and t.get("href", "").startswith("#"))
+        if a2:
+            abs_link = to_abs(a2.get("href"))
+            if abs_link:
+                return abs_link
 
-        for row in rows[1:]:
-            cells = row.find_all("td")
-            if len(cells) <= max(name_idx, type_idx, desc_idx):
+    return None
+
+
+@dataclass(frozen=True)
+class GeneratorConfig:
+    doc_url: str = DOC_URL
+    user_agent: str = "eventsub-swagger-generator/1.4"
+    timeout_seconds: int = 30
+
+
+class TwitchEventSubSpecGenerator:
+    def __init__(self, config: GeneratorConfig = GeneratorConfig()):
+        self.config = config
+
+    def fetch_html(self) -> str:
+        resp = requests.get(
+            self.config.doc_url,
+            timeout=self.config.timeout_seconds,
+            headers={"User-Agent": self.config.user_agent},
+        )
+        resp.encoding = "utf-8"
+        return resp.text
+
+    def parse_schemas(self, html: str) -> dict:
+        soup = BeautifulSoup(html, "html.parser")
+        schemas: dict[str, dict] = {}
+
+        headers = soup.find_all(["h2", "h3"])
+        skip_titles = {"Contents", "Overview", "Request fields", "Response fields"}
+
+        for header in headers:
+            title = _normalize_ws(header.get_text())
+            if title in skip_titles:
                 continue
 
-            raw_name = cells[name_idx].get_text()
-            indent = _leading_indent(raw_name)
-            f_name = _normalize_ws(raw_name)
-
-            if not f_name or f_name.lower() in {"-", "—"}:
+            table = header.find_next("table")
+            if not table or table.find_previous(["h2", "h3"]) != header:
                 continue
 
-            f_type = _normalize_ws(cells[type_idx].get_text())
-            f_desc = _normalize_ws(cells[desc_idx].get_text())
+            component_name = to_pascal_case(title)
+            if not component_name:
+                continue
 
-            is_required = False
-            if required_idx is not None and len(cells) > required_idx:
-                req_val = _normalize_ws(cells[required_idx].get_text()).lower()
-                is_required = req_val in {"yes", "true", "required"}
+            permalink = _header_permalink(header)
 
-            while stack and indent < stack[-1][0]:
-                stack.pop()
-            if not stack:
-                stack = [(0, root_schema, None)]
+            rows = table.find_all("tr")
+            if not rows:
+                continue
 
-            if indent > stack[-1][0]:
-                _prev_indent, prev_obj, prev_last_name = stack[-1]
-                if prev_last_name and prev_last_name in prev_obj.get("properties", {}):
-                    parent_prop_schema = prev_obj["properties"][prev_last_name]
-                    nested_obj = _ensure_object_schema(parent_prop_schema)
-                    stack.append((indent, nested_obj, None))
+            thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
+            try:
+                name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v))
+                type_idx = next(i for i, v in enumerate(thead) if "type" in v)
+                desc_idx = next(i for i, v in enumerate(thead) if "description" in v)
+            except StopIteration:
+                continue
 
-            _, current_obj, _last = stack[-1]
+            required_idx = None
+            for i, v in enumerate(thead):
+                if "required" in v:
+                    required_idx = i
+                    break
 
-            field_schema = map_type(f_type, field_name=f_name, desc_text=f_desc)
-            field_schema["description"] = f_desc
-            field_schema = _force_array_if_needed(f_name, f_type, f_desc, field_schema)
+            root_schema = {"type": "object", "properties": {}}
+            required_fields: list[str] = []
+            stack: list[tuple[int, dict, str | None]] = [(0, root_schema, None)]
 
-            if _looks_nullable(f_type, f_desc):
-                if "$ref" in field_schema:
-                    field_schema = {"allOf": [{"$ref": field_schema["$ref"]}], "nullable": True, "description": f_desc}
-                else:
-                    field_schema.setdefault("nullable", True)
+            for row in rows[1:]:
+                cells = row.find_all("td")
+                if len(cells) <= max(name_idx, type_idx, desc_idx):
+                    continue
 
-            current_obj.setdefault("properties", {})
-            current_obj["properties"][f_name] = field_schema
+                raw_name = cells[name_idx].get_text()
+                indent = _leading_indent(raw_name)
+                f_name = _normalize_ws(raw_name)
 
-            stack[-1] = (stack[-1][0], current_obj, f_name)
+                if not f_name or f_name.lower() in {"-", "—"}:
+                    continue
 
-            if is_required:
-                required_fields.append(f_name)
+                f_type = _normalize_ws(cells[type_idx].get_text())
+                f_desc = _normalize_ws(cells[desc_idx].get_text())
 
-        if root_schema["properties"]:
-            if required_fields:
-                seen = set()
-                root_schema["required"] = [x for x in required_fields if not (x in seen or seen.add(x))]
-            schemas[component_name] = root_schema
+                is_required = False
+                if required_idx is not None and len(cells) > required_idx:
+                    req_val = _normalize_ws(cells[required_idx].get_text()).lower()
+                    is_required = req_val in {"yes", "true", "required"}
 
-    valid_components = set(schemas.keys())
+                while stack and indent < stack[-1][0]:
+                    stack.pop()
+                if not stack:
+                    stack = [(0, root_schema, None)]
 
-    def fix_schema(node: object) -> object:
-        if isinstance(node, dict):
-            if "$ref" in node:
-                ref_target = node["$ref"].split("/")[-1]
-                if ref_target not in valid_components:
-                    return {"type": "object", "description": node.get("description", "")}
+                if indent > stack[-1][0]:
+                    _prev_indent, prev_obj, prev_last_name = stack[-1]
+                    if prev_last_name and prev_last_name in prev_obj.get("properties", {}):
+                        parent_prop_schema = prev_obj["properties"][prev_last_name]
+                        nested_obj = _ensure_object_schema(parent_prop_schema)
+                        stack.append((indent, nested_obj, None))
 
-            if "allOf" in node and isinstance(node["allOf"], list):
-                fixed_allof = []
-                for part in node["allOf"]:
-                    if isinstance(part, dict) and "$ref" in part:
-                        ref_target = part["$ref"].split("/")[-1]
-                        if ref_target not in valid_components:
-                            fixed_allof.append({"type": "object"})
+                _, current_obj, _last = stack[-1]
+
+                field_schema = map_type(f_type, field_name=f_name, desc_text=f_desc)
+                field_schema["description"] = f_desc
+                field_schema = _force_array_if_needed(f_name, f_type, f_desc, field_schema)
+
+                if _looks_nullable(f_type, f_desc):
+                    if "$ref" in field_schema:
+                        field_schema = {
+                            "allOf": [{"$ref": field_schema["$ref"]}],
+                            "nullable": True,
+                            "description": f_desc,
+                        }
+                    else:
+                        field_schema.setdefault("nullable", True)
+
+                current_obj.setdefault("properties", {})
+                current_obj["properties"][f_name] = field_schema
+                stack[-1] = (stack[-1][0], current_obj, f_name)
+
+                if is_required:
+                    required_fields.append(f_name)
+
+            if root_schema["properties"]:
+                if required_fields:
+                    seen = set()
+                    root_schema["required"] = [x for x in required_fields if not (x in seen or seen.add(x))]
+
+                # Ensure source is appended at the end (so it can't be overwritten later)
+                _append_source(root_schema, permalink)
+
+                schemas[component_name] = root_schema
+
+        return self._post_process_schemas(schemas)
+
+    def _post_process_schemas(self, schemas: dict) -> dict:
+        valid_components = set(schemas.keys())
+
+        def fix_schema(node: object) -> object:
+            if isinstance(node, dict):
+                if "$ref" in node:
+                    ref_target = node["$ref"].split("/")[-1]
+                    if ref_target not in valid_components:
+                        return {"type": "object", "description": node.get("description", "")}
+
+                if "allOf" in node and isinstance(node["allOf"], list):
+                    fixed_allof = []
+                    for part in node["allOf"]:
+                        if isinstance(part, dict) and "$ref" in part:
+                            ref_target = part["$ref"].split("/")[-1]
+                            fixed_allof.append(part if ref_target in valid_components else {"type": "object"})
                         else:
                             fixed_allof.append(part)
-                    else:
-                        fixed_allof.append(part)
-                node["allOf"] = fixed_allof
+                    node["allOf"] = fixed_allof
 
-            for k, v in list(node.items()):
-                node[k] = fix_schema(v)
-        elif isinstance(node, list):
-            return [fix_schema(x) for x in node]
-        return node
+                for k, v in list(node.items()):
+                    node[k] = fix_schema(v)
+            elif isinstance(node, list):
+                return [fix_schema(x) for x in node]
+            return node
 
-    schemas = {k: fix_schema(v) for k, v in schemas.items()}
+        schemas = {k: fix_schema(v) for k, v in schemas.items()}
 
-    # Ensure Subscription.transport exists if Transport is present (matches Twitch examples)
-    if "Subscription" in schemas and "Transport" in schemas:
-        sub_props = schemas["Subscription"].setdefault("properties", {})
-        if "transport" not in sub_props:
-            sub_props["transport"] = {"$ref": "#/components/schemas/Transport", "description": "Transport details."}
+        # Ensure Subscription.transport exists if Transport is present (matches Twitch payload examples)
+        if "Subscription" in schemas and "Transport" in schemas:
+            sub_props = schemas["Subscription"].setdefault("properties", {})
+            if "transport" not in sub_props:
+                sub_props["transport"] = {"$ref": "#/components/schemas/Transport", "description": "Transport details."}
 
-    return schemas
+        return schemas
+
+    def generate_spec(self) -> dict:
+        html = self.fetch_html()
+        schemas = self.parse_schemas(html)
+        return {
+            "openapi": "3.0.0",
+            "info": {
+                "title": "Twitch EventSub Reference",
+                "version": "1.4.0",
+                "description": "Best-effort OpenAPI components generated from Twitch EventSub Reference tables.",
+            },
+            "paths": {},
+            "components": {"schemas": schemas},
+        }
 
 
 def main() -> None:
-    schemas = parse_twitch_docs()
-
-    spec = {
-        "openapi": "3.0.0",
-        "info": {
-            "title": "Twitch EventSub Reference",
-            "version": "1.2.0",
-            "description": "Best-effort OpenAPI components generated from Twitch EventSub Reference tables.",
-        },
-        "paths": {},
-        "components": {"schemas": schemas},
-    }
+    generator = TwitchEventSubSpecGenerator()
+    spec = generator.generate_spec()
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(spec, f, ensure_ascii=False, indent=2)
 
-    print(f"Done! Created {OUTPUT_FILE} with {len(schemas)} schemas.")
+    print(f"Done! Created {OUTPUT_FILE} with {len(spec['components']['schemas'])} schemas.")
 
 
 if __name__ == "__main__":
