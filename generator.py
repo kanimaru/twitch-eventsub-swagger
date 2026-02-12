@@ -282,7 +282,7 @@ class TwitchEventSubSpecGenerator:
 
             thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
             try:
-                name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v))
+                name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v) or ("param" in v))
                 type_idx = next(i for i, v in enumerate(thead) if "type" in v)
                 desc_idx = next(i for i, v in enumerate(thead) if "description" in v)
             except StopIteration:
