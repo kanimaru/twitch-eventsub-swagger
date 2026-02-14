@@ -103,6 +103,26 @@ def map_type(twitch_type_raw: str, *, field_name: str | None = None, desc_text: 
     t_clean = _normalize_ws(twitch_type_raw).lower()
     t_base = re.sub(r"\(.*?\)", "", t_clean).strip()
 
+    # Heuristic overrides for known doc table inconsistencies:
+    # Sometimes Twitch marks string fields as "object" in nested message structures.
+    fn = (field_name or "").strip().lower()
+    desc_l = (desc_text or "").lower()
+
+    if t_base in {"object", ""}:
+        # Common pattern: "The chat message in plain text." -> string
+        if fn == "text" and ("plain text" in desc_l or "message text" in desc_l):
+            res = {"type": "string"}
+            if _looks_nullable(twitch_type_raw, desc_text):
+                res["nullable"] = True
+            return res
+
+        # Common pattern: Cheermote prefix described as a name portion -> string
+        if fn == "prefix" and "name portion" in desc_l:
+            res = {"type": "string"}
+            if _looks_nullable(twitch_type_raw, desc_text):
+                res["nullable"] = True
+            return res
+
     # Arrays (handle: "array", "array of X", "X[]")
     if "[]" in t_base or t_base.startswith("array") or "array of" in t_base:
         inner = (
