@@ -234,6 +234,23 @@ def _header_permalink(header_tag) -> str | None:
     return None
 
 
+def _tables_until_next_header(header_tag) -> list:
+    """
+    Some sections (e.g., Drop Entitlement Grant Event) are split into multiple tables
+    before the next h2/h3. Collect all those tables and merge their rows.
+    """
+    out: list = []
+    if header_tag is None:
+        return out
+
+    node = header_tag.find_next_sibling()
+    while node is not None and node.name not in {"h2", "h3"}:
+        if node.name == "table":
+            out.append(node)
+        node = node.find_next_sibling()
+    return out
+
+
 @dataclass(frozen=True)
 class GeneratorConfig:
     doc_url: str = DOC_URL
@@ -266,8 +283,8 @@ class TwitchEventSubSpecGenerator:
             if title in skip_titles:
                 continue
 
-            table = header.find_next("table")
-            if not table or table.find_previous(["h2", "h3"]) != header:
+            tables = _tables_until_next_header(header)
+            if not tables:
                 continue
 
             component_name = to_pascal_case(title)
@@ -276,91 +293,134 @@ class TwitchEventSubSpecGenerator:
 
             permalink = _header_permalink(header)
 
-            rows = table.find_all("tr")
-            if not rows:
-                continue
-
-            thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
-            try:
-                name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v) or ("param" in v))
-                type_idx = next(i for i, v in enumerate(thead) if "type" in v)
-                desc_idx = next(i for i, v in enumerate(thead) if "description" in v)
-            except StopIteration:
-                continue
-
-            required_idx = None
-            for i, v in enumerate(thead):
-                if "required" in v:
-                    required_idx = i
-                    break
-
             root_schema = {"type": "object", "properties": {}}
-            required_fields: list[str] = []
-            stack: list[tuple[int, dict, str | None]] = [(0, root_schema, None)]
+            root_required_fields: list[str] = []
 
-            for row in rows[1:]:
-                cells = row.find_all("td")
-                if len(cells) <= max(name_idx, type_idx, desc_idx):
+            for table_i, table in enumerate(tables):
+                rows = table.find_all("tr")
+                if not rows:
                     continue
 
-                raw_name = cells[name_idx].get_text()
-                indent = _leading_indent(raw_name)
-                f_name = _normalize_ws(raw_name)
-
-                if not f_name or f_name.lower() in {"-", "—"}:
+                thead = [_normalize_ws(c.get_text()).lower() for c in rows[0].find_all(["th", "td"])]
+                try:
+                    name_idx = next(i for i, v in enumerate(thead) if ("name" in v) or ("field" in v) or ("param" in v))
+                    type_idx = next(i for i, v in enumerate(thead) if "type" in v)
+                    desc_idx = next(i for i, v in enumerate(thead) if "description" in v)
+                except StopIteration:
                     continue
 
-                f_type = _normalize_ws(cells[type_idx].get_text())
-                f_desc = _normalize_ws(cells[desc_idx].get_text())
+                required_idx = None
+                for i, v in enumerate(thead):
+                    if "required" in v:
+                        required_idx = i
+                        break
 
-                is_required = False
-                if required_idx is not None and len(cells) > required_idx:
-                    req_val = _normalize_ws(cells[required_idx].get_text()).lower()
-                    is_required = req_val in {"yes", "true", "required"}
+                # Decide where this table's rows should land.
+                # If the first table defined `data` as an array, and it's still "unshaped",
+                # treat later tables as describing the array's element object.
+                target_obj = root_schema
+                target_required_fields: list[str] = root_required_fields
 
-                while stack and indent < stack[-1][0]:
-                    stack.pop()
-                if not stack:
-                    stack = [(0, root_schema, None)]
+                if table_i > 0:
+                    data_prop = root_schema.get("properties", {}).get("data")
+                    if isinstance(data_prop, dict) and data_prop.get("type") == "array":
+                        items = data_prop.get("items")
+                        if not isinstance(items, dict):
+                            items = {"type": "object"}
+                            data_prop["items"] = items
 
-                if indent > stack[-1][0]:
-                    _prev_indent, prev_obj, prev_last_name = stack[-1]
-                    if prev_last_name and prev_last_name in prev_obj.get("properties", {}):
-                        parent_prop_schema = prev_obj["properties"][prev_last_name]
-                        nested_obj = _ensure_object_schema(parent_prop_schema)
-                        stack.append((indent, nested_obj, None))
+                        # Normalize `items` to an object schema that can accept properties
+                        items_obj = _ensure_object_schema(items)
 
-                _, current_obj, _last = stack[-1]
+                        # Only redirect if the items object hasn't already been populated
+                        if not items_obj.get("properties"):
+                            target_obj = items_obj
+                            target_required_fields = items_obj.setdefault("_required_acc", [])
 
-                field_schema = map_type(f_type, field_name=f_name, desc_text=f_desc)
-                field_schema["description"] = f_desc
-                field_schema = _force_array_if_needed(f_name, f_type, f_desc, field_schema)
+                # Reset stack per table; tables are often "continuations"
+                stack: list[tuple[int, dict, str | None]] = [(0, target_obj, None)]
+                local_required: list[str] = []
 
-                if _looks_nullable(f_type, f_desc):
-                    if "$ref" in field_schema:
-                        field_schema = {
-                            "allOf": [{"$ref": field_schema["$ref"]}],
-                            "nullable": True,
-                            "description": f_desc,
-                        }
+                for row in rows[1:]:
+                    cells = row.find_all("td")
+                    if len(cells) <= max(name_idx, type_idx, desc_idx):
+                        continue
+
+                    raw_name = cells[name_idx].get_text()
+                    indent = _leading_indent(raw_name)
+                    f_name = _normalize_ws(raw_name)
+
+                    if not f_name or f_name.lower() in {"-", "—"}:
+                        continue
+
+                    f_type = _normalize_ws(cells[type_idx].get_text())
+                    f_desc = _normalize_ws(cells[desc_idx].get_text())
+
+                    is_required = False
+                    if required_idx is not None and len(cells) > required_idx:
+                        req_val = _normalize_ws(cells[required_idx].get_text()).lower()
+                        is_required = req_val in {"yes", "true", "required"}
+
+                    while stack and indent < stack[-1][0]:
+                        stack.pop()
+                    if not stack:
+                        stack = [(0, target_obj, None)]
+
+                    if indent > stack[-1][0]:
+                        _prev_indent, prev_obj, prev_last_name = stack[-1]
+                        if prev_last_name and prev_last_name in prev_obj.get("properties", {}):
+                            parent_prop_schema = prev_obj["properties"][prev_last_name]
+                            nested_obj = _ensure_object_schema(parent_prop_schema)
+                            stack.append((indent, nested_obj, None))
+
+                    _, current_obj, _last = stack[-1]
+
+                    field_schema = map_type(f_type, field_name=f_name, desc_text=f_desc)
+                    field_schema["description"] = f_desc
+                    field_schema = _force_array_if_needed(f_name, f_type, f_desc, field_schema)
+
+                    if _looks_nullable(f_type, f_desc):
+                        if "$ref" in field_schema:
+                            field_schema = {
+                                "allOf": [{"$ref": field_schema["$ref"]}],
+                                "nullable": True,
+                                "description": f_desc,
+                            }
+                        else:
+                            field_schema.setdefault("nullable", True)
+
+                    current_obj.setdefault("properties", {})
+                    current_obj["properties"][f_name] = field_schema
+                    stack[-1] = (stack[-1][0], current_obj, f_name)
+
+                    if is_required:
+                        local_required.append(f_name)
+
+                # Accumulate required fields onto the correct target
+                if local_required:
+                    if target_obj is root_schema:
+                        root_required_fields.extend(local_required)
                     else:
-                        field_schema.setdefault("nullable", True)
-
-                current_obj.setdefault("properties", {})
-                current_obj["properties"][f_name] = field_schema
-                stack[-1] = (stack[-1][0], current_obj, f_name)
-
-                if is_required:
-                    required_fields.append(f_name)
+                        target_required_fields.extend(local_required)
 
             if root_schema["properties"]:
-                if required_fields:
+                if root_required_fields:
                     seen = set()
-                    root_schema["required"] = [x for x in required_fields if not (x in seen or seen.add(x))]
+                    root_schema["required"] = [x for x in root_required_fields if not (x in seen or seen.add(x))]
 
-                # Ensure source is appended at the end (so it can't be overwritten later)
+                # Promote nested required accumulator (if any) to actual JSON Schema "required"
+                data_prop = root_schema.get("properties", {}).get("data")
+                if isinstance(data_prop, dict) and data_prop.get("type") == "array":
+                    items = data_prop.get("items")
+                    if isinstance(items, dict):
+                        items_obj = items if items.get("type") == "object" else None
+                        if isinstance(items_obj, dict) and "_required_acc" in items_obj:
+                            reqs = items_obj.pop("_required_acc") or []
+                            if reqs:
+                                seen = set()
+                                items_obj["required"] = [x for x in reqs if not (x in seen or seen.add(x))]
+
                 _append_source(root_schema, permalink)
-
                 schemas[component_name] = root_schema
 
         return self._post_process_schemas(schemas)

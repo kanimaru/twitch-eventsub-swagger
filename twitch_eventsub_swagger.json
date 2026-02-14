@@ -6483,7 +6483,49 @@
           "data": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "organization_id": {
+                  "type": "string",
+                  "description": "The ID of the organization that owns the game that has Drops enabled."
+                },
+                "category_id": {
+                  "type": "string",
+                  "description": "Twitch category ID of the game that was being played when this benefit was entitled."
+                },
+                "category_name": {
+                  "type": "string",
+                  "description": "The category name."
+                },
+                "campaign_id": {
+                  "type": "string",
+                  "description": "The campaign this entitlement is associated with."
+                },
+                "user_id": {
+                  "type": "string",
+                  "description": "Twitch user ID of the user who was granted the entitlement."
+                },
+                "user_name": {
+                  "type": "string",
+                  "description": "The user display name of the user who was granted the entitlement."
+                },
+                "user_login": {
+                  "type": "string",
+                  "description": "The user login of the user who was granted the entitlement."
+                },
+                "entitlement_id": {
+                  "type": "string",
+                  "description": "Unique identifier of the entitlement. Use this to de-duplicate entitlements."
+                },
+                "benefit_id": {
+                  "type": "string",
+                  "description": "Identifier of the Benefit."
+                },
+                "created_at": {
+                  "type": "string",
+                  "description": "UTC timestamp in ISO format when this entitlement was granted on Twitch."
+                }
+              }
             },
             "description": "Entitlement object."
           }
