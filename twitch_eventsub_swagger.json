@@ -1178,46 +1178,58 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Metadata surrounding the potential inappropriate fragments of the message."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Metadata surrounding the potential inappropriate fragments of the message."
+              }
+            }
           },
           "category": {
             "type": "string",
@@ -1267,50 +1279,62 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Metadata surrounding the potential inappropriate fragments of the message."
-          },
-          "type": {
-            "type": "string",
-            "description": "One of three options: text emote cheermote"
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "One of three options: text emote cheermote"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Metadata surrounding the potential inappropriate fragments of the message."
+              }
+            }
           },
           "held_at": {
             "type": "string",
@@ -1322,61 +1346,79 @@
           },
           "automod": {
             "type": "object",
-            "description": "Optional. If the message was caught by automod, this will be populated."
-          },
-          "category": {
-            "type": "string",
-            "description": "The category of the caught message."
-          },
-          "level": {
-            "type": "integer",
-            "description": "The level of severity (1-4)."
-          },
-          "boundaries": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The bounds of the text that caused the message to be caught."
-          },
-          "start_pos": {
-            "type": "integer",
-            "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
-          },
-          "end_pos": {
-            "type": "integer",
-            "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+            "description": "Optional. If the message was caught by automod, this will be populated.",
+            "properties": {
+              "category": {
+                "type": "string",
+                "description": "The category of the caught message."
+              },
+              "level": {
+                "type": "integer",
+                "description": "The level of severity (1-4)."
+              },
+              "boundaries": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "start_pos": {
+                      "type": "integer",
+                      "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
+                    },
+                    "end_pos": {
+                      "type": "integer",
+                      "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+                    }
+                  }
+                },
+                "description": "The bounds of the text that caused the message to be caught."
+              }
+            }
           },
           "blocked_term": {
             "type": "object",
-            "description": "Optional. If the message was caught due to a blocked term, this will be populated."
-          },
-          "terms_found": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The list of blocked terms found in the message."
-          },
-          "term_id": {
-            "type": "string",
-            "description": "The id of the blocked term found."
-          },
-          "boundary": {
-            "type": "object",
-            "description": "The bounds of the text that caused the message to be caught."
-          },
-          "owner_broadcaster_user_id": {
-            "type": "string",
-            "description": "The id of the broadcaster that owns the blocked term."
-          },
-          "owner_broadcaster_user_login": {
-            "type": "string",
-            "description": "The login of the broadcaster that owns the blocked term."
-          },
-          "owner_broadcaster_user_name": {
-            "type": "string",
-            "description": "The username of the broadcaster that owns the blocked term."
+            "description": "Optional. If the message was caught due to a blocked term, this will be populated.",
+            "properties": {
+              "terms_found": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "term_id": {
+                      "type": "string",
+                      "description": "The id of the blocked term found."
+                    },
+                    "boundary": {
+                      "type": "object",
+                      "description": "The bounds of the text that caused the message to be caught.",
+                      "properties": {
+                        "start_pos": {
+                          "type": "integer",
+                          "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
+                        },
+                        "end_pos": {
+                          "type": "integer",
+                          "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+                        }
+                      }
+                    },
+                    "owner_broadcaster_user_id": {
+                      "type": "string",
+                      "description": "The id of the broadcaster that owns the blocked term."
+                    },
+                    "owner_broadcaster_user_login": {
+                      "type": "string",
+                      "description": "The login of the broadcaster that owns the blocked term."
+                    },
+                    "owner_broadcaster_user_name": {
+                      "type": "string",
+                      "description": "The username of the broadcaster that owns the blocked term."
+                    }
+                  }
+                },
+                "description": "The list of blocked terms found in the message."
+              }
+            }
           }
         }
       },
@@ -1426,46 +1468,58 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Metadata surrounding the potential inappropriate fragments of the message."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Metadata surrounding the potential inappropriate fragments of the message."
+              }
+            }
           },
           "category": {
             "type": "string",
@@ -1531,50 +1585,62 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Metadata surrounding the potential inappropriate fragments of the message."
-          },
-          "type": {
-            "type": "string",
-            "description": "One of three options: text emote cheermote"
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "One of three options: text emote cheermote"
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Metadata surrounding the potential inappropriate fragments of the message."
+              }
+            }
           },
           "status": {
             "type": "string",
@@ -1590,61 +1656,79 @@
           },
           "automod": {
             "type": "object",
-            "description": "Optional. If the message was caught by automod, this will be populated."
-          },
-          "category": {
-            "type": "string",
-            "description": "The category of the caught message."
-          },
-          "level": {
-            "type": "integer",
-            "description": "The level of severity (1-4)."
-          },
-          "boundaries": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The bounds of the text that caused the message to be caught."
-          },
-          "start_pos": {
-            "type": "integer",
-            "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
-          },
-          "end_pos": {
-            "type": "integer",
-            "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+            "description": "Optional. If the message was caught by automod, this will be populated.",
+            "properties": {
+              "category": {
+                "type": "string",
+                "description": "The category of the caught message."
+              },
+              "level": {
+                "type": "integer",
+                "description": "The level of severity (1-4)."
+              },
+              "boundaries": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "start_pos": {
+                      "type": "integer",
+                      "description": "Index in the message for the start of the problem (Starting at 0)."
+                    },
+                    "end_pos": {
+                      "type": "integer",
+                      "description": "Index in the message for the end of the problem (Starting at 0)."
+                    }
+                  }
+                },
+                "description": "The bounds of the text that caused the message to be caught."
+              }
+            }
           },
           "blocked_term": {
             "type": "object",
-            "description": "Optional. If the message was caught due to a blocked term, this will be populated."
-          },
-          "terms_found": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The list of blocked terms found in the message."
-          },
-          "term_id": {
-            "type": "string",
-            "description": "The id of the blocked term found."
-          },
-          "boundary": {
-            "type": "object",
-            "description": "The bounds of the text that caused the message to be caught."
-          },
-          "owner_broadcaster_user_id": {
-            "type": "string",
-            "description": "The id of the broadcaster that owns the blocked term."
-          },
-          "owner_broadcaster_user_login": {
-            "type": "string",
-            "description": "The login of the broadcaster that owns the blocked term."
-          },
-          "owner_broadcaster_user_name": {
-            "type": "string",
-            "description": "The username of the broadcaster that owns the blocked term."
+            "description": "Optional. If the message was caught due to a blocked term, this will be populated.",
+            "properties": {
+              "terms_found": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "term_id": {
+                      "type": "string",
+                      "description": "The id of the blocked term found."
+                    },
+                    "boundary": {
+                      "type": "object",
+                      "description": "The bounds of the text that caused the message to be caught.",
+                      "properties": {
+                        "start_pos": {
+                          "type": "integer",
+                          "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
+                        },
+                        "end_pos": {
+                          "type": "integer",
+                          "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+                        }
+                      }
+                    },
+                    "owner_broadcaster_user_id": {
+                      "type": "string",
+                      "description": "The id of the broadcaster that owns the blocked term."
+                    },
+                    "owner_broadcaster_user_login": {
+                      "type": "string",
+                      "description": "The login of the broadcaster that owns the blocked term."
+                    },
+                    "owner_broadcaster_user_name": {
+                      "type": "string",
+                      "description": "The username of the broadcaster that owns the blocked term."
+                    }
+                  }
+                },
+                "description": "The list of blocked terms found in the message."
+              }
+            }
           }
         }
       },
@@ -1890,85 +1974,123 @@
           },
           "bits": {
             "type": "integer",
-            "description": "The amount of Bits cheered."
+            "description": "The number of Bits used."
           },
           "type": {
             "type": "string",
-            "description": "Possible values: message_effect celebration gigantify_an_emote"
+            "description": "Possible values are: cheer power_up custom_power_up"
           },
           "message": {
             "type": "object",
-            "description": "Optional. An object that contains the user message and emote information needed to recreate the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "The message text in fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The ordered list of chat message fragments."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Emote associated with the reward."
-          },
-          "id": {
-            "type": "string",
-            "description": "The ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "The ID that identifies the emote set that the emote belongs to."
-          },
-          "owner_id": {
-            "type": "string",
-            "description": "The ID of the broadcaster who owns the emote."
-          },
-          "format": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. The metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "Optional. An object that contains the user message and emote information needed to recreate the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The chat message in plain text."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "The message text in fragment."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "The type of message fragment. Possible values are: text cheermote emote"
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. The metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "The ID that identifies the emote set that the emote belongs to."
+                        },
+                        "owner_id": {
+                          "type": "string",
+                          "description": "The ID of the broadcaster who owns the emote."
+                        },
+                        "format": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. The metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "The ordered list of chat message fragments."
+              }
+            }
           },
           "power_up": {
             "type": "object",
-            "description": "Optional. Data about a default (i.e. built-in) Power-up."
-          },
-          "name": {
-            "type": "string",
-            "description": "The human readable emote token."
-          },
-          "message_effect_id": {
-            "type": "string",
-            "description": "Optional. The ID of the message effect."
+            "description": "Optional. Data about a default (i.e. built-in) Power-up.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Possible values: message_effect celebration gigantify_an_emote"
+              },
+              "emote": {
+                "type": "object",
+                "description": "Optional. Emote associated with the reward.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The ID that uniquely identifies this emote."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The human readable emote token."
+                  }
+                }
+              },
+              "message_effect_id": {
+                "type": "string",
+                "description": "Optional. The ID of the message effect."
+              }
+            }
           },
           "custom_power_up": {
             "type": "object",
-            "description": "Optional. Data about a custom Power-up."
-          },
-          "title": {
-            "type": "string",
-            "description": "The title of the custom Power-up."
-          },
-          "reward_id": {
-            "type": "string",
-            "description": "The ID of the custom Power-up."
+            "description": "Optional. Data about a custom Power-up.",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "The title of the custom Power-up."
+              },
+              "reward_id": {
+                "type": "string",
+                "description": "The ID of the custom Power-up."
+              }
+            }
           }
         }
       },
@@ -2054,77 +2176,91 @@
           },
           "message": {
             "type": "object",
-            "description": "The structured chat message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Ordered list of chat message fragments."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of message fragment. Possible values: text cheermote emote mention"
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits the user cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "owner_id": {
-            "type": "string",
-            "description": "The ID of the broadcaster who owns the emote."
-          },
-          "format": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
-          },
-          "mention": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the mention."
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The user ID of the mentioned user."
-          },
-          "user_name": {
-            "type": "string",
-            "description": "The user name of the mentioned user."
-          },
-          "user_login": {
-            "type": "string",
-            "description": "The user login of the mentioned user."
+            "description": "The structured chat message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The chat message in plain text."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "The type of message fragment. Possible values: text cheermote emote mention"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in fragment."
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        },
+                        "owner_id": {
+                          "type": "string",
+                          "description": "The ID of the broadcaster who owns the emote."
+                        },
+                        "format": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
+                        }
+                      }
+                    },
+                    "mention": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the mention.",
+                      "properties": {
+                        "user_id": {
+                          "type": "string",
+                          "description": "The user ID of the mentioned user."
+                        },
+                        "user_name": {
+                          "type": "string",
+                          "description": "The user name of the mentioned user."
+                        },
+                        "user_login": {
+                          "type": "string",
+                          "description": "The user login of the mentioned user."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Ordered list of chat message fragments."
+              }
+            }
           },
           "message_type": {
             "type": "string",
@@ -2133,21 +2269,33 @@
           "badges": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "set_id": {
+                  "type": "string",
+                  "description": "An ID that identifies this set of chat badges. For example, Bits or Subscriber."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+                },
+                "info": {
+                  "type": "string",
+                  "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+                }
+              }
             },
             "description": "List of chat badges."
           },
-          "set_id": {
-            "type": "string",
-            "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
-          },
-          "info": {
-            "type": "string",
-            "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
-          },
           "cheer": {
             "type": "object",
-            "description": "Optional . Metadata if this message is a cheer."
+            "description": "Optional . Metadata if this message is a cheer.",
+            "properties": {
+              "bits": {
+                "type": "integer",
+                "description": "The amount of Bits the user cheered."
+              }
+            }
           },
           "color": {
             "type": "string",
@@ -2155,43 +2303,45 @@
           },
           "reply": {
             "type": "object",
-            "description": "Optional . Metadata if this message is a reply."
-          },
-          "parent_message_id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies the parent message that this message is replying to."
-          },
-          "parent_message_body": {
-            "type": "string",
-            "description": "The message body of the parent message."
-          },
-          "parent_user_id": {
-            "type": "string",
-            "description": "User ID of the sender of the parent message."
-          },
-          "parent_user_name": {
-            "type": "string",
-            "description": "User name of the sender of the parent message."
-          },
-          "parent_user_login": {
-            "type": "string",
-            "description": "User login of the sender of the parent message."
-          },
-          "thread_message_id": {
-            "type": "string",
-            "description": "An ID that identifies the parent message of the reply thread."
-          },
-          "thread_user_id": {
-            "type": "string",
-            "description": "User ID of the sender of the thread's parent message."
-          },
-          "thread_user_name": {
-            "type": "string",
-            "description": "User name of the sender of the thread's parent message."
-          },
-          "thread_user_login": {
-            "type": "string",
-            "description": "User login of the sender of the thread's parent message."
+            "description": "Optional . Metadata if this message is a reply.",
+            "properties": {
+              "parent_message_id": {
+                "type": "string",
+                "description": "An ID that uniquely identifies the parent message that this message is replying to."
+              },
+              "parent_message_body": {
+                "type": "string",
+                "description": "The message body of the parent message."
+              },
+              "parent_user_id": {
+                "type": "string",
+                "description": "User ID of the sender of the parent message."
+              },
+              "parent_user_name": {
+                "type": "string",
+                "description": "User name of the sender of the parent message."
+              },
+              "parent_user_login": {
+                "type": "string",
+                "description": "User login of the sender of the parent message."
+              },
+              "thread_message_id": {
+                "type": "string",
+                "description": "An ID that identifies the parent message of the reply thread."
+              },
+              "thread_user_id": {
+                "type": "string",
+                "description": "User ID of the sender of the thread's parent message."
+              },
+              "thread_user_name": {
+                "type": "string",
+                "description": "User name of the sender of the thread's parent message."
+              },
+              "thread_user_login": {
+                "type": "string",
+                "description": "User login of the sender of the thread's parent message."
+              }
+            }
           },
           "channel_points_custom_reward_id": {
             "type": "string",
@@ -2215,7 +2365,21 @@
           },
           "source_badges": {
             "type": "object",
-            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
+            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.",
+            "properties": {
+              "set_id": {
+                "type": "string",
+                "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
+              },
+              "id": {
+                "type": "string",
+                "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+              },
+              "info": {
+                "type": "string",
+                "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+              }
+            }
           },
           "is_source_only": {
             "type": "boolean",
@@ -2287,26 +2451,28 @@
           },
           "color": {
             "type": "string",
-            "description": "Color of the announcement."
+            "description": "The color of the user's name in the chat room."
           },
           "badges": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "set_id": {
+                  "type": "string",
+                  "description": "An ID that identifies this set of chat badges. For example, Bits or Subscriber."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+                },
+                "info": {
+                  "type": "string",
+                  "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+                }
+              }
             },
             "description": "The color of the user's name in the chat room."
-          },
-          "set_id": {
-            "type": "string",
-            "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
-          },
-          "id": {
-            "type": "string",
-            "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
-          },
-          "info": {
-            "type": "string",
-            "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
           },
           "system_message": {
             "type": "string",
@@ -2318,73 +2484,91 @@
           },
           "message": {
             "type": "object",
-            "description": "The structured chat message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Ordered list of chat message fragments."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of message fragment. Possible values: text cheermote emote mention"
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "object",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier of the Bits badge the user just earned. For example, 100, 1000, or 10000."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "owner_id": {
-            "type": "string",
-            "description": "The ID of the broadcaster who owns the emote."
-          },
-          "format": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
-          },
-          "mention": {
-            "type": "object",
-            "description": "Optional . Metadata pertaining to the mention."
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The user ID of the broadcaster raiding this channel."
-          },
-          "user_name": {
-            "type": "string",
-            "description": "The user name of the broadcaster raiding this channel."
-          },
-          "user_login": {
-            "type": "string",
-            "description": "The login name of the broadcaster raiding this channel."
+            "description": "The structured chat message.",
+            "properties": {
+              "text": {
+                "type": "object",
+                "description": "The chat message in plain text."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "The type of message fragment. Possible values: text cheermote emote mention"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in fragment."
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "object",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        },
+                        "owner_id": {
+                          "type": "string",
+                          "description": "The ID of the broadcaster who owns the emote."
+                        },
+                        "format": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote."
+                        }
+                      }
+                    },
+                    "mention": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the mention.",
+                      "properties": {
+                        "user_id": {
+                          "type": "string",
+                          "description": "The user ID of the mentioned user."
+                        },
+                        "user_name": {
+                          "type": "string",
+                          "description": "The user name of the mentioned user."
+                        },
+                        "user_login": {
+                          "type": "string",
+                          "description": "The user login of the mentioned user."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Ordered list of chat message fragments."
+              }
+            }
           },
           "notice_type": {
             "type": "string",
@@ -2392,107 +2576,199 @@
           },
           "sub": {
             "type": "object",
-            "description": "Information about the sub event. Null if notice_type is not sub ."
-          },
-          "sub_tier": {
-            "type": "string",
-            "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
-          },
-          "is_prime": {
-            "type": "boolean",
-            "description": "Optional . The number of consecutive months the user has subscribed."
-          },
-          "duration_months": {
-            "type": "integer",
-            "description": "The number of months the subscription is for."
+            "description": "Information about the sub event. Null if notice_type is not sub .",
+            "properties": {
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "is_prime": {
+                "type": "boolean",
+                "description": "Indicates if the subscription was obtained through Amazon Prime."
+              },
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              }
+            }
           },
           "resub": {
             "type": "object",
-            "description": "Information about the resub event. Null if notice_type is not resub ."
-          },
-          "cumulative_months": {
-            "type": "integer",
-            "description": "The total number of months the user has subscribed."
-          },
-          "streak_months": {
-            "type": "integer",
-            "description": "The total number of months the user has subscribed."
-          },
-          "is_gift": {
-            "type": "boolean",
-            "description": "Whether or not the resub was a result of a gift."
-          },
-          "gifter_is_anonymous": {
-            "type": "boolean",
-            "description": "Whether the gift was given anonymously."
-          },
-          "gifter_user_id": {
-            "type": "string",
-            "description": "The user ID of the user who gifted the subscription. Null if anonymous."
-          },
-          "gifter_user_name": {
-            "type": "string",
-            "description": "Optional . The user name of the user who gifted the subscription. Null if anonymous."
-          },
-          "gifter_user_login": {
-            "type": "string",
-            "description": "The user login of the user who gifted the subscription. Null if anonymous."
+            "description": "Information about the resub event. Null if notice_type is not resub .",
+            "properties": {
+              "cumulative_months": {
+                "type": "integer",
+                "description": "The total number of months the user has subscribed."
+              },
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              },
+              "streak_months": {
+                "type": "integer",
+                "description": "The total number of months the user has subscribed."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "is_prime": {
+                "type": "boolean",
+                "description": "Optional . The number of consecutive months the user has subscribed."
+              },
+              "is_gift": {
+                "type": "boolean",
+                "description": "Whether or not the resub was a result of a gift."
+              },
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Optional . Whether or not the gift was anonymous."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "The user ID of the subscription gifter. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "The user name of the subscription gifter. Null if anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "description": "Optional . The user login of the subscription gifter. Null if anonymous."
+              }
+            }
           },
           "sub_gift": {
             "type": "object",
-            "description": "Information about the gift sub event. Null if notice_type is not sub_gift."
-          },
-          "cumulative_total": {
-            "type": "integer",
-            "description": "Optional . The amount of gifts the gifter has given in this channel. Null if anonymous."
-          },
-          "recipient_user_id": {
-            "type": "string",
-            "description": "The user ID of the subscription gift recipient."
-          },
-          "recipient_user_name": {
-            "type": "string",
-            "description": "The user name of the subscription gift recipient."
-          },
-          "recipient_user_login": {
-            "type": "string",
-            "description": "The user login of the subscription gift recipient."
-          },
-          "community_gift_id": {
-            "type": "string",
-            "description": "Optional . The ID of the associated community gift. Null if not associated with a community gift."
+            "description": "Information about the gift sub event. Null if notice_type is not sub_gift.",
+            "properties": {
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              },
+              "cumulative_total": {
+                "type": "integer",
+                "description": "Optional . The amount of gifts the gifter has given in this channel. Null if anonymous."
+              },
+              "recipient_user_id": {
+                "type": "string",
+                "description": "The user ID of the subscription gift recipient."
+              },
+              "recipient_user_name": {
+                "type": "string",
+                "description": "The user name of the subscription gift recipient."
+              },
+              "recipient_user_login": {
+                "type": "string",
+                "description": "The user login of the subscription gift recipient."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "community_gift_id": {
+                "type": "string",
+                "description": "Optional . The ID of the associated community gift. Null if not associated with a community gift."
+              }
+            }
           },
           "community_sub_gift": {
             "type": "object",
-            "description": "Information about the community gift sub event. Null if notice_type is not community_sub_gift ."
-          },
-          "total": {
-            "type": "integer",
-            "description": "Number of subscriptions being gifted."
+            "description": "Information about the community gift sub event. Null if notice_type is not community_sub_gift .",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of the associated community gift."
+              },
+              "total": {
+                "type": "integer",
+                "description": "Number of subscriptions being gifted."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "cumulative_total": {
+                "type": "integer",
+                "description": "Optional . The amount of gifts the gifter has given in this channel. Null if anonymous."
+              }
+            }
           },
           "gift_paid_upgrade": {
             "type": "object",
-            "description": "Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade ."
+            "description": "Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade .",
+            "properties": {
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Whether the gift was given anonymously."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "Optional . The user ID of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "Optional . The user name of the user who gifted the subscription. Null if anonymous."
+              }
+            }
           },
           "prime_paid_upgrade": {
             "type": "object",
-            "description": "Information about the Prime gift paid upgrade event. Null if notice_type is not prime_paid_upgrade"
+            "description": "Information about the Prime gift paid upgrade event. Null if notice_type is not prime_paid_upgrade",
+            "properties": {
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              }
+            }
           },
           "pay_it_forward": {
             "type": "object",
-            "description": "Information about the pay it forward event. Null if notice_type is not pay_it_forward"
+            "description": "Information about the pay it forward event. Null if notice_type is not pay_it_forward",
+            "properties": {
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Whether the gift was given anonymously."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "The user ID of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "Optional . The user name of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "description": "The user login of the user who gifted the subscription. Null if anonymous."
+              }
+            }
           },
           "raid": {
             "type": "object",
-            "description": "Information about the raid event. Null if notice_type is not raid"
-          },
-          "viewer_count": {
-            "type": "integer",
-            "description": "The number of viewers raiding this channel from the broadcaster's channel."
-          },
-          "profile_image_url": {
-            "type": "string",
-            "description": "Profile image URL of the broadcaster raiding this channel."
+            "description": "Information about the raid event. Null if notice_type is not raid",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The user ID of the broadcaster raiding this channel."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the broadcaster raiding this channel."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login name of the broadcaster raiding this channel."
+              },
+              "viewer_count": {
+                "type": "integer",
+                "description": "The number of viewers raiding this channel from the broadcaster's channel."
+              },
+              "profile_image_url": {
+                "type": "string",
+                "description": "Profile image URL of the broadcaster raiding this channel."
+              }
+            }
           },
           "unraid": {
             "type": "object",
@@ -2500,11 +2776,23 @@
           },
           "announcement": {
             "type": "object",
-            "description": "Information about the announcement event. Null if notice_type is not announcement"
+            "description": "Information about the announcement event. Null if notice_type is not announcement",
+            "properties": {
+              "color": {
+                "type": "string",
+                "description": "Color of the announcement."
+              }
+            }
           },
           "bits_badge_tier": {
             "type": "object",
-            "description": "Information about the Bits badge tier event. Null if notice_type is not bits_badge_tier"
+            "description": "Information about the Bits badge tier event. Null if notice_type is not bits_badge_tier",
+            "properties": {
+              "tier": {
+                "type": "integer",
+                "description": "The tier of the Bits badge the user just earned. For example, 100, 1000, or 10000."
+              }
+            }
           },
           "charity_donation": {
             "type": "string",
@@ -2516,31 +2804,35 @@
           },
           "amount": {
             "type": "object",
-            "description": "An object that contains the amount of money that the user paid."
-          },
-          "value": {
-            "type": "integer",
-            "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-          },
-          "decimal_place": {
-            "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places."
-          },
-          "currency": {
-            "type": "string",
-            "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value."
+            "description": "An object that contains the amount of money that the user paid.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_place": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places."
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value."
+              }
+            }
           },
           "watch_streak": {
             "type": "object",
-            "description": "Information about the Watch Streak event. Null if notice_type is not watch_streak ."
-          },
-          "streak_count": {
-            "type": "integer",
-            "description": "The number of consecutive broadcasts for which the user has been watching."
-          },
-          "channel_points_awarded": {
-            "type": "integer",
-            "description": "The number of channel points awarded for the Watch Streak milestone."
+            "description": "Information about the Watch Streak event. Null if notice_type is not watch_streak .",
+            "properties": {
+              "streak_count": {
+                "type": "integer",
+                "description": "The number of consecutive broadcasts for which the user has been watching."
+              },
+              "channel_points_awarded": {
+                "type": "integer",
+                "description": "The number of channel points awarded for the Watch Streak milestone."
+              }
+            }
           },
           "source_broadcaster_user_id": {
             "type": "string",
@@ -2560,7 +2852,21 @@
           },
           "source_badges": {
             "type": "object",
-            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
+            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.",
+            "properties": {
+              "set_id": {
+                "type": "string",
+                "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
+              },
+              "id": {
+                "type": "string",
+                "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+              },
+              "info": {
+                "type": "string",
+                "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+              }
+            }
           },
           "is_source_only": {
             "type": "boolean",
@@ -2684,46 +2990,58 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Ordered list of chat message fragments."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Ordered list of chat message fragments."
+              }
+            }
           }
         }
       },
@@ -2765,46 +3083,58 @@
           },
           "message": {
             "type": "object",
-            "description": "The body of the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in a fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Ordered list of chat message fragments."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "integer",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The body of the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The contents of the message caught by automod."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in a fragment."
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "integer",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "integer",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Ordered list of chat message fragments."
+              }
+            }
           }
         }
       },
@@ -3177,130 +3507,300 @@
           },
           "action": {
             "type": "string",
-            "description": "Either \"add\" or \"remove\"."
+            "description": "The type of action: Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request shared_chat_ban shared_chat_timeout shared_chat_untimeout shared_chat_unban shared_chat_delete"
           },
           "followers": {
             "type": "object",
-            "description": "Optional .. Metadata associated with the followers command."
-          },
-          "follow_duration_minutes": {
-            "type": "integer",
-            "description": "The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room."
+            "description": "Optional .. Metadata associated with the followers command.",
+            "properties": {
+              "follow_duration_minutes": {
+                "type": "integer",
+                "description": "The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room."
+              }
+            }
           },
           "slow": {
             "type": "object",
-            "description": "Optional . Metadata associated with the slow command."
-          },
-          "wait_time_seconds": {
-            "type": "integer",
-            "description": "The amount of time, in seconds, that users need to wait between sending messages."
+            "description": "Optional . Metadata associated with the slow command.",
+            "properties": {
+              "wait_time_seconds": {
+                "type": "integer",
+                "description": "The amount of time, in seconds, that users need to wait between sending messages."
+              }
+            }
           },
           "vip": {
             "type": "object",
-            "description": "Optional . Metadata associated with the vip command."
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The ID of the banned user."
-          },
-          "user_login": {
-            "type": "string",
-            "description": "The login of the user."
-          },
-          "user_name": {
-            "type": "string",
-            "description": "The user name of the user."
+            "description": "Optional . Metadata associated with the vip command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user gaining VIP status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user gaining VIP status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user gaining VIP status."
+              }
+            }
           },
           "unvip": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unvip command."
+            "description": "Optional . Metadata associated with the unvip command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user losing VIP status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user losing VIP status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user losing VIP status."
+              }
+            }
           },
           "mod": {
             "type": "object",
-            "description": "Optional . Metadata associated with the mod command."
+            "description": "Optional . Metadata associated with the mod command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user gaining mod status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user gaining mod status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user gaining mod status."
+              }
+            }
           },
           "unmod": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unmod command."
+            "description": "Optional . Metadata associated with the unmod command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user losing mod status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user losing mod status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user losing mod status."
+              }
+            }
           },
           "ban": {
             "type": "object",
-            "description": "Optional . Metadata associated with the ban command."
-          },
-          "reason": {
-            "type": "string",
-            "description": "Optional .. The reason given for the timeout."
+            "description": "Optional . Metadata associated with the ban command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being banned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being banned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being banned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . Reason given for the ban."
+              }
+            }
           },
           "unban": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unban command."
+            "description": "Optional . Metadata associated with the unban command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being unbanned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being unbanned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being unbanned."
+              }
+            }
           },
           "timeout": {
             "type": "object",
-            "description": "Optional .. Metadata associated with the timeout command."
-          },
-          "expires_at": {
-            "type": "string",
-            "description": "The time at which the timeout ends."
+            "description": "Optional .. Metadata associated with the timeout command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being timed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being timed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being timed out."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional .. The reason given for the timeout."
+              },
+              "expires_at": {
+                "type": "string",
+                "description": "The time at which the timeout ends."
+              }
+            }
           },
           "untimeout": {
             "type": "object",
-            "description": "Optional . Metadata associated with the untimeout command."
+            "description": "Optional . Metadata associated with the untimeout command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being untimed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being untimed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user untimed out."
+              }
+            }
           },
           "raid": {
             "type": "object",
-            "description": "Optional .. Metadata associated with the raid command."
-          },
-          "viewer_count": {
-            "type": "integer",
-            "description": "The viewer count."
+            "description": "Optional .. Metadata associated with the raid command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being raided."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being raided."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user raided."
+              },
+              "viewer_count": {
+                "type": "integer",
+                "description": "The viewer count."
+              }
+            }
           },
           "unraid": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unraid command."
+            "description": "Optional . Metadata associated with the unraid command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user no longer being raided."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user no longer being raided."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the no longer user raided."
+              }
+            }
           },
           "delete": {
             "type": "object",
-            "description": "Optional . Metadata associated with the delete command."
-          },
-          "message_id": {
-            "type": "string",
-            "description": "The ID of the message being deleted."
-          },
-          "message_body": {
-            "type": "string",
-            "description": "The message body of the message being deleted."
+            "description": "Optional . Metadata associated with the delete command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user whose message is being deleted."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "message_id": {
+                "type": "string",
+                "description": "The ID of the message being deleted."
+              },
+              "message_body": {
+                "type": "string",
+                "description": "The message body of the message being deleted."
+              }
+            }
           },
           "automod_terms": {
             "type": "object",
-            "description": "Optional . Metadata associated with the automod terms changes."
-          },
-          "list": {
-            "type": "string",
-            "description": "Either \"blocked\" or \"permitted\"."
-          },
-          "terms": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Terms being added or removed."
-          },
-          "from_automod": {
-            "type": "boolean",
-            "description": "Whether the terms were added due to an Automod message approve/deny action."
+            "description": "Optional . Metadata associated with the automod terms changes.",
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Either \"add\" or \"remove\"."
+              },
+              "list": {
+                "type": "string",
+                "description": "Either \"blocked\" or \"permitted\"."
+              },
+              "terms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Terms being added or removed."
+              },
+              "from_automod": {
+                "type": "boolean",
+                "description": "Whether the terms were added due to an Automod message approve/deny action."
+              }
+            }
           },
           "unban_request": {
             "type": "object",
-            "description": "Optional . Metadata associated with an unban request."
-          },
-          "is_approved": {
-            "type": "boolean",
-            "description": "Whether or not the unban request was approved or denied."
-          },
-          "moderator_message": {
-            "type": "string",
-            "description": "The message included by the moderator explaining their approval or denial."
+            "description": "Optional . Metadata associated with an unban request.",
+            "properties": {
+              "is_approved": {
+                "type": "boolean",
+                "description": "Whether or not the unban request was approved or denied."
+              },
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the banned user."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "moderator_message": {
+                "type": "string",
+                "description": "The message included by the moderator explaining their approval or denial."
+              }
+            }
           },
           "shared_chat_ban": {
             "type": "object",
@@ -3366,141 +3866,329 @@
           },
           "action": {
             "type": "string",
-            "description": "Either \"add\" or \"remove\"."
+            "description": "The action performed. Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request warn shared_chat_ban shared_chat_timeout shared_chat_unban shared_chat_untimeout shared_chat_delete"
           },
           "followers": {
             "type": "object",
-            "description": "Optional . Metadata associated with the followers command."
-          },
-          "follow_duration_minutes": {
-            "type": "integer",
-            "description": "The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room."
+            "description": "Optional . Metadata associated with the followers command.",
+            "properties": {
+              "follow_duration_minutes": {
+                "type": "integer",
+                "description": "The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room."
+              }
+            }
           },
           "slow": {
             "type": "object",
-            "description": "Optional . Metadata associated with the slow command."
-          },
-          "wait_time_seconds": {
-            "type": "integer",
-            "description": "The amount of time, in seconds, that users need to wait between sending messages."
+            "description": "Optional . Metadata associated with the slow command.",
+            "properties": {
+              "wait_time_seconds": {
+                "type": "integer",
+                "description": "The amount of time, in seconds, that users need to wait between sending messages."
+              }
+            }
           },
           "vip": {
             "type": "object",
-            "description": "Optional . Metadata associated with the vip command."
-          },
-          "user_id": {
-            "type": "string",
-            "description": "The ID of the user being warned."
-          },
-          "user_login": {
-            "type": "string",
-            "description": "The login of the user being warned."
-          },
-          "user_name": {
-            "type": "string",
-            "description": "The user name of the user being warned."
+            "description": "Optional . Metadata associated with the vip command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user gaining VIP status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user gaining VIP status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user gaining VIP status."
+              }
+            }
           },
           "unvip": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unvip command."
+            "description": "Optional . Metadata associated with the unvip command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user losing VIP status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user losing VIP status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user losing VIP status."
+              }
+            }
           },
           "mod": {
             "type": "object",
-            "description": "Optional . Metadata associated with the mod command."
+            "description": "Optional . Metadata associated with the mod command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user gaining mod status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user gaining mod status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user gaining mod status."
+              }
+            }
           },
           "unmod": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unmod command."
+            "description": "Optional . Metadata associated with the unmod command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user losing mod status."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user losing mod status."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user losing mod status."
+              }
+            }
           },
           "ban": {
             "type": "object",
-            "description": "Optional . Metadata associated with the ban command."
-          },
-          "reason": {
-            "type": "string",
-            "description": "Optional . Reason given for the warning."
+            "description": "Optional . Metadata associated with the ban command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being banned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being banned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being banned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . Reason given for the ban."
+              }
+            }
           },
           "unban": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unban command."
+            "description": "Optional . Metadata associated with the unban command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being unbanned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being unbanned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being unbanned."
+              }
+            }
           },
           "timeout": {
             "type": "object",
-            "description": "Optional . Metadata associated with the timeout command."
-          },
-          "expires_at": {
-            "type": "string",
-            "description": "The time at which the timeout ends."
+            "description": "Optional . Metadata associated with the timeout command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being timed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being timed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being timed out."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . The reason given for the timeout."
+              },
+              "expires_at": {
+                "type": "string",
+                "description": "The time at which the timeout ends."
+              }
+            }
           },
           "untimeout": {
             "type": "object",
-            "description": "Optional . Metadata associated with the untimeout command."
+            "description": "Optional . Metadata associated with the untimeout command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being untimed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being untimed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user untimed out."
+              }
+            }
           },
           "raid": {
             "type": "object",
-            "description": "Optional . Metadata associated with the raid command."
-          },
-          "viewer_count": {
-            "type": "integer",
-            "description": "The viewer count."
+            "description": "Optional . Metadata associated with the raid command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being raided."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being raided."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user raided."
+              },
+              "viewer_count": {
+                "type": "integer",
+                "description": "The viewer count."
+              }
+            }
           },
           "unraid": {
             "type": "object",
-            "description": "Optional . Metadata associated with the unraid command."
+            "description": "Optional . Metadata associated with the unraid command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user no longer being raided."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user no longer being raided."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the no longer user raided."
+              }
+            }
           },
           "delete": {
             "type": "object",
-            "description": "Optional . Metadata associated with the delete command."
-          },
-          "message_id": {
-            "type": "string",
-            "description": "The ID of the message being deleted."
-          },
-          "message_body": {
-            "type": "string",
-            "description": "The message body of the message being deleted."
+            "description": "Optional . Metadata associated with the delete command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user whose message is being deleted."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "message_id": {
+                "type": "string",
+                "description": "The ID of the message being deleted."
+              },
+              "message_body": {
+                "type": "string",
+                "description": "The message body of the message being deleted."
+              }
+            }
           },
           "automod_terms": {
             "type": "object",
-            "description": "Optional . Metadata associated with the automod terms changes."
-          },
-          "list": {
-            "type": "string",
-            "description": "Either \"blocked\" or \"permitted\"."
-          },
-          "terms": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Terms being added or removed."
-          },
-          "from_automod": {
-            "type": "boolean",
-            "description": "Whether the terms were added due to an Automod message approve/deny action."
+            "description": "Optional . Metadata associated with the automod terms changes.",
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Either \"add\" or \"remove\"."
+              },
+              "list": {
+                "type": "string",
+                "description": "Either \"blocked\" or \"permitted\"."
+              },
+              "terms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Terms being added or removed."
+              },
+              "from_automod": {
+                "type": "boolean",
+                "description": "Whether the terms were added due to an Automod message approve/deny action."
+              }
+            }
           },
           "unban_request": {
             "type": "object",
-            "description": "Optional . Metadata associated with an unban request."
-          },
-          "is_approved": {
-            "type": "boolean",
-            "description": "Whether or not the unban request was approved or denied."
-          },
-          "moderator_message": {
-            "type": "string",
-            "description": "The message included by the moderator explaining their approval or denial."
+            "description": "Optional . Metadata associated with an unban request.",
+            "properties": {
+              "is_approved": {
+                "type": "boolean",
+                "description": "Whether or not the unban request was approved or denied."
+              },
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the banned user."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "moderator_message": {
+                "type": "string",
+                "description": "The message included by the moderator explaining their approval or denial."
+              }
+            }
           },
           "warn": {
             "type": "object",
-            "description": "Optional . Metadata associated with the warn command."
-          },
-          "chat_rules_cited": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional . Chat rules cited for the warning."
+            "description": "Optional . Metadata associated with the warn command.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being warned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being warned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being warned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . Reason given for the warning."
+              },
+              "chat_rules_cited": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional . Chat rules cited for the warning."
+              }
+            }
           },
           "shared_chat_ban": {
             "type": "object",
@@ -3936,50 +4624,66 @@
           },
           "id": {
             "type": "string",
-            "description": "The emote ID."
+            "description": "The ID of the Redemption."
           },
           "reward": {
             "type": "object",
-            "description": "An object that contains the reward information."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock message_effect gigantify_an_emote celebration"
-          },
-          "cost": {
-            "type": "integer",
-            "description": "The reward cost."
-          },
-          "unlocked_emote": {
-            "type": "object",
-            "description": "Optional. Emote that was unlocked."
-          },
-          "name": {
-            "type": "string",
-            "description": "The human readable emote token."
+            "description": "An object that contains the reward information.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock message_effect gigantify_an_emote celebration"
+              },
+              "cost": {
+                "type": "integer",
+                "description": "The reward cost."
+              },
+              "unlocked_emote": {
+                "type": "object",
+                "description": "Optional. Emote that was unlocked.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The emote ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The human readable emote token."
+                  }
+                }
+              }
+            }
           },
           "message": {
             "type": "object",
-            "description": "An object that contains the user message and emote information needed to recreate the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "The text of the chat message."
-          },
-          "emotes": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
-          },
-          "begin": {
-            "type": "integer",
-            "description": "The index of where the Emote starts in the text."
-          },
-          "end": {
-            "type": "integer",
-            "description": "The index of where the Emote ends in the text."
+            "description": "An object that contains the user message and emote information needed to recreate the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The text of the chat message."
+              },
+              "emotes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The emote ID."
+                    },
+                    "begin": {
+                      "type": "integer",
+                      "description": "The index of where the Emote starts in the text."
+                    },
+                    "end": {
+                      "type": "integer",
+                      "description": "The index of where the Emote ends in the text."
+                    }
+                  }
+                },
+                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
+              }
+            }
           },
           "user_input": {
             "type": "string",
@@ -4021,42 +4725,72 @@
           },
           "id": {
             "type": "string",
-            "description": "The ID that uniquely identifies this emote."
+            "description": "The ID of the Redemption."
           },
           "reward": {
             "type": "object",
-            "description": "An object that contains the reward information."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of message fragment. Possible values are: text emote"
-          },
-          "channel_points": {
-            "type": "integer",
-            "description": "Number of channel points used."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. The metadata pertaining to the emote."
-          },
-          "name": {
-            "type": "string",
-            "description": "The human readable emote token."
+            "description": "An object that contains the reward information.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock"
+              },
+              "channel_points": {
+                "type": "integer",
+                "description": "Number of channel points used."
+              },
+              "emote": {
+                "type": "object",
+                "description": "Optional. Emote associated with the reward.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The emote ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The human readable emote token."
+                  }
+                }
+              }
+            }
           },
           "message": {
             "type": "object",
-            "description": "Optional. An object that contains the user message and emote information needed to recreate the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "The message text in fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "The ordered list of chat message fragments."
+            "description": "Optional. An object that contains the user message and emote information needed to recreate the message.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The chat message in plain text."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "The message text in fragment."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "The type of message fragment. Possible values are: text emote"
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. The metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The ID that uniquely identifies this emote."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "The ordered list of chat message fragments."
+              }
+            }
           },
           "redeemed_at": {
             "type": "string",
@@ -4613,15 +5347,15 @@
           },
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The User ID of the participant channel."
+            "description": "The User ID of the channel in the subscription condition which is now active in the shared chat session."
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The display name of the participant channel."
+            "description": "The display name of the channel in the subscription condition which is now active in the shared chat session."
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "The user login of the participant channel."
+            "description": "The user login of the channel in the subscription condition which is now active in the shared chat session."
           },
           "host_broadcaster_user_id": {
             "type": "string",
@@ -4637,7 +5371,21 @@
           },
           "participants": {
             "type": "object",
-            "description": "The list of participants in the session."
+            "description": "The list of participants in the session.",
+            "properties": {
+              "broadcaster_user_id": {
+                "type": "string",
+                "description": "The User ID of the participant channel."
+              },
+              "broadcaster_user_name": {
+                "type": "string",
+                "description": "The display name of the participant channel."
+              },
+              "broadcaster_user_login": {
+                "type": "string",
+                "description": "The user login of the participant channel."
+              }
+            }
           }
         }
       },
@@ -4651,15 +5399,15 @@
           },
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The User ID of the participant channel."
+            "description": "The User ID of the channel in the subscription condition."
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The display name of the participant channel."
+            "description": "The display name of the channel in the subscription condition."
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "The user login of the participant channel."
+            "description": "The user login of the channel in the subscription condition."
           },
           "host_broadcaster_user_id": {
             "type": "string",
@@ -4675,7 +5423,21 @@
           },
           "participants": {
             "type": "object",
-            "description": "The list of participants in the session."
+            "description": "The list of participants in the session.",
+            "properties": {
+              "broadcaster_user_id": {
+                "type": "string",
+                "description": "The User ID of the participant channel."
+              },
+              "broadcaster_user_name": {
+                "type": "string",
+                "description": "The display name of the participant channel."
+              },
+              "broadcaster_user_login": {
+                "type": "string",
+                "description": "The user login of the participant channel."
+              }
+            }
           }
         }
       },
@@ -4945,54 +5707,66 @@
           },
           "message": {
             "type": "object",
-            "description": "The structured chat message."
-          },
-          "message_id": {
-            "type": "string",
-            "description": "The UUID that identifies the message."
-          },
-          "text": {
-            "type": "string",
-            "description": "Message text in fragment."
-          },
-          "fragments": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Ordered list of chat message fragments."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of message fragment. Possible values: -text -cheermote -emote"
-          },
-          "cheermote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the cheermote."
-          },
-          "prefix": {
-            "type": "string",
-            "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
-          },
-          "bits": {
-            "type": "string",
-            "description": "The amount of Bits cheered."
-          },
-          "tier": {
-            "type": "string",
-            "description": "The tier level of the cheermote."
-          },
-          "emote": {
-            "type": "object",
-            "description": "Optional. Metadata pertaining to the emote."
-          },
-          "id": {
-            "type": "string",
-            "description": "An ID that uniquely identifies this emote."
-          },
-          "emote_set_id": {
-            "type": "string",
-            "description": "An ID that identifies the emote set that the emote belongs to."
+            "description": "The structured chat message.",
+            "properties": {
+              "message_id": {
+                "type": "string",
+                "description": "The UUID that identifies the message."
+              },
+              "text": {
+                "type": "string",
+                "description": "The chat message in plain text."
+              },
+              "fragments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "The type of message fragment. Possible values: -text -cheermote -emote"
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Message text in fragment."
+                    },
+                    "cheermote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the cheermote.",
+                      "properties": {
+                        "prefix": {
+                          "type": "string",
+                          "description": "The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is \"Cheer\" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered."
+                        },
+                        "bits": {
+                          "type": "string",
+                          "description": "The amount of Bits cheered."
+                        },
+                        "tier": {
+                          "type": "string",
+                          "description": "The tier level of the cheermote."
+                        }
+                      }
+                    },
+                    "emote": {
+                      "type": "object",
+                      "description": "Optional. Metadata pertaining to the emote.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this emote."
+                        },
+                        "emote_set_id": {
+                          "type": "string",
+                          "description": "An ID that identifies the emote set that the emote belongs to."
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Ordered list of chat message fragments."
+              }
+            }
           }
         }
       },
@@ -5193,19 +5967,21 @@
           },
           "amount": {
             "type": "object",
-            "description": "An object that contains the amount of money that the user donated."
-          },
-          "value": {
-            "type": "integer",
-            "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-          },
-          "decimal_places": {
-            "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
-          },
-          "currency": {
-            "type": "string",
-            "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+            "description": "An object that contains the amount of money that the user donated.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           }
         }
       },
@@ -5247,23 +6023,39 @@
           },
           "current_amount": {
             "type": "object",
-            "description": "An object that contains the current amount of donations that the campaign has received."
-          },
-          "value": {
-            "type": "integer",
-            "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-          },
-          "decimal_places": {
-            "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
-          },
-          "currency": {
-            "type": "string",
-            "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+            "description": "An object that contains the current amount of donations that the campaign has received.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           },
           "target_amount": {
             "type": "object",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           },
           "started_at": {
             "type": "string",
@@ -5309,23 +6101,39 @@
           },
           "current_amount": {
             "type": "object",
-            "description": "An object that contains the current amount of donations that the campaign has received."
-          },
-          "value": {
-            "type": "integer",
-            "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-          },
-          "decimal_places": {
-            "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
-          },
-          "currency": {
-            "type": "string",
-            "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+            "description": "An object that contains the current amount of donations that the campaign has received.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           },
           "target_amount": {
             "type": "object",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           }
         }
       },
@@ -5367,23 +6175,39 @@
           },
           "current_amount": {
             "type": "object",
-            "description": "An object that contains the final amount of donations that the campaign received."
-          },
-          "value": {
-            "type": "integer",
-            "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-          },
-          "decimal_places": {
-            "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
-          },
-          "currency": {
-            "type": "string",
-            "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+            "description": "An object that contains the final amount of donations that the campaign received.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           },
           "target_amount": {
             "type": "object",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal.",
+            "properties": {
+              "value": {
+                "type": "integer",
+                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
+              },
+              "decimal_places": {
+                "type": "integer",
+                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
+              },
+              "currency": {
+                "type": "string",
+                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value ."
+              }
+            }
           },
           "stopped_at": {
             "type": "string",
@@ -5698,11 +6522,13 @@
           },
           "whisper": {
             "type": "object",
-            "description": "Object containing whisper information."
-          },
-          "text": {
-            "type": "string",
-            "description": "The body of the whisper message."
+            "description": "Object containing whisper information.",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The body of the whisper message."
+              }
+            }
           }
         }
       },

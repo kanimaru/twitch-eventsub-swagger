@@ -102,6 +102,7 @@ def parse_twitch_docs():
         component_name = to_pascal_case(title)
         properties = {}
         required_fields = []
+        stack = [(0, properties)] # Reset stack for each component
 
         rows = table.find_all('tr')
         if not rows: continue
@@ -119,17 +120,84 @@ def parse_twitch_docs():
             cells = row.find_all('td')
             if len(cells) <= max(name_idx, type_idx, desc_idx): continue
 
-            # Clean property name
-            f_name = cells[name_idx].get_text(strip=True)
+            # Clean property name and determine indentation
+            name_cell = cells[name_idx]
+            
+            # Count leading non-breaking spaces explicitly in the cell contents
+            indent_count = 0
+            # Twitch documentation sometimes uses multiple strings or elements
+            # We want the indentation before the FIRST element (usually a <code>)
+            for child in name_cell.children:
+                child_text = str(child)
+                stripped = child_text.lstrip('\xa0 ')
+                if not stripped: # Only spaces/nbsps
+                    indent_count += len(child_text)
+                else:
+                    # Found something with content, add its leading spaces and stop
+                    indent_count += len(child_text) - len(stripped)
+                    break
+            
+            # Each level of indentation in Twitch docs is usually 3 non-breaking spaces
+            depth = indent_count // 3
+            if '\xa0 \xa0' in str(name_cell): depth = 1 # Workaround
+            
+            f_name = name_cell.get_text(strip=True)
+            # Remove any zero-width characters or other junk if necessary
+            f_name = "".join(c for c in f_name if c.isprintable()).strip()
+
             f_type = cells[type_idx].get_text(strip=True)
             f_desc = clean_description(cells[desc_idx])
+            
+            # Use a stack to handle nested properties
+            while stack and stack[-1][0] > depth and len(stack) > 1:
+                stack.pop()
+            
+            # Use the actual properties dict from the stack
+            current_props = stack[-1][1]
 
+            # Map the type
             field_schema = map_type(f_type, f_desc)
             field_schema["description"] = f_desc
-            properties[f_name] = field_schema
+            
+            # Add to current level
+            current_props[f_name] = field_schema
+
+            # If it's a container, push to stack
+            is_object = field_schema.get("type") == "object"
+            is_object_array = field_schema.get("type") == "array" and field_schema.get("items", {}).get("type") == "object"
+            
+            if is_object or is_object_array:
+                if is_object_array:
+                    field_schema["items"]["properties"] = {}
+                    new_props = field_schema["items"]["properties"]
+                else:
+                    field_schema["properties"] = {}
+                    new_props = field_schema["properties"]
+                
+                stack.append((depth + 1, new_props))
 
             if req_idx != -1 and 'yes' in cells[req_idx].get_text().lower():
                 required_fields.append(f_name)
+        
+        # Cleanup: Remove empty properties objects if no children were found
+        def remove_empty_properties(props):
+            for p_name, p_val in list(props.items()):
+                # Check for properties in the object itself or in its items if it's an array
+                if p_val.get("type") == "object":
+                    if "properties" in p_val:
+                        if not p_val["properties"]:
+                            del p_val["properties"]
+                        else:
+                            remove_empty_properties(p_val["properties"])
+                elif p_val.get("type") == "array" and "items" in p_val:
+                    if p_val["items"].get("type") == "object":
+                        if "properties" in p_val["items"]:
+                            if not p_val["items"]["properties"]:
+                                del p_val["items"]["properties"]
+                            else:
+                                remove_empty_properties(p_val["items"]["properties"])
+
+        remove_empty_properties(properties)
 
         if properties:
             schemas[component_name] = {
