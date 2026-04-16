@@ -2364,22 +2364,25 @@
             "description": "Optional . The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
           },
           "source_badges": {
-            "type": "object",
-            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.",
-            "properties": {
-              "set_id": {
-                "type": "string",
-                "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
-              },
-              "id": {
-                "type": "string",
-                "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
-              },
-              "info": {
-                "type": "string",
-                "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "set_id": {
+                  "type": "string",
+                  "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+                },
+                "info": {
+                  "type": "string",
+                  "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+                }
               }
-            }
+            },
+            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
           },
           "is_source_only": {
             "type": "boolean",
@@ -2851,22 +2854,25 @@
             "description": "Optional . The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
           },
           "source_badges": {
-            "type": "object",
-            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.",
-            "properties": {
-              "set_id": {
-                "type": "string",
-                "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
-              },
-              "id": {
-                "type": "string",
-                "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
-              },
-              "info": {
-                "type": "string",
-                "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "set_id": {
+                  "type": "string",
+                  "description": "The ID that identifies this set of chat badges. For example, Bits or Subscriber."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde."
+                },
+                "info": {
+                  "type": "string",
+                  "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+                }
               }
-            }
+            },
+            "description": "Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
           },
           "is_source_only": {
             "type": "boolean",
@@ -5370,22 +5376,25 @@
             "description": "The user login of the host channel."
           },
           "participants": {
-            "type": "object",
-            "description": "The list of participants in the session.",
-            "properties": {
-              "broadcaster_user_id": {
-                "type": "string",
-                "description": "The User ID of the participant channel."
-              },
-              "broadcaster_user_name": {
-                "type": "string",
-                "description": "The display name of the participant channel."
-              },
-              "broadcaster_user_login": {
-                "type": "string",
-                "description": "The user login of the participant channel."
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "broadcaster_user_id": {
+                  "type": "string",
+                  "description": "The User ID of the participant channel."
+                },
+                "broadcaster_user_name": {
+                  "type": "string",
+                  "description": "The display name of the participant channel."
+                },
+                "broadcaster_user_login": {
+                  "type": "string",
+                  "description": "The user login of the participant channel."
+                }
               }
-            }
+            },
+            "description": "The list of participants in the session."
           }
         }
       },
@@ -5422,22 +5431,25 @@
             "description": "The user login of the host channel."
           },
           "participants": {
-            "type": "object",
-            "description": "The list of participants in the session.",
-            "properties": {
-              "broadcaster_user_id": {
-                "type": "string",
-                "description": "The User ID of the participant channel."
-              },
-              "broadcaster_user_name": {
-                "type": "string",
-                "description": "The display name of the participant channel."
-              },
-              "broadcaster_user_login": {
-                "type": "string",
-                "description": "The user login of the participant channel."
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "broadcaster_user_id": {
+                  "type": "string",
+                  "description": "The User ID of the participant channel."
+                },
+                "broadcaster_user_name": {
+                  "type": "string",
+                  "description": "The display name of the participant channel."
+                },
+                "broadcaster_user_login": {
+                  "type": "string",
+                  "description": "The user login of the participant channel."
+                }
               }
-            }
+            },
+            "description": "The list of participants in the session."
           }
         }
       },

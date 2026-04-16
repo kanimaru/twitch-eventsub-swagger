@@ -45,8 +45,9 @@ def map_type(twitch_type_raw, description_text=""):
     t_base = re.sub(r'\(.*\)', '', t_clean).strip()
 
     # 1. Handle Arrays
-    if 'array' in t_base or '[]' in t_base:
+    if 'array' in t_base or '[]' in t_base or (t_base == 'object' and any(word in d_clean for word in ['list of', 'array of'])):
         inner = t_base.replace('array', '').replace('of', '').replace('[]', '').strip()
+        if inner == 'object': inner = '' # If it was 'object (list of ...)', inner will be 'object'
         inner_mapping = map_type(inner) if inner and inner != 'object' else {"type": "object"}
         res = {"type": "array", "items": inner_mapping}
         if is_nullable: res["nullable"] = True
