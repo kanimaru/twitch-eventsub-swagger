@@ -717,6 +717,23 @@
           "broadcaster_user_id"
         ]
       },
+      "ChannelCustomPowerUpRedemptionAddCondition": {
+        "type": "object",
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-custom-power-up-redemption-add-condition",
+        "properties": {
+          "broadcaster_user_id": {
+            "type": "string",
+            "description": "The broadcaster user ID for the channel you want to receive custom Power-up redemption add notifications for."
+          },
+          "reward_id": {
+            "type": "string",
+            "description": "Optional . Specify a reward id to only receive notifications for a specific custom Power-up."
+          }
+        },
+        "required": [
+          "broadcaster_user_id"
+        ]
+      },
       "ChannelPollBeginCondition": {
         "type": "object",
         "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-poll-begin-condition",
@@ -1125,6 +1142,28 @@
         "required": [
           "user_id"
         ]
+      },
+      "CustomPowerUp": {
+        "type": "object",
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#custom-power-up",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID for this Custom Power-up."
+          },
+          "title": {
+            "type": "string",
+            "description": "The user-viewable name of this Custom Power-up."
+          },
+          "bits_cost": {
+            "type": "integer",
+            "description": "The cost of the Custom Power-up to redeem."
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The creator-provided description for this Power-up."
+          }
+        }
       },
       "Emotes": {
         "type": "object",
@@ -5180,6 +5219,56 @@
           "redeemed_at": {
             "type": "string",
             "description": "RFC3339 timestamp of when the reward was redeemed."
+          }
+        }
+      },
+      "ChannelCustomPowerUpRedemptionAddEvent": {
+        "type": "object",
+        "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-custom-power-up-redemption-add-event",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The redemption identifier."
+          },
+          "broadcaster_user_id": {
+            "type": "string",
+            "description": "The requested broadcaster ID."
+          },
+          "broadcaster_user_login": {
+            "type": "string",
+            "description": "The requested broadcaster login."
+          },
+          "broadcaster_user_name": {
+            "type": "string",
+            "description": "The requested broadcaster display name."
+          },
+          "user_id": {
+            "type": "string",
+            "description": "User ID of the user that redeemed the custom Power-up."
+          },
+          "user_login": {
+            "type": "string",
+            "description": "Login of the user that redeemed the custom Power-up."
+          },
+          "user_name": {
+            "type": "string",
+            "description": "Display name of the user that redeemed the custom Power-up."
+          },
+          "user_input": {
+            "type": "string",
+            "description": "The user input provided. Empty string if not provided."
+          },
+          "status": {
+            "type": "string",
+            "description": "Defaults to unfulfilled . Possible values are unknown , unfulfilled , fulfilled , and canceled ."
+          },
+          "custom_power_up": {
+            "$ref": "#/components/schemas/CustomPowerUp",
+            "description": "Basic information about the custom Power-up that was redeemed, at the time it was redeemed."
+          },
+          "redeemed_at": {
+            "type": "string",
+            "description": "RFC3339 timestamp of when the custom Power-up was redeemed."
           }
         }
       },
