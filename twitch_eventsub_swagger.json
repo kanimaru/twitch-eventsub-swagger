@@ -138,13 +138,13 @@
         "type": "object",
         "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-ad-break-begin-condition",
         "properties": {
-          "broadcaster_id": {
+          "broadcaster_user_id": {
             "type": "string",
             "description": "The ID of the broadcaster that you want to get Channel Ad Break begin notifications for. Maximum: 1"
           }
         },
         "required": [
-          "broadcaster_id"
+          "broadcaster_user_id"
         ]
       },
       "ChannelBanCondition": {
@@ -2614,7 +2614,7 @@
           },
           "notice_type": {
             "type": "string",
-            "description": "The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement"
+            "description": "The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement unknown"
           },
           "sub": {
             "type": "object",
@@ -5162,13 +5162,13 @@
             "type": "string",
             "description": "Defaults to unfulfilled . Possible values are unknown , unfulfilled , fulfilled , and canceled ."
           },
-          "reward": {
-            "$ref": "#/components/schemas/Reward",
-            "description": "Basic information about the reward that was redeemed, at the time it was redeemed."
-          },
           "redeemed_at": {
             "type": "string",
             "description": "RFC3339 timestamp of when the reward was redeemed."
+          },
+          "reward": {
+            "$ref": "#/components/schemas/Reward",
+            "description": "Basic information about the reward that was redeemed, at the time it was redeemed."
           }
         }
       },
