@@ -2614,7 +2614,7 @@
           },
           "notice_type": {
             "type": "string",
-            "description": "The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement unknown"
+            "description": "The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak modiversary shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement shared_chat_modiversary unknown"
           },
           "sub": {
             "type": "object",
@@ -2876,6 +2876,16 @@
               }
             }
           },
+          "modiversary": {
+            "type": "object",
+            "description": "Information about the modiversary event. Null if notice_type is not modiversary .",
+            "properties": {
+              "months": {
+                "type": "integer",
+                "description": "The number of months the user has been a moderator in this channel."
+              }
+            }
+          },
           "source_broadcaster_user_id": {
             "type": "string",
             "description": "Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
@@ -2952,6 +2962,10 @@
           "shared_chat_announcement": {
             "type": "object",
             "description": "Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+          },
+          "shared_chat_modiversary": {
+            "type": "object",
+            "description": "Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
           }
         }
       },
