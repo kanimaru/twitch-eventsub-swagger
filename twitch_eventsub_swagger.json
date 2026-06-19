@@ -2656,7 +2656,7 @@
               },
               "is_prime": {
                 "type": "boolean",
-                "description": "Optional . The number of consecutive months the user has subscribed."
+                "description": "Optional . Whether or not this subscription is a Prime subscription."
               },
               "is_gift": {
                 "type": "boolean",
@@ -3746,7 +3746,7 @@
           },
           "raid": {
             "type": "object",
-            "description": "Optional .. Metadata associated with the raid command.",
+            "description": "Optional . Metadata associated with the raid command.",
             "properties": {
               "user_id": {
                 "type": "string",
@@ -4449,7 +4449,7 @@
           },
           "state": {
             "type": "string",
-            "description": "The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue. accepted — The guest has accepted the invite and is currently in the process of setting up to join the session. ready — The guest has signaled they are ready and can be assigned a slot. backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software. live — The guest is now live in the host's broadcasting software. removed — The guest was removed from the call or queue. accepted — The guest has accepted the invite to the call."
+            "description": "The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue. accepted — The guest has accepted the invite and is currently in the process of setting up to join the session. ready — The guest has signaled they are ready and can be assigned a slot. backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software. live — The guest is now live in the host's broadcasting software. removed — The guest was removed from the call or queue."
           },
           "host_user_id": {
             "type": "string",
@@ -4714,35 +4714,33 @@
             }
           },
           "message": {
-            "type": "object",
-            "description": "An object that contains the user message and emote information needed to recreate the message.",
-            "properties": {
-              "text": {
-                "type": "string",
-                "description": "The text of the chat message."
-              },
-              "emotes": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "The emote ID."
-                    },
-                    "begin": {
-                      "type": "integer",
-                      "description": "The index of where the Emote starts in the text."
-                    },
-                    "end": {
-                      "type": "integer",
-                      "description": "The index of where the Emote ends in the text."
-                    }
-                  }
+            "$ref": "#/components/schemas/Message",
+            "description": "An object that contains the user message and emote information needed to recreate the message."
+          },
+          "text": {
+            "type": "string",
+            "description": "The text of the chat message."
+          },
+          "emotes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The emote ID."
                 },
-                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
+                "begin": {
+                  "type": "integer",
+                  "description": "The index of where the Emote starts in the text."
+                },
+                "end": {
+                  "type": "integer",
+                  "description": "The index of where the Emote ends in the text."
+                }
               }
-            }
+            },
+            "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
           },
           "user_input": {
             "type": "string",
@@ -7251,7 +7249,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Your client ID."
+            "description": "The Subscription ID of the Subscription"
           },
           "type": {
             "type": "string",
