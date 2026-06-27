@@ -6803,6 +6803,10 @@
         "type": "object",
         "x-docs-url": "https://dev.twitch.tv/docs/eventsub/eventsub-reference/#stream-offline-event",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the stream."
+          },
           "broadcaster_user_id": {
             "type": "string",
             "description": "The broadcaster's user id."
