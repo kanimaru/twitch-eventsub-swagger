@@ -2228,7 +2228,7 @@
                   "properties": {
                     "type": {
                       "type": "string",
-                      "description": "The type of message fragment. Possible values: text cheermote emote mention"
+                      "description": "The type of message fragment. Possible values: text cheermote emote mention gif"
                     },
                     "text": {
                       "type": "string",
@@ -2292,6 +2292,20 @@
                         "user_login": {
                           "type": "string",
                           "description": "The user login of the mentioned user."
+                        }
+                      }
+                    },
+                    "gif": {
+                      "type": "object",
+                      "description": "Optional . Metadata pertaining to the GIF.",
+                      "properties": {
+                        "gif_id": {
+                          "type": "string",
+                          "description": "An ID that uniquely identifies this GIF."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the GIF asset. Applications rendering the GIF must use the full URL provided; it must not be modified."
                         }
                       }
                     }
