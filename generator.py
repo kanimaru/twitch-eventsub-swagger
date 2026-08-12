@@ -32,8 +32,27 @@ def to_pascal_case(text):
     words = re.findall(r'[a-zA-Z0-9]+', text, re.ASCII)
     return "".join(word.capitalize() for word in words)
 
-def map_type(twitch_type_raw, description_text=""):
-    """Maps Twitch types to OpenAPI with robust nullable detection."""
+# "An array of outcomes...", "The ordered list of fragments...",
+# "An array that includes the emote ID..." - Twitch documents most collections
+# in prose only, without any marker in the Type column.
+ARRAY_IN_DESCRIPTION = re.compile(r'\b(?:an?|the)\s+(?:\w+\s+)?(?:array|list)\b|\b(?:array|list)\s+of\b')
+
+def map_primitive(t_base):
+    """Maps a bare Twitch type name to a primitive schema, or None if it isn't one."""
+    if any(x in t_base for x in ['string', 'timestamp', 'date', 'id']):
+        return {"type": "string"}
+    if any(x in t_base for x in ['int', 'integer', 'number', 'float', 'counter']):
+        return {"type": "integer"}
+    if any(x in t_base for x in ['bool', 'boolean']):
+        return {"type": "boolean"}
+    return None
+
+def map_type(twitch_type_raw, description_text="", infer_collection=True):
+    """Maps Twitch types to OpenAPI with robust nullable detection.
+
+    infer_collection is cleared when mapping the item type of an array, so a
+    plural type name such as "outcomes" yields Outcomes[] and not Outcomes[][].
+    """
     t_clean = twitch_type_raw.lower().strip()
     d_clean = description_text.lower()
 
@@ -45,22 +64,27 @@ def map_type(twitch_type_raw, description_text=""):
     t_base = re.sub(r'\(.*\)', '', t_clean).strip()
 
     # 1. Handle Arrays
-    if 'array' in t_base or '[]' in t_base or (t_base == 'object' and any(word in d_clean for word in ['list of', 'array of'])):
-        inner = t_base.replace('array', '').replace('of', '').replace('[]', '').strip()
+    is_array = 'array' in t_base or '[]' in t_base
+    inner = t_base
+    if is_array:
+        inner = re.sub(r'\barray\b|\bof\b|\[\s*\]', '', t_base).strip()
+    elif infer_collection and map_primitive(t_base) is None:
+        # Reference types (e.g. "outcomes", "choices", "top_contributions") carry
+        # no [] in the Type column, so the collection has to be inferred. Both
+        # signals are only trusted for non-primitives: a boolean whose prose
+        # mentions a list is still a boolean.
+        is_array = bool(ARRAY_IN_DESCRIPTION.search(d_clean)) or \
+                   (t_base.endswith('s') and t_base != 'object')
+
+    if is_array:
         if inner == 'object': inner = '' # If it was 'object (list of ...)', inner will be 'object'
-        inner_mapping = map_type(inner) if inner and inner != 'object' else {"type": "object"}
+        inner_mapping = map_type(inner, infer_collection=False) if inner and inner != 'object' else {"type": "object"}
         res = {"type": "array", "items": inner_mapping}
         if is_nullable: res["nullable"] = True
         return res
 
     # 2. Handle Primitives
-    res = None
-    if any(x in t_base for x in ['string', 'timestamp', 'date', 'id']):
-        res = {"type": "string"}
-    elif any(x in t_base for x in ['int', 'integer', 'number', 'float', 'counter']):
-        res = {"type": "integer"}
-    elif any(x in t_base for x in ['bool', 'boolean']):
-        res = {"type": "boolean"}
+    res = map_primitive(t_base)
 
     if res:
         if is_nullable: res["nullable"] = True

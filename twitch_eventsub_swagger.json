@@ -4550,7 +4550,10 @@
             "description": "Question displayed for the poll."
           },
           "choices": {
-            "$ref": "#/components/schemas/Choices",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Choices"
+            },
             "description": "An array of choices for the poll."
           },
           "bits_voting": {
@@ -4596,7 +4599,10 @@
             "description": "Question displayed for the poll."
           },
           "choices": {
-            "$ref": "#/components/schemas/Choices",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Choices"
+            },
             "description": "An array of choices for the poll. Includes vote counts."
           },
           "bits_voting": {
@@ -4642,7 +4648,10 @@
             "description": "Question displayed for the poll."
           },
           "choices": {
-            "$ref": "#/components/schemas/Choices",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Choices"
+            },
             "description": "An array of choices for the poll. Includes vote counts."
           },
           "bits_voting": {
@@ -5323,7 +5332,10 @@
             "description": "Title for the Channel Points Prediction."
           },
           "outcomes": {
-            "$ref": "#/components/schemas/Outcomes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outcomes"
+            },
             "description": "An array of outcomes for the Channel Points Prediction."
           },
           "started_at": {
@@ -5361,7 +5373,10 @@
             "description": "Title for the Channel Points Prediction."
           },
           "outcomes": {
-            "$ref": "#/components/schemas/Outcomes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outcomes"
+            },
             "description": "An array of outcomes for the Channel Points Prediction. Includes top_predictors ."
           },
           "started_at": {
@@ -5399,7 +5414,10 @@
             "description": "Title for the Channel Points Prediction."
           },
           "outcomes": {
-            "$ref": "#/components/schemas/Outcomes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outcomes"
+            },
             "description": "An array of outcomes for the Channel Points Prediction. Includes top_predictors ."
           },
           "started_at": {
@@ -5441,7 +5459,10 @@
             "description": "ID of the winning outcome."
           },
           "outcomes": {
-            "$ref": "#/components/schemas/Outcomes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outcomes"
+            },
             "description": "An array of outcomes for the Channel Points Prediction. Includes top_predictors ."
           },
           "status": {
@@ -6526,7 +6547,10 @@
             "description": "The number of points required to reach the next level."
           },
           "top_contributions": {
-            "$ref": "#/components/schemas/TopContributions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopContributions"
+            },
             "description": "The contributors with the most points contributed."
           },
           "user_id": {
@@ -6625,7 +6649,10 @@
             "description": "The number of points required to reach the next level."
           },
           "top_contributions": {
-            "$ref": "#/components/schemas/TopContributions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopContributions"
+            },
             "description": "The contributors with the most points contributed."
           },
           "user_id": {
@@ -7048,7 +7075,10 @@
             "description": "The text of the resubscription chat message."
           },
           "emotes": {
-            "$ref": "#/components/schemas/Emotes",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Emotes"
+            },
             "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
           }
         }
@@ -7078,7 +7108,10 @@
             "description": "The total number of Channel Points used on this outcome."
           },
           "top_predictors": {
-            "$ref": "#/components/schemas/TopPredictors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopPredictors"
+            },
             "description": "An array of users who used the most Channel Points on this outcome."
           }
         }
