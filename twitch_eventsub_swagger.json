@@ -2299,7 +2299,7 @@
                       "type": "object",
                       "description": "Optional . Metadata pertaining to the GIF.",
                       "properties": {
-                        "gif_id": {
+                        "id": {
                           "type": "string",
                           "description": "An ID that uniquely identifies this GIF."
                         },
