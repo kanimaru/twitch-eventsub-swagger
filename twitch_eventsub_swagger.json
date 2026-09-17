@@ -1381,7 +1381,7 @@
           },
           "reason": {
             "type": "string",
-            "description": "Possible values are: automod blocked_term"
+            "description": "Possible values are: automod blocked_term blocked_link"
           },
           "automod": {
             "type": "object",
@@ -1416,7 +1416,7 @@
           },
           "blocked_term": {
             "type": "object",
-            "description": "Optional. If the message was caught due to a blocked term, this will be populated.",
+            "description": "Optional. If the message was caught due to a blocked term or a blocked link, this will be populated.",
             "properties": {
               "terms_found": {
                 "type": "array",
@@ -1691,7 +1691,7 @@
           },
           "reason": {
             "type": "string",
-            "description": "The reason why the message was caught. Possible values are: automod blocked_term"
+            "description": "The reason why the message was caught. Possible values are: automod blocked_term blocked_link"
           },
           "automod": {
             "type": "object",
@@ -1726,7 +1726,7 @@
           },
           "blocked_term": {
             "type": "object",
-            "description": "Optional. If the message was caught due to a blocked term, this will be populated.",
+            "description": "Optional. If the message was caught due to a blocked term or a blocked link, this will be populated.",
             "properties": {
               "terms_found": {
                 "type": "array",
