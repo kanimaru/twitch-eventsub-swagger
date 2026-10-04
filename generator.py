@@ -1,3 +1,4 @@
+import copy
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -38,12 +39,17 @@ def to_pascal_case(text):
 ARRAY_IN_DESCRIPTION = re.compile(r'\b(?:an?|the)\s+(?:\w+\s+)?(?:array|list)\b|\b(?:array|list)\s+of\b')
 
 def map_primitive(t_base):
-    """Maps a bare Twitch type name to a primitive schema, or None if it isn't one."""
-    if any(x in t_base for x in ['string', 'timestamp', 'date', 'id']):
+    """Maps a bare Twitch type name to a primitive schema, or None if it isn't one.
+
+    Matches whole words only: a reference type such as "channel_points_voting" contains "int" and "id"-like
+    fragments without being an integer or a string.
+    """
+    words = set(re.findall(r'[a-z0-9]+', t_base))
+    if words & {'string', 'timestamp', 'date', 'datetime', 'id'}:
         return {"type": "string"}
-    if any(x in t_base for x in ['int', 'integer', 'number', 'float', 'counter']):
+    if words & {'int', 'integer', 'int32', 'int64', 'number', 'float', 'counter'}:
         return {"type": "integer"}
-    if any(x in t_base for x in ['bool', 'boolean']):
+    if words & {'bool', 'boolean'}:
         return {"type": "boolean"}
     return None
 
@@ -99,9 +105,56 @@ def map_type(twitch_type_raw, description_text="", infer_collection=True):
 
     ref_dict = {"$ref": f"#/components/schemas/{ref_name}"}
     if is_nullable:
-        return {"anyOf": [ref_dict, {"nullable": True}]}
+        # The OpenAPI 3.0 way to make a reference nullable ($ref ignores sibling keys).
+        return {"allOf": [ref_dict], "nullable": True}
 
     return ref_dict
+
+# "This field has the same information as the sub field but for ..." (shared_chat_* fields of chat
+# notifications and moderate events) - documented without their own rows.
+SAME_AS_FIELD = re.compile(r'same information as the (\w+) field')
+
+
+def resolve_same_as(props):
+    """Gives an object documented as "the same information as the X field" the schema of its sibling X."""
+    for name, schema in list(props.items()):
+        if schema.get("type") != "object" or schema.get("properties"):
+            continue
+        match = SAME_AS_FIELD.search(schema.get("description", ""))
+        sibling = props.get(match.group(1)) if match else None
+        if sibling is None or sibling is schema:
+            continue
+        resolved = copy.deepcopy(sibling)
+        resolved["description"] = schema["description"]
+        if schema.get("nullable"):
+            resolved["nullable"] = True
+        props[name] = resolved
+
+
+def reference_flattened_objects(props, schemas):
+    """Links an object without children to the component of the same name.
+
+    Some tables list an object's fields without indentation, right after it (transport of the conduit shard
+    disabled event). When a childless object is named like a component, it references that component, and the
+    rows directly after it that are fields of that component are folded back into it.
+    """
+    names = list(props.keys())
+    for index, name in enumerate(names):
+        schema = props.get(name)
+        if schema is None or schema.get("type") != "object" or schema.get("properties"):
+            continue
+        component = schemas.get(to_pascal_case(name))
+        if component is None or component is props:
+            continue
+        ref = {"$ref": f"#/components/schemas/{to_pascal_case(name)}"}
+        props[name] = ({"allOf": [ref], "nullable": True} if schema.get("nullable") else ref) | \
+            {"description": schema.get("description", "")}
+        component_fields = component.get("properties", {})
+        for follower in names[index + 1:]:
+            if follower not in component_fields:
+                break
+            del props[follower]
+
 
 def parse_twitch_docs():
     print(f"Fetching {DOC_URL}...")
@@ -223,6 +276,7 @@ def parse_twitch_docs():
                                 remove_empty_properties(p_val["items"]["properties"])
 
         remove_empty_properties(properties)
+        resolve_same_as(properties)
 
         if properties:
             schemas[component_name] = {
@@ -236,10 +290,11 @@ def parse_twitch_docs():
     # Post-Process Validation
     valid_components = set(schemas.keys())
     for comp in schemas.values():
+        reference_flattened_objects(comp.get("properties", {}), schemas)
         for prop_name, prop_val in comp.get("properties", {}).items():
             target_ref = None
             if "$ref" in prop_val: target_ref = prop_val
-            elif "anyOf" in prop_val: target_ref = prop_val["anyOf"][0]
+            elif "allOf" in prop_val: target_ref = prop_val["allOf"][0]
             elif prop_val.get("type") == "array" and "$ref" in prop_val.get("items", {}):
                 target_ref = prop_val["items"]
 
