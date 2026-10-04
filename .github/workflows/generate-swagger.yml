@@ -28,8 +28,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
+      - name: Install Twitch CLI
+        env:
+          TWITCH_CLI_VERSION: "1.1.24"
+        run: |
+          archive="twitch-cli_${TWITCH_CLI_VERSION}_Linux_x86_64.tar.gz"
+          base="https://github.com/twitchdev/twitch-cli/releases/download/v${TWITCH_CLI_VERSION}"
+          curl -fsSLO "$base/$archive"
+          curl -fsSL "$base/checksums.txt" | grep " $archive\$" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/twitch-cli"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/twitch-cli"
+          dirname "$(find "$RUNNER_TEMP/twitch-cli" -type f -name twitch)" >> "$GITHUB_PATH"
+          rm "$archive"
+
       - name: Run generator
         run: python generator.py
+
+      # Checks the generated schema against the example notifications of the docs and the Twitch CLI. A mismatch
+      # fails the job before the commit, so a wrong schema is never published.
+      - name: Validate against Twitch payloads
+        run: python validate.py --require-cli
 
       - name: Commit generated file
         run: |

@@ -160,6 +160,99 @@ def reference_flattened_objects(props, schemas):
             del props[follower]
 
 
+# Mistakes of the reference tables that the parser cannot see. Every correction is backed by the payloads Twitch
+# sends - the examples of the subscription types page and the Twitch CLI - and validate.py checks the generated
+# schema against those payloads, so a wrong correction fails the build. Each entry is
+# (component, field path, change, evidence); a path walks properties with "." and array items with "[]".
+# Changes: {"rename": new name}, {"set": schema keys}, {"add": schema, "after": field} or {"same_as": sibling field}.
+SCHEMA_CORRECTIONS = [
+    ("ChannelUnbanRequestResolveEvent", "moderator_id", {"rename": "moderator_user_id"},
+     "docs example and Twitch CLI"),
+    ("ChannelUnbanRequestResolveEvent", "moderator_login", {"rename": "moderator_user_login"},
+     "docs example and Twitch CLI"),
+    ("ChannelUnbanRequestResolveEvent", "moderator_name", {"rename": "moderator_user_name"},
+     "docs example and Twitch CLI"),
+    ("ChannelChatNotificationEvent", "chatter_user_login",
+     {"add": {"type": "string", "description": "The chatter's login name."}, "after": "chatter_user_name"},
+     "both docs examples"),
+    ("ChannelChatNotificationEvent", "message.text", {"set": {"type": "string"}}, "both docs examples"),
+    ("ChannelChatNotificationEvent", "shared_chat_unraid", {"same_as": "unraid"}, "shared chat docs example"),
+    ("ChannelChatNotificationEvent", "shared_chat_bits_badge_tier", {"same_as": "bits_badge_tier"},
+     "shared chat docs example"),
+    ("ChannelChatNotificationEvent", "shared_chat_charity_donation", {"same_as": "charity_donation"},
+     "shared chat docs example"),
+    ("ChannelChatUserMessageHoldEvent", "message.fragments[].type",
+     {"add": {"type": "string", "description": "The type of message fragment. Possible values: text, emote, "
+                                               "cheermote."}, "after": None},
+     "docs example"),
+    ("ChannelChatUserMessageUpdateEvent", "message.fragments[].type",
+     {"add": {"type": "string", "description": "The type of message fragment. Possible values: text, emote, "
+                                               "cheermote."}, "after": None},
+     "docs example"),
+    ("ChannelSuspiciousUserMessageEvent", "message.fragments[].cheermote.bits", {"set": {"type": "integer"}},
+     "docs example; the cheermote of every other message fragment"),
+    ("ChannelSuspiciousUserMessageEvent", "message.fragments[].cheermote.tier", {"set": {"type": "integer"}},
+     "docs example; the cheermote of every other message fragment"),
+] + [
+    (component, field, {"add": {"type": "string", "description": description}, "after": after}, "docs example")
+    for component in ("ChannelGuestStarSessionBeginEvent", "ChannelGuestStarSessionEndEvent")
+    for field, description, after in (
+        ("moderator_user_id", "The user ID of the moderator who started or ended the session.",
+         "broadcaster_user_login"),
+        ("moderator_user_name", "The display name of the moderator.", "moderator_user_id"),
+        ("moderator_user_login", "The login of the moderator.", "moderator_user_name"),
+    )
+]
+
+
+def apply_corrections(schemas):
+    """Applies SCHEMA_CORRECTIONS. A correction the docs no longer need is reported; one whose field is gone fails."""
+    for component, path, change, evidence in SCHEMA_CORRECTIONS:
+        *parents, name = path.split(".")
+        props = schemas[component]["properties"]
+        for parent in parents:
+            schema = props[parent.removesuffix("[]")]
+            if parent.endswith("[]"):
+                schema = schema["items"]
+            props = schema.setdefault("properties", {})
+        field = name.removesuffix("[]")
+
+        if "rename" in change:
+            if field not in props and change["rename"] in props:
+                print(f"  correction no longer needed: {component}.{path} is {change['rename']} ({evidence})")
+                continue
+            renamed = {change["rename"] if key == field else key: value for key, value in props.items()}
+            props.clear()
+            props.update(renamed)
+        elif "set" in change:
+            schema = props[field]
+            if all(schema.get(key) == value for key, value in change["set"].items()):
+                print(f"  correction no longer needed: {component}.{path} ({evidence})")
+                continue
+            if change["set"].get("type") not in (None, "object", "array"):
+                schema.pop("properties", None)
+                schema.pop("items", None)
+            schema.update(change["set"])
+        elif "add" in change:
+            if field in props:
+                print(f"  correction no longer needed: {component}.{path} exists ({evidence})")
+                continue
+            entries = list(props.items())
+            index = next((i + 1 for i, (key, _) in enumerate(entries) if key == change["after"]), 0)
+            entries.insert(index, (field, dict(change["add"])))
+            props.clear()
+            props.update(entries)
+        elif "same_as" in change:
+            if field in props:
+                print(f"  correction no longer needed: {component}.{path} exists ({evidence})")
+                continue
+            sibling = copy.deepcopy(props[change["same_as"]])
+            sibling["nullable"] = True
+            sibling["description"] = f"This field has the same information as the {change['same_as']} field " \
+                                     f"but for a notification that happened in a channel in the shared chat session."
+            props[field] = sibling
+
+
 def parse_twitch_docs():
     print(f"Fetching {DOC_URL}...")
     response = requests.get(DOC_URL)
@@ -185,6 +278,7 @@ def parse_twitch_docs():
         properties = {}
         required_fields = []
         stack = [(0, properties)] # Reset stack for each component
+        last_field = None # (depth, schema) of the previous row
 
         rows = table.find_all('tr')
         if not rows: continue
@@ -230,10 +324,22 @@ def parse_twitch_docs():
             f_type = cells[type_idx].get_text(strip=True)
             f_desc = clean_description(cells[desc_idx])
             
+            # Rows indented under a field documented as a primitive make it an object (charity_donation of
+            # channel.chat.notification is typed "string" but has charity_name and amount below it).
+            if last_field is not None and depth > last_field[0] and \
+                    last_field[1].get("type") in ("string", "integer", "boolean"):
+                last_depth, last_schema = last_field
+                nullable = last_schema.get("nullable")
+                description = last_schema["description"]
+                last_schema.clear()
+                last_schema.update({"type": "object", "properties": {}, "description": description})
+                if nullable: last_schema["nullable"] = True
+                stack.append((last_depth + 1, last_schema["properties"]))
+
             # Use a stack to handle nested properties
             while stack and stack[-1][0] > depth and len(stack) > 1:
                 stack.pop()
-            
+
             # Use the actual properties dict from the stack
             current_props = stack[-1][1]
 
@@ -243,6 +349,7 @@ def parse_twitch_docs():
             
             # Add to current level
             current_props[f_name] = field_schema
+            last_field = (depth, field_schema)
 
             # If it's a container, push to stack
             is_object = field_schema.get("type") == "object"
@@ -290,6 +397,8 @@ def parse_twitch_docs():
             }
             if required_fields:
                 schemas[component_name]["required"] = required_fields
+
+    apply_corrections(schemas)
 
     # Post-Process Validation
     valid_components = set(schemas.keys())
