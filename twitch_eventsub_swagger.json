@@ -2953,11 +2953,67 @@
           },
           "shared_chat_sub": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "is_prime": {
+                "type": "boolean",
+                "description": "Indicates if the subscription was obtained through Amazon Prime."
+              },
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              }
+            }
           },
           "shared_chat_resub": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "cumulative_months": {
+                "type": "integer",
+                "description": "The total number of months the user has subscribed."
+              },
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              },
+              "streak_months": {
+                "type": "integer",
+                "description": "The total number of months the user has subscribed."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "is_prime": {
+                "type": "boolean",
+                "description": "Optional . Whether or not this subscription is a Prime subscription."
+              },
+              "is_gift": {
+                "type": "boolean",
+                "description": "Whether or not the resub was a result of a gift."
+              },
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Optional . Whether or not the gift was anonymous."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "The user ID of the subscription gifter. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "The user name of the subscription gifter. Null if anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "description": "Optional . The user login of the subscription gifter. Null if anonymous."
+              }
+            }
           },
           "shared_chat_sub_gift": {
             "type": "object",
@@ -2965,35 +3021,131 @@
           },
           "shared_chat_community_sub_gift": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of the associated community gift."
+              },
+              "total": {
+                "type": "integer",
+                "description": "Number of subscriptions being gifted."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "cumulative_total": {
+                "type": "integer",
+                "description": "Optional . The amount of gifts the gifter has given in this channel. Null if anonymous."
+              }
+            }
           },
           "shared_chat_gift_paid_upgrade": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Whether the gift was given anonymously."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "Optional . The user ID of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "Optional . The user name of the user who gifted the subscription. Null if anonymous."
+              }
+            }
           },
           "shared_chat_prime_paid_upgrade": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              }
+            }
           },
           "shared_chat_pay_it_forward": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Whether the gift was given anonymously."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "description": "The user ID of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "description": "Optional . The user name of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "description": "The user login of the user who gifted the subscription. Null if anonymous."
+              }
+            }
           },
           "shared_chat_raid": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The user ID of the broadcaster raiding this channel."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the broadcaster raiding this channel."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login name of the broadcaster raiding this channel."
+              },
+              "viewer_count": {
+                "type": "integer",
+                "description": "The number of viewers raiding this channel from the broadcaster's channel."
+              },
+              "profile_image_url": {
+                "type": "string",
+                "description": "Profile image URL of the broadcaster raiding this channel."
+              }
+            }
           },
           "shared_chat_announcement": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "color": {
+                "type": "string",
+                "description": "Color of the announcement."
+              }
+            }
           },
           "shared_chat_modiversary": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "months": {
+                "type": "integer",
+                "description": "The number of months the user has been a moderator in this channel."
+              }
+            }
           },
           "shared_chat_gifted_drops_summary": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_gifted_drops_summary event. Is null if notice_type is not shared_chat_gifted_drops_summary . This field has the same information as the gifted_drops_summary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_gifted_drops_summary event. Is null if notice_type is not shared_chat_gifted_drops_summary . This field has the same information as the gifted_drops_summary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "recipient_count": {
+                "type": "integer",
+                "description": "The number of users who received a gifted Drop."
+              }
+            }
           }
         }
       },
@@ -3891,23 +4043,113 @@
           },
           "shared_chat_ban": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being banned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being banned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being banned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . Reason given for the ban."
+              }
+            }
           },
           "shared_chat_unban": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being unbanned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being unbanned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being unbanned."
+              }
+            }
           },
           "shared_chat_timeout": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being timed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being timed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being timed out."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional .. The reason given for the timeout."
+              },
+              "expires_at": {
+                "type": "string",
+                "description": "The time at which the timeout ends."
+              }
+            }
           },
           "shared_chat_untimeout": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being untimed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being untimed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user untimed out."
+              }
+            }
           },
           "shared_chat_delete": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user whose message is being deleted."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "message_id": {
+                "type": "string",
+                "description": "The ID of the message being deleted."
+              },
+              "message_body": {
+                "type": "string",
+                "description": "The message body of the message being deleted."
+              }
+            }
           }
         }
       },
@@ -4279,23 +4521,113 @@
           },
           "shared_chat_ban": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being banned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being banned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being banned."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . Reason given for the ban."
+              }
+            }
           },
           "shared_chat_unban": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being unbanned."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being unbanned."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being unbanned."
+              }
+            }
           },
           "shared_chat_timeout": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being timed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being timed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user being timed out."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional . The reason given for the timeout."
+              },
+              "expires_at": {
+                "type": "string",
+                "description": "The time at which the timeout ends."
+              }
+            }
           },
           "shared_chat_untimeout": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user being untimed out."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user being untimed out."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user untimed out."
+              }
+            }
           },
           "shared_chat_delete": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "user_id": {
+                "type": "string",
+                "description": "The ID of the user whose message is being deleted."
+              },
+              "user_login": {
+                "type": "string",
+                "description": "The login of the user."
+              },
+              "user_name": {
+                "type": "string",
+                "description": "The user name of the user."
+              },
+              "message_id": {
+                "type": "string",
+                "description": "The ID of the message being deleted."
+              },
+              "message_body": {
+                "type": "string",
+                "description": "The message body of the message being deleted."
+              }
+            }
           }
         }
       },
@@ -4575,7 +4907,7 @@
             "description": "Not supported."
           },
           "channel_points_voting": {
-            "type": "integer",
+            "$ref": "#/components/schemas/ChannelPointsVoting",
             "description": "The Channel Points voting settings for the poll."
           },
           "started_at": {
@@ -4624,7 +4956,7 @@
             "description": "Not supported."
           },
           "channel_points_voting": {
-            "type": "integer",
+            "$ref": "#/components/schemas/ChannelPointsVoting",
             "description": "The Channel Points voting settings for the poll."
           },
           "started_at": {
@@ -4673,7 +5005,7 @@
             "description": "Not supported."
           },
           "channel_points_voting": {
-            "type": "integer",
+            "$ref": "#/components/schemas/ChannelPointsVoting",
             "description": "The Channel Points voting settings for the poll."
           },
           "status": {
@@ -4957,14 +5289,12 @@
             "description": "Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2 ."
           },
           "image": {
-            "anyOf": [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/Image"
-              },
-              {
-                "nullable": true
               }
             ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
@@ -5050,14 +5380,12 @@
             "description": "Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2 ."
           },
           "image": {
-            "anyOf": [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/Image"
-              },
-              {
-                "nullable": true
               }
             ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
@@ -5143,14 +5471,12 @@
             "description": "Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2 ."
           },
           "image": {
-            "anyOf": [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/Image"
-              },
-              {
-                "nullable": true
               }
             ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
@@ -6394,28 +6720,8 @@
             "description": "The new status of the transport."
           },
           "transport": {
-            "type": "object",
+            "$ref": "#/components/schemas/Transport",
             "description": "The disabled transport."
-          },
-          "method": {
-            "type": "string",
-            "description": "websocket or webhook"
-          },
-          "callback": {
-            "type": "string",
-            "description": "Optional. Webhook callback URL. Null if method is set to websocket ."
-          },
-          "session_id": {
-            "type": "string",
-            "description": "Optional. WebSocket session ID. Null if method is set to webhook ."
-          },
-          "connected_at": {
-            "type": "string",
-            "description": "Optional. Time that the WebSocket session connected. Null if method is set to webhook ."
-          },
-          "disconnected_at": {
-            "type": "string",
-            "description": "Optional. Time that the WebSocket session disconnected. Null if method is set to webhook ."
           }
         }
       },
