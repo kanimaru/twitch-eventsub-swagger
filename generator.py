@@ -121,7 +121,11 @@ def resolve_same_as(props):
         if schema.get("type") != "object" or schema.get("properties"):
             continue
         match = SAME_AS_FIELD.search(schema.get("description", ""))
-        sibling = props.get(match.group(1)) if match else None
+        if not match:
+            continue
+        # The docs sometimes name a field that does not exist (shared_chat_sub_gift says "chat_sub_gift"); the
+        # field without the shared_chat_ prefix is the one meant.
+        sibling = props.get(match.group(1)) or props.get(name.removeprefix("shared_chat_"))
         if sibling is None or sibling is schema:
             continue
         resolved = copy.deepcopy(sibling)
