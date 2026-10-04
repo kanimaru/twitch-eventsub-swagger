@@ -3017,7 +3017,37 @@
           },
           "shared_chat_sub_gift": {
             "type": "object",
-            "description": "Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition."
+            "description": "Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "properties": {
+              "duration_months": {
+                "type": "integer",
+                "description": "The number of months the subscription is for."
+              },
+              "cumulative_total": {
+                "type": "integer",
+                "description": "Optional . The amount of gifts the gifter has given in this channel. Null if anonymous."
+              },
+              "recipient_user_id": {
+                "type": "string",
+                "description": "The user ID of the subscription gift recipient."
+              },
+              "recipient_user_name": {
+                "type": "string",
+                "description": "The user name of the subscription gift recipient."
+              },
+              "recipient_user_login": {
+                "type": "string",
+                "description": "The user login of the subscription gift recipient."
+              },
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription."
+              },
+              "community_gift_id": {
+                "type": "string",
+                "description": "Optional . The ID of the associated community gift. Null if not associated with a community gift."
+              }
+            }
           },
           "shared_chat_community_sub_gift": {
             "type": "object",
