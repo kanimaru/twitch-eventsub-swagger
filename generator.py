@@ -33,6 +33,7 @@ FIELD_LINE = re.compile(
     r"(?P<flags>(?:, (?:Nullable|\*\*Required\*\*))*)\.?(?:\s+(?P<description>.*))?$")
 LIST_ITEM = re.compile(r"^\s*- (.*)$")
 JSON_BLOCK = re.compile(r"^```json[ \t]*\n(.*?)^```", re.M | re.S)
+NULL_IN_DESCRIPTION = re.compile(r"\b(?:can|may) be null\b", re.I)
 
 PRIMITIVES = {"String": "string", "Integer": "integer", "Boolean": "boolean", "Number": "number"}
 
@@ -116,6 +117,8 @@ def parse_fields(section):
     def finish():
         if current is not None:
             current.description = clean_text(" ".join(parts))
+            # Some fields say it only in prose ("Can be **null** if no images have been uploaded").
+            current.nullable |= bool(NULL_IN_DESCRIPTION.search(current.description))
 
     for line in section.splitlines():
         match = FIELD_LINE.match(line)

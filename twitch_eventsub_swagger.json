@@ -3458,7 +3458,12 @@
             "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
           },
           "image": {
-            "$ref": "#/components/schemas/Image",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              }
+            ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
@@ -3568,7 +3573,12 @@
             "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
           },
           "image": {
-            "$ref": "#/components/schemas/Image",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              }
+            ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
@@ -3678,7 +3688,12 @@
             "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
           },
           "image": {
-            "$ref": "#/components/schemas/Image",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              }
+            ],
+            "nullable": true,
             "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
           },
           "default_image": {
