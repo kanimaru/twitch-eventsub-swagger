@@ -1,123 +1,257 @@
+"""Generates an OpenAPI schema of the Twitch EventSub notifications from the EventSub reference.
+
+The reference has one page per category (AutoMod, Channel, Chat, ...), each also served as Markdown. Every
+subscription type there lists the fields of its subscription request body and of its notification payload as a
+nested list whose entries carry their full path, type, flags and description:
+
+    - `event.message.fragments` — Object[]. Ordered list of chat message fragments.
+      - `event.message.fragments.type` — String, Nullable. The type of message fragment.
+
+Each subscription type yields a <Name>Condition and a <Name>Event component, marked with x-subscription-type and
+x-subscription-version. An object that several events document with the same shape (reward, outcomes, ...) becomes
+one shared component named after its field.
+"""
 import copy
-import requests
-from bs4 import BeautifulSoup
 import json
 import re
 import unicodedata
+from collections import Counter, defaultdict
+from dataclasses import dataclass, field
 
-# Configuration
-DOC_URL = "https://dev.twitch.tv/docs/eventsub/eventsub-reference/"
+import requests
+
+REFERENCE_URL = "https://dev.twitch.tv/docs/eventsub/reference/"
+INDEX_URL = "https://dev.twitch.tv/docs/eventsub/reference.md"
 OUTPUT_FILE = "twitch_eventsub_swagger.json"
 
-def clean_description(cell):
-    """
-    Extracts text from a table cell, ensuring spaces between HTML elements 
-    to prevent squashing, and normalizes unicode characters.
-    """
-    # separator=' ' prevents "text<li>item</li>" from becoming "textitem"
-    raw_text = cell.get_text(separator=' ', strip=True)
+CATEGORY_LINK = re.compile(r"/docs/eventsub/reference/([a-z0-9-]+)\.md#")
+ENTRY_HEADER = re.compile(r"^## (.+?) \{#([a-z0-9-]+)\}[ \t]*$", re.M)
+SECTION_HEADER = re.compile(r"^### (.+?)[ \t]*$", re.M)
+SUBSCRIPTION_LINE = re.compile(r"^- (Type|Version): `([^`]+)`", re.M)
+FIELD_LINE = re.compile(
+    r"^(?P<indent>\s*)- `(?P<path>[A-Za-z0-9_.]+)` — (?P<type>[A-Za-z]+)(?P<array>\[\])?"
+    r"(?P<flags>(?:, (?:Nullable|\*\*Required\*\*))*)\.?(?:\s+(?P<description>.*))?$")
+LIST_ITEM = re.compile(r"^\s*- (.*)$")
+JSON_BLOCK = re.compile(r"^```json[ \t]*\n(.*?)^```", re.M | re.S)
+NULL_IN_DESCRIPTION = re.compile(r"\b(?:can|may) be null\b", re.I)
 
-    # Normalize unicode (converts non-breaking spaces to standard spaces, etc.)
-    text = unicodedata.normalize("NFKC", raw_text)
+PRIMITIVES = {"String": "string", "Integer": "integer", "Boolean": "boolean", "Number": "number"}
 
-    # Optional: Convert curly quotes to straight quotes for better compatibility
-    text = text.replace('’', "'").replace('“', '"').replace('”', '"')
+# Component base names that keep the names of the old single-page reference, so generated code keeps its classes.
+# Keyed by the anchor of the subscription type; everything else is the PascalCase of its title.
+BASE_NAME_OVERRIDES = {
+    "channel-warning-acknowledge": "ChannelWarningAcknowledge",  # titled "Channel Warning Acknowledgement"
+    "channel-custom-power-up-redemption-add": "ChannelCustomPowerUpRedemptionAdd",  # titled "Power-ups"
+}
+EVENT_NAME_OVERRIDES = {
+    "automod-message-hold-v2": "AutomodMessageHoldEventV2",
+    "automod-message-update-v2": "AutomodMessageUpdateEventV2",
+    "channel-moderate-v2": "ChannelModerateEventV2",
+}
 
-    # Clean up multiple spaces
-    return re.sub(r'\s+', ' ', text).strip()
+
+@dataclass
+class Field:
+    path: str
+    type: str
+    is_array: bool
+    nullable: bool
+    required: bool
+    description: str
+
+
+@dataclass
+class Entry:
+    """One subscription type of the reference."""
+    title: str
+    anchor: str
+    category: str
+    subscription_type: str
+    version: str
+    request_fields: list = field(default_factory=list)
+    payload_fields: list = field(default_factory=list)
+    payload_examples: list = field(default_factory=list)  # JSON text of each event payload example
+
+    @property
+    def docs_url(self):
+        return f"{REFERENCE_URL}{self.category}#{self.anchor}"
+
+    @property
+    def base_name(self):
+        return BASE_NAME_OVERRIDES.get(self.anchor) or to_pascal_case(self.title)
+
+    @property
+    def event_name(self):
+        return EVENT_NAME_OVERRIDES.get(self.anchor) or f"{self.base_name}Event"
+
+    @property
+    def condition_name(self):
+        return f"{self.base_name}Condition"
+
+
+def clean_text(text):
+    """Turns Markdown into plain text: links keep their label, emphasis and code marks go."""
+    text = unicodedata.normalize("NFKC", text)
+    text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    text = re.sub(r"\*\*|`", "", text)
+    text = re.sub(r"(?<![\w*])\*(?!\s)([^*]+?)(?<!\s)\*(?![\w*])", r"\1", text)
+    text = text.replace("’", "'").replace("“", '"').replace("”", '"')
+    return re.sub(r"\s+", " ", text).strip()
+
 
 def to_pascal_case(text):
     """Strictly converts text to PascalCase using only ASCII alphanumeric chars."""
-    # Strip any non-ascii garbage before regex
-    text = unicodedata.normalize("NFKC", text).encode('ascii', 'ignore').decode('ascii')
-    words = re.findall(r'[a-zA-Z0-9]+', text, re.ASCII)
-    return "".join(word.capitalize() for word in words)
+    text = unicodedata.normalize("NFKC", text).encode("ascii", "ignore").decode("ascii")
+    return "".join(word.capitalize() for word in re.findall(r"[a-zA-Z0-9]+", text, re.ASCII))
 
-# "An array of outcomes...", "The ordered list of fragments...",
-# "An array that includes the emote ID..." - Twitch documents most collections
-# in prose only, without any marker in the Type column.
-ARRAY_IN_DESCRIPTION = re.compile(r'\b(?:an?|the)\s+(?:\w+\s+)?(?:array|list)\b|\b(?:array|list)\s+of\b')
 
-def map_primitive(t_base):
-    """Maps a bare Twitch type name to a primitive schema, or None if it isn't one.
+def parse_fields(section):
+    """Parses the field list of a Subscription Request Body or Event Payload section.
 
-    Matches whole words only: a reference type such as "channel_points_voting" contains "int" and "id"-like
-    fragments without being an integer or a string.
+    A field's description is the text after its type plus the more deeply indented lines below it that are not
+    fields themselves; a list there (the possible values) is joined with commas.
     """
-    words = set(re.findall(r'[a-z0-9]+', t_base))
-    if words & {'string', 'timestamp', 'date', 'datetime', 'id'}:
-        return {"type": "string"}
-    if words & {'int', 'integer', 'int32', 'int64', 'number', 'float', 'counter'}:
-        return {"type": "integer"}
-    if words & {'bool', 'boolean'}:
-        return {"type": "boolean"}
-    return None
+    fields = []
+    current, indent, parts, in_list = None, 0, [], False
 
-def map_type(twitch_type_raw, description_text="", infer_collection=True):
-    """Maps Twitch types to OpenAPI with robust nullable detection.
+    def finish():
+        if current is not None:
+            current.description = clean_text(" ".join(parts))
+            # Some fields say it only in prose ("Can be **null** if no images have been uploaded").
+            current.nullable |= bool(NULL_IN_DESCRIPTION.search(current.description))
 
-    infer_collection is cleared when mapping the item type of an array, so a
-    plural type name such as "outcomes" yields Outcomes[] and not Outcomes[][].
+    for line in section.splitlines():
+        match = FIELD_LINE.match(line)
+        if match:
+            finish()
+            flags = match["flags"]
+            current = Field(match["path"], match["type"], bool(match["array"]), "Nullable" in flags,
+                            "Required" in flags, "")
+            fields.append(current)
+            indent, parts, in_list = len(match["indent"]), [match["description"] or ""], False
+            continue
+        if current is None or not line.strip():
+            continue
+        if len(line) - len(line.lstrip()) <= indent:
+            continue  # text of the section, not of the field
+        item = LIST_ITEM.match(line)
+        if item:
+            parts.append(("," if in_list else "") + " " + item.group(1))
+            in_list = True
+        else:
+            parts.append(line.strip())
+            in_list = False
+    finish()
+    for field_ in fields:
+        field_.description = field_.description.replace(" ,", ",")
+    return fields
+
+
+def parse_page(category, markdown):
+    """The subscription types of one category page."""
+    entries = []
+    headers = list(ENTRY_HEADER.finditer(markdown))
+    for index, header in enumerate(headers):
+        end = headers[index + 1].start() if index + 1 < len(headers) else len(markdown)
+        body = markdown[header.end():end]
+        subscription = dict(SUBSCRIPTION_LINE.findall(body))
+        if "Type" not in subscription:
+            continue  # "Contents" and other headers without a subscription type
+        entry = Entry(header.group(1).strip(), header.group(2), category, subscription["Type"],
+                      subscription.get("Version", "1"))
+        sections = list(SECTION_HEADER.finditer(body))
+        for position, section in enumerate(sections):
+            text = body[section.end():sections[position + 1].start() if position + 1 < len(sections) else len(body)]
+            title = section.group(1)
+            if title == "Subscription Request Body":
+                entry.request_fields = parse_fields(text)
+            elif title == "Event Payload":
+                entry.payload_fields = parse_fields(text)
+            elif title.startswith("Event Payload Example"):
+                entry.payload_examples.extend(block.group(1) for block in JSON_BLOCK.finditer(text))
+        entries.append(entry)
+    return entries
+
+
+def fetch(url):
+    response = requests.get(url, timeout=60)
+    response.raise_for_status()
+    response.encoding = "utf-8"
+    return response.text
+
+
+def fetch_reference():
+    """Every subscription type of the EventSub reference, in the order of the reference index."""
+    print(f"Fetching {INDEX_URL}...")
+    categories = list(dict.fromkeys(CATEGORY_LINK.findall(fetch(INDEX_URL))))
+    if not categories:
+        raise RuntimeError(f"{INDEX_URL} links no category pages; has the reference moved again?")
+    entries = []
+    for category in categories:
+        url = f"{REFERENCE_URL}{category}.md"
+        print(f"Fetching {url}...")
+        page_entries = parse_page(category, fetch(url))
+        if not page_entries:
+            raise RuntimeError(f"{url} has no subscription types; has its format changed?")
+        entries.extend(page_entries)
+    return entries
+
+
+def field_schema(field_):
+    schema = {"type": "object"} if field_.type == "Object" else {"type": PRIMITIVES.get(field_.type, "string")}
+    if field_.type not in PRIMITIVES and field_.type != "Object":
+        print(f"  WARNING unknown type {field_.type} of {field_.path}, using string")
+    if field_.is_array:
+        schema = {"type": "array", "items": schema}
+    if field_.nullable:
+        schema["nullable"] = True
+    schema["description"] = field_.description
+    return schema
+
+
+def object_of(schema):
+    """The object schema that holds the children of a field: the field itself, or the items of an array.
+
+    A field documented as a primitive but with fields below it is an object.
     """
-    t_clean = twitch_type_raw.lower().strip()
-    d_clean = description_text.lower()
+    target = schema["items"] if schema.get("type") == "array" else schema
+    if target.get("type") != "object":
+        kept = {key: target[key] for key in ("nullable", "description") if key in target}
+        target.clear()
+        target.update({"type": "object", **kept})
+    return target
 
-    # Determine if nullable
-    is_nullable = any(word in t_clean for word in ['null', 'optional']) or \
-                  any(word in d_clean for word in ['field is null', 'can be null', 'is optional'])
 
-    # Remove parentheticals for type mapping
-    t_base = re.sub(r'\(.*\)', '', t_clean).strip()
+def build_object(fields, root_path):
+    """Builds the schema of the field at root_path from the fields below it; None if it has none."""
+    nodes = {root_path: {"type": "object"}}
+    for field_ in fields:
+        if field_.path == root_path or not field_.path.startswith(root_path + "."):
+            continue
+        parent_path, name = field_.path.rsplit(".", 1)
+        if parent_path not in nodes:
+            raise ValueError(f"{field_.path} is documented without its parent {parent_path}")
+        parent = object_of(nodes[parent_path])
+        schema = field_schema(field_)
+        parent.setdefault("properties", {})[name] = schema
+        if field_.required:
+            parent.setdefault("required", []).append(name)
+        nodes[field_.path] = schema
+    root = nodes[root_path]
+    root = root["items"] if root.get("type") == "array" else root
+    return root if root.get("properties") else None
 
-    # 1. Handle Arrays
-    is_array = 'array' in t_base or '[]' in t_base
-    inner = t_base
-    if is_array:
-        inner = re.sub(r'\barray\b|\bof\b|\[\s*\]', '', t_base).strip()
-    elif infer_collection and map_primitive(t_base) is None:
-        # Reference types (e.g. "outcomes", "choices", "top_contributions") carry
-        # no [] in the Type column, so the collection has to be inferred. Both
-        # signals are only trusted for non-primitives: a boolean whose prose
-        # mentions a list is still a boolean.
-        is_array = bool(ARRAY_IN_DESCRIPTION.search(d_clean)) or \
-                   (t_base.endswith('s') and t_base != 'object')
-
-    if is_array:
-        if inner == 'object': inner = '' # If it was 'object (list of ...)', inner will be 'object'
-        inner_mapping = map_type(inner, infer_collection=False) if inner and inner != 'object' else {"type": "object"}
-        res = {"type": "array", "items": inner_mapping}
-        if is_nullable: res["nullable"] = True
-        return res
-
-    # 2. Handle Primitives
-    res = map_primitive(t_base)
-
-    if res:
-        if is_nullable: res["nullable"] = True
-        return res
-
-    # 3. Handle References
-    ref_name = to_pascal_case(t_base)
-    if not ref_name or ref_name.lower() == "object":
-        obj = {"type": "object"}
-        if is_nullable: obj["nullable"] = True
-        return obj
-
-    ref_dict = {"$ref": f"#/components/schemas/{ref_name}"}
-    if is_nullable:
-        # The OpenAPI 3.0 way to make a reference nullable ($ref ignores sibling keys).
-        return {"allOf": [ref_dict], "nullable": True}
-
-    return ref_dict
 
 # "This field has the same information as the sub field but for ..." (shared_chat_* fields of chat
-# notifications and moderate events) - documented without their own rows.
-SAME_AS_FIELD = re.compile(r'same information as the (\w+) field')
+# notifications and moderate events) - documented without their own fields.
+SAME_AS_FIELD = re.compile(r"same information as the (\w+) field")
 
 
 def resolve_same_as(props):
     """Gives an object documented as "the same information as the X field" the schema of its sibling X."""
     for name, schema in list(props.items()):
+        if schema.get("type") == "object" and schema.get("properties"):
+            resolve_same_as(schema["properties"])
         if schema.get("type") != "object" or schema.get("properties"):
             continue
         match = SAME_AS_FIELD.search(schema.get("description", ""))
@@ -135,66 +269,20 @@ def resolve_same_as(props):
         props[name] = resolved
 
 
-def reference_flattened_objects(props, schemas):
-    """Links an object without children to the component of the same name.
-
-    Some tables list an object's fields without indentation, right after it (transport of the conduit shard
-    disabled event). When a childless object is named like a component, it references that component, and the
-    rows directly after it that are fields of that component are folded back into it.
-    """
-    names = list(props.keys())
-    for index, name in enumerate(names):
-        schema = props.get(name)
-        if schema is None or schema.get("type") != "object" or schema.get("properties"):
-            continue
-        component = schemas.get(to_pascal_case(name))
-        if component is None or component is props:
-            continue
-        ref = {"$ref": f"#/components/schemas/{to_pascal_case(name)}"}
-        props[name] = ({"allOf": [ref], "nullable": True} if schema.get("nullable") else ref) | \
-            {"description": schema.get("description", "")}
-        component_fields = component.get("properties", {})
-        for follower in names[index + 1:]:
-            if follower not in component_fields:
-                break
-            del props[follower]
-
-
-# Mistakes of the reference tables that the parser cannot see. Every correction is backed by the payloads Twitch
-# sends - the examples of the subscription types page and the Twitch CLI - and validate.py checks the generated
-# schema against those payloads, so a wrong correction fails the build. Each entry is
-# (component, field path, change, evidence); a path walks properties with "." and array items with "[]".
+# Mistakes of the reference that the parser cannot see. Every correction is backed by the payloads Twitch sends -
+# the examples of the reference and the Twitch CLI - and validate.py checks the generated schema against those
+# payloads, so a wrong correction fails the build. Each entry is (component, field path, change, evidence); a path
+# walks properties with "." and array items with "[]".
 # Changes: {"rename": new name}, {"set": schema keys}, {"add": schema, "after": field} or {"same_as": sibling field}.
+# "Old example" is an example of the single-page reference that the per-category pages replaced in November 2026.
 SCHEMA_CORRECTIONS = [
-    ("ChannelUnbanRequestResolveEvent", "moderator_id", {"rename": "moderator_user_id"},
-     "docs example and Twitch CLI"),
-    ("ChannelUnbanRequestResolveEvent", "moderator_login", {"rename": "moderator_user_login"},
-     "docs example and Twitch CLI"),
-    ("ChannelUnbanRequestResolveEvent", "moderator_name", {"rename": "moderator_user_name"},
-     "docs example and Twitch CLI"),
-    ("ChannelChatNotificationEvent", "chatter_user_login",
-     {"add": {"type": "string", "description": "The chatter's login name."}, "after": "chatter_user_name"},
-     "both docs examples"),
-    ("ChannelChatNotificationEvent", "message.text", {"set": {"type": "string"}}, "both docs examples"),
-    ("ChannelChatNotificationEvent", "shared_chat_unraid", {"same_as": "unraid"}, "shared chat docs example"),
+    ("ChannelChatNotificationEvent", "shared_chat_unraid", {"same_as": "unraid"}, "old shared chat example"),
     ("ChannelChatNotificationEvent", "shared_chat_bits_badge_tier", {"same_as": "bits_badge_tier"},
-     "shared chat docs example"),
+     "old shared chat example"),
     ("ChannelChatNotificationEvent", "shared_chat_charity_donation", {"same_as": "charity_donation"},
-     "shared chat docs example"),
-    ("ChannelChatUserMessageHoldEvent", "message.fragments[].type",
-     {"add": {"type": "string", "description": "The type of message fragment. Possible values: text, emote, "
-                                               "cheermote."}, "after": None},
-     "docs example"),
-    ("ChannelChatUserMessageUpdateEvent", "message.fragments[].type",
-     {"add": {"type": "string", "description": "The type of message fragment. Possible values: text, emote, "
-                                               "cheermote."}, "after": None},
-     "docs example"),
-    ("ChannelSuspiciousUserMessageEvent", "message.fragments[].cheermote.bits", {"set": {"type": "integer"}},
-     "docs example; the cheermote of every other message fragment"),
-    ("ChannelSuspiciousUserMessageEvent", "message.fragments[].cheermote.tier", {"set": {"type": "integer"}},
-     "docs example; the cheermote of every other message fragment"),
+     "old shared chat example"),
 ] + [
-    (component, field, {"add": {"type": "string", "description": description}, "after": after}, "docs example")
+    (component, field, {"add": {"type": "string", "description": description}, "after": after}, "old example")
     for component in ("ChannelGuestStarSessionBeginEvent", "ChannelGuestStarSessionEndEvent")
     for field, description, after in (
         ("moderator_user_id", "The user ID of the moderator who started or ended the session.",
@@ -205,9 +293,15 @@ SCHEMA_CORRECTIONS = [
 ]
 
 
+class CorrectionError(Exception):
+    pass
+
+
 def apply_corrections(schemas):
     """Applies SCHEMA_CORRECTIONS. A correction the docs no longer need is reported; one whose field is gone fails."""
     for component, path, change, evidence in SCHEMA_CORRECTIONS:
+        if component not in schemas:
+            raise CorrectionError(f"correction of {component}.{path}: the component no longer exists")
         *parents, name = path.split(".")
         props = schemas[component]["properties"]
         for parent in parents:
@@ -215,17 +309,17 @@ def apply_corrections(schemas):
             if parent.endswith("[]"):
                 schema = schema["items"]
             props = schema.setdefault("properties", {})
-        field = name.removesuffix("[]")
+        field_name = name.removesuffix("[]")
 
         if "rename" in change:
-            if field not in props and change["rename"] in props:
+            if field_name not in props and change["rename"] in props:
                 print(f"  correction no longer needed: {component}.{path} is {change['rename']} ({evidence})")
                 continue
-            renamed = {change["rename"] if key == field else key: value for key, value in props.items()}
+            renamed = {change["rename"] if key == field_name else key: value for key, value in props.items()}
             props.clear()
             props.update(renamed)
         elif "set" in change:
-            schema = props[field]
+            schema = props[field_name]
             if all(schema.get(key) == value for key, value in change["set"].items()):
                 print(f"  correction no longer needed: {component}.{path} ({evidence})")
                 continue
@@ -234,193 +328,138 @@ def apply_corrections(schemas):
                 schema.pop("items", None)
             schema.update(change["set"])
         elif "add" in change:
-            if field in props:
+            if field_name in props:
                 print(f"  correction no longer needed: {component}.{path} exists ({evidence})")
                 continue
             entries = list(props.items())
             index = next((i + 1 for i, (key, _) in enumerate(entries) if key == change["after"]), 0)
-            entries.insert(index, (field, dict(change["add"])))
+            entries.insert(index, (field_name, dict(change["add"])))
             props.clear()
             props.update(entries)
         elif "same_as" in change:
-            if field in props:
+            if field_name in props:
                 print(f"  correction no longer needed: {component}.{path} exists ({evidence})")
                 continue
             sibling = copy.deepcopy(props[change["same_as"]])
             sibling["nullable"] = True
             sibling["description"] = f"This field has the same information as the {change['same_as']} field " \
                                      f"but for a notification that happened in a channel in the shared chat session."
-            props[field] = sibling
+            props[field_name] = sibling
 
 
-def parse_twitch_docs():
-    print(f"Fetching {DOC_URL}...")
-    response = requests.get(DOC_URL)
-    response.encoding = 'utf-8'
-    soup = BeautifulSoup(response.text, 'html.parser')
+def shape(schema):
+    """The structure of a schema without its descriptions, for finding objects documented the same way twice."""
+    return (schema.get("type"), schema.get("nullable", False),
+            shape(schema["items"]) if "items" in schema else None,
+            tuple((name, shape(child)) for name, child in schema.get("properties", {}).items()))
 
+
+def liftable(schema):
+    """The object a field could share as a component: the field's object, or the object items of its array."""
+    target = schema.get("items", {}) if schema.get("type") == "array" else schema
+    return target if target.get("type") == "object" and target.get("properties") else None
+
+
+def share_repeated_objects(schemas):
+    """Moves objects that several components document with the same shape into one component per field name.
+
+    The name is the PascalCase of the field (reward -> Reward, top_predictors -> TopPredictors). When a field name
+    comes with different shapes, the most frequent one is shared and the others stay inline.
+    """
+    shapes = defaultdict(Counter)
+
+    def count(props):
+        for name, schema in props.items():
+            target = liftable(schema)
+            if target is not None:
+                shapes[to_pascal_case(name)][shape(target)] += 1
+                count(target["properties"])
+
+    for component in schemas.values():
+        count(component.get("properties", {}))
+    chosen = {}
+    for name, counter in shapes.items():
+        common, occurrences = counter.most_common(1)[0]
+        if occurrences >= 2 and name not in schemas:
+            chosen[name] = common
+
+    shared = {}
+
+    def replace(props):
+        for name, schema in props.items():
+            target = liftable(schema)
+            if target is None:
+                continue
+            component = to_pascal_case(name)
+            if chosen.get(component) != shape(target):
+                replace(target["properties"])
+                continue
+            if component not in shared:
+                lifted = copy.deepcopy(target)
+                lifted.pop("description", None)
+                lifted.pop("nullable", None)
+                shared[component] = lifted
+                replace(lifted["properties"])
+            ref = {"$ref": f"#/components/schemas/{component}"}
+            if schema.get("type") == "array":
+                schema["items"] = ref
+            else:
+                nullable, description = schema.get("nullable"), schema.get("description", "")
+                schema.clear()
+                schema.update({"allOf": [ref], "nullable": True} if nullable else ref)
+                schema["description"] = description
+
+    for component in list(schemas.values()):
+        replace(component.get("properties", {}))
+    schemas.update(sorted(shared.items()))
+
+
+def component(schema, entry):
+    return {"type": "object", "x-docs-url": entry.docs_url, "x-subscription-type": entry.subscription_type,
+            "x-subscription-version": entry.version, **schema}
+
+
+def build_schemas(entries):
     schemas = {}
-    headers = soup.find_all(['h2', 'h3'])
+    for entry in entries:
+        for name, fields, root in ((entry.condition_name, entry.request_fields, "condition"),
+                                   (entry.event_name, entry.payload_fields, "event"),
+                                   (entry.event_name, entry.payload_fields, "events")):
+            schema = build_object(fields, root)
+            if schema is None:
+                continue
+            if name in schemas:
+                raise ValueError(f"{name} of {entry.docs_url} clashes with {schemas[name]['x-docs-url']}")
+            schema.pop("type")
+            schema.pop("description", None)
+            schema.pop("nullable", None)
+            resolve_same_as(schema["properties"])
+            schemas[name] = component(schema, entry)
+        if entry.condition_name not in schemas:
+            print(f"  WARNING {entry.docs_url} documents no condition fields")
+        if entry.event_name not in schemas:
+            print(f"  WARNING {entry.docs_url} documents no event fields")
 
-    for header in headers:
-        title = header.get_text().strip()
-        header_id = header.get('id', '')
-
-        # Skip Navigational noise
-        if title in ["Contents", "Overview", "Request fields", "Response fields"]:
-            continue
-
-        table = header.find_next("table")
-        if not table or table.find_previous(['h2', 'h3']) != header:
-            continue
-
-        component_name = to_pascal_case(title)
-        properties = {}
-        required_fields = []
-        stack = [(0, properties)] # Reset stack for each component
-        last_field = None # (depth, schema) of the previous row
-
-        rows = table.find_all('tr')
-        if not rows: continue
-
-        thead = [c.get_text().lower() for c in rows[0].find_all(['th', 'td'])]
-        try:
-            name_idx = next(i for i, v in enumerate(thead) if 'name' in v or 'field' in v or 'param' in v)
-            type_idx = next(i for i, v in enumerate(thead) if 'type' in v)
-            desc_idx = next(i for i, v in enumerate(thead) if 'description' in v)
-            req_idx = next((i for i, v in enumerate(thead) if 'required' in v), -1)
-        except (StopIteration, ValueError):
-            continue
-
-        for row in rows[1:]:
-            cells = row.find_all('td')
-            if len(cells) <= max(name_idx, type_idx, desc_idx): continue
-
-            # Clean property name and determine indentation
-            name_cell = cells[name_idx]
-            
-            # Count leading non-breaking spaces explicitly in the cell contents
-            indent_count = 0
-            # Twitch documentation sometimes uses multiple strings or elements
-            # We want the indentation before the FIRST element (usually a <code>)
-            for child in name_cell.children:
-                child_text = str(child)
-                stripped = child_text.lstrip('\xa0 ')
-                if not stripped: # Only spaces/nbsps
-                    indent_count += len(child_text)
-                else:
-                    # Found something with content, add its leading spaces and stop
-                    indent_count += len(child_text) - len(stripped)
-                    break
-            
-            # Each level of indentation in Twitch docs is usually 3 non-breaking spaces
-            depth = indent_count // 3
-            if '\xa0 \xa0' in str(name_cell): depth = 1 # Workaround
-            
-            f_name = name_cell.get_text(strip=True)
-            # Remove any zero-width characters or other junk if necessary
-            f_name = "".join(c for c in f_name if c.isprintable()).strip()
-
-            f_type = cells[type_idx].get_text(strip=True)
-            f_desc = clean_description(cells[desc_idx])
-            
-            # Rows indented under a field documented as a primitive make it an object (charity_donation of
-            # channel.chat.notification is typed "string" but has charity_name and amount below it).
-            if last_field is not None and depth > last_field[0] and \
-                    last_field[1].get("type") in ("string", "integer", "boolean"):
-                last_depth, last_schema = last_field
-                nullable = last_schema.get("nullable")
-                description = last_schema["description"]
-                last_schema.clear()
-                last_schema.update({"type": "object", "properties": {}, "description": description})
-                if nullable: last_schema["nullable"] = True
-                stack.append((last_depth + 1, last_schema["properties"]))
-
-            # Use a stack to handle nested properties
-            while stack and stack[-1][0] > depth and len(stack) > 1:
-                stack.pop()
-
-            # Use the actual properties dict from the stack
-            current_props = stack[-1][1]
-
-            # Map the type
-            field_schema = map_type(f_type, f_desc)
-            field_schema["description"] = f_desc
-            
-            # Add to current level
-            current_props[f_name] = field_schema
-            last_field = (depth, field_schema)
-
-            # If it's a container, push to stack
-            is_object = field_schema.get("type") == "object"
-            is_object_array = field_schema.get("type") == "array" and field_schema.get("items", {}).get("type") == "object"
-            
-            if is_object or is_object_array:
-                if is_object_array:
-                    field_schema["items"]["properties"] = {}
-                    new_props = field_schema["items"]["properties"]
-                else:
-                    field_schema["properties"] = {}
-                    new_props = field_schema["properties"]
-                
-                stack.append((depth + 1, new_props))
-
-            if req_idx != -1 and 'yes' in cells[req_idx].get_text().lower():
-                required_fields.append(f_name)
-        
-        # Cleanup: Remove empty properties objects if no children were found
-        def remove_empty_properties(props):
-            for p_name, p_val in list(props.items()):
-                # Check for properties in the object itself or in its items if it's an array
-                if p_val.get("type") == "object":
-                    if "properties" in p_val:
-                        if not p_val["properties"]:
-                            del p_val["properties"]
-                        else:
-                            remove_empty_properties(p_val["properties"])
-                elif p_val.get("type") == "array" and "items" in p_val:
-                    if p_val["items"].get("type") == "object":
-                        if "properties" in p_val["items"]:
-                            if not p_val["items"]["properties"]:
-                                del p_val["items"]["properties"]
-                            else:
-                                remove_empty_properties(p_val["items"]["properties"])
-
-        remove_empty_properties(properties)
-        resolve_same_as(properties)
-
-        if properties:
-            schemas[component_name] = {
-                "type": "object",
-                "x-docs-url": f"{DOC_URL}#{header_id}" if header_id else DOC_URL,
-                "properties": properties
-            }
-            if required_fields:
-                schemas[component_name]["required"] = required_fields
+    # The envelope every notification and subscription shares, as the first subscription type documents it.
+    first = entries[0]
+    for name, fields, root in (("Subscription", first.payload_fields, "subscription"),
+                               ("Transport", first.request_fields, "transport")):
+        schema = build_object(fields, root)
+        if root == "subscription":
+            condition = schema["properties"]["condition"]
+            condition.pop("properties", None)
+            condition.pop("required", None)
+        schema.pop("description", None)
+        schemas[name] = {"type": "object", "x-docs-url": first.docs_url, **schema}
+        schemas[name].pop("nullable", None)
 
     apply_corrections(schemas)
-
-    # Post-Process Validation
-    valid_components = set(schemas.keys())
-    for comp in schemas.values():
-        reference_flattened_objects(comp.get("properties", {}), schemas)
-        for prop_name, prop_val in comp.get("properties", {}).items():
-            target_ref = None
-            if "$ref" in prop_val: target_ref = prop_val
-            elif "allOf" in prop_val: target_ref = prop_val["allOf"][0]
-            elif prop_val.get("type") == "array" and "$ref" in prop_val.get("items", {}):
-                target_ref = prop_val["items"]
-
-            if target_ref and "$ref" in target_ref:
-                ref_name = target_ref["$ref"].split("/")[-1]
-                if ref_name not in valid_components:
-                    desc = prop_val.get("description", "")
-                    comp["properties"][prop_name] = {"type": "object", "description": desc}
-
+    share_repeated_objects(schemas)
     return schemas
 
+
 def main():
-    schemas = parse_twitch_docs()
+    schemas = build_schemas(fetch_reference())
 
     openapi_spec = {
         "openapi": "3.0.0",
@@ -433,11 +472,12 @@ def main():
         "components": {"schemas": schemas}
     }
 
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         # ensure_ascii=False writes literal UTF-8 characters instead of \uXXXX
         json.dump(openapi_spec, f, indent=2, ensure_ascii=False)
 
     print(f"Successfully generated {OUTPUT_FILE} with {len(schemas)} schemas.")
+
 
 if __name__ == "__main__":
     main()

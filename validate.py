@@ -1,11 +1,10 @@
 """Checks the generated schema against real EventSub notifications.
 
-The schema is parsed from the tables of the EventSub reference, which are easy to misread (indentation, prose-only
-arrays, unindented fields). The payloads Twitch sends are the ground truth, so every notification payload is
-validated against the schema of its event and condition:
+The schema is parsed from the field lists of the EventSub reference, which can be wrong or incomplete. The payloads
+Twitch sends are the ground truth, so every notification payload is validated against the schema of its event and
+condition, found by the x-subscription-type and x-subscription-version of the components:
 
-- the example notifications of the subscription types page (EXAMPLES_URL), which link each payload to the
-  reference section of its event and condition,
+- the event payload examples of the reference, next to the field lists the schema comes from,
 - the mock notifications of the Twitch CLI, and
 - the payloads in fixtures/ - notifications captured from Twitch, one JSON file each in the same format
   ({"subscription": {"type", "version", "condition"}, "event"}).
@@ -22,14 +21,9 @@ import shutil
 import subprocess
 import sys
 
-import requests
-from bs4 import BeautifulSoup
+from generator import OUTPUT_FILE, fetch_reference
 
-from generator import OUTPUT_FILE
-
-EXAMPLES_URL = "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/"
 FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
-REFERENCE_PATH = "/docs/eventsub/eventsub-reference"  # linked with and without the trailing slash
 
 # Mistakes in a payload source, not in the schema: (source, subscription type, version, path) -> reason, where
 # source is "docs", "twitch-cli" or "fixture" and array indices are written []. Only list a mismatch here when
@@ -37,21 +31,13 @@ REFERENCE_PATH = "/docs/eventsub/eventsub-reference"  # linked with and without 
 KNOWN_PAYLOAD_ERRORS = {
     ("docs", "channel.ad_break.begin", "1", "event.duration_seconds"): "a string; the Twitch CLI sends an integer",
     ("docs", "channel.ad_break.begin", "1", "event.is_automatic"): "a string; the Twitch CLI sends a boolean",
-    ("docs", "channel.channel_points_custom_reward.remove", "1", "condition.reward_id"):
-        "an integer; the Twitch CLI sends a string",
     **{("docs", f"channel.prediction.{kind}", "1", "event.outcomes[].top_predictors[].user_id"):
         "an integer; the Twitch CLI sends a string" for kind in ("progress", "lock", "end")},
     **{("twitch-cli", f"channel.charity_campaign.{kind}", "1", f"event.broadcaster_user_{field}"):
-        "the reference table and the docs example say broadcaster_" + field
+        "the reference and the docs example say broadcaster_" + field
         for kind in ("start", "progress", "stop") for field in ("id", "login", "name")},
-    **{("docs", f"automod.message.{kind}", "1", path): reason
-        for kind in ("hold", "update")
-        for path, reason in (("event.message", "a string; the reference table documents the object of V2"),
-                             ("event.fragments", "outside the message; the reference table has it inside"))},
-    ("docs", "automod.settings.update", "1", "event.data"):
-        "wraps the event in the data array of the Get AutoMod Settings response",
-    **{("docs", "channel.chat.notification", "1", f"event.{field}.sub_plan"):
-        "sub_plan; the reference table documents sub_tier and is_prime" for field in ("resub", "shared_chat_resub")},
+    ("docs", "channel.chat.notification", "1", "event.resub.sub_plan"):
+        "sub_plan; the reference documents sub_tier and is_prime",
 }
 
 
@@ -111,24 +97,14 @@ def type_name(value):
     return "null"
 
 
-def component_for_anchor(schemas):
-    """Maps the reference anchor of each component (x-docs-url) to its name."""
-    return {schema["x-docs-url"].split("#", 1)[1]: name
-            for name, schema in schemas.items() if "#" in schema.get("x-docs-url", "")}
-
-
-def reference_anchor(table, field):
-    """The reference anchor the type cell of a field links to, or None."""
-    for row in table.find_all("tr"):
-        cells = row.find_all("td")
-        if len(cells) >= 2 and cells[0].get_text(strip=True) == field:
-            link = cells[1].find("a", href=True)
-            if link and REFERENCE_PATH in link["href"] and "#" in link["href"]:
-                return link["href"].split("#", 1)[1]
-    return None
-
-
-SUBSCRIPTION_HEADER = re.compile(r"^[a-z_]+(\.[a-z_]+)+\b")
+def components_for_subscription(schemas):
+    """Maps (subscription type, version) to the names of its "event" and "condition" components."""
+    found = {}
+    for name, schema in schemas.items():
+        key = (schema.get("x-subscription-type"), schema.get("x-subscription-version"))
+        if key[0] is not None:
+            found.setdefault(key, {})["condition" if name.endswith("Condition") else "event"] = name
+    return found
 
 
 def lenient_json(text):
@@ -162,44 +138,25 @@ def lenient_json(text):
     raise last_error
 
 
-def example_payloads():
-    """(source, payload, event anchor, condition anchor) of every example notification of the docs.
+def example_payloads(entries):
+    """(source, payload, key) of every event payload example of the reference.
 
-    The anchors come from the section the example is in: the event type cell of its Notification Payload table
-    and the condition type cell of its Request Body table.
+    The key is the subscription type and version the example is documented under: an example's own subscription
+    is sometimes copied from a neighbour (the automod.message.update v2 example says automod.message.hold).
     """
-    print(f"Fetching {EXAMPLES_URL}...")
-    response = requests.get(EXAMPLES_URL)
-    response.encoding = "utf-8"
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # Walk the page in order: a subscription type header (automod.message.hold V2) starts a section, its tables give
-    # the anchors, and the examples after them use those.
-    event_anchor = condition_anchor = None
-    header = None
-    for element in soup.find_all(["h2", "h3", "pre"]):
-        if element.name != "pre":
-            header = element
-            title = element.get_text().strip()
-            if SUBSCRIPTION_HEADER.match(title):
-                event_anchor = condition_anchor = None
-            elif title.endswith("Payload"):  # "... Notification Payload", once "Channel Chat Message Payload"
-                event_anchor = reference_anchor(element.find_next("table"), "event")
-            elif title.endswith("Request Body"):
-                condition_anchor = reference_anchor(element.find_next("table"), "condition")
-            continue
-
-        text = element.get_text()
-        if '"event"' not in text or '"subscription"' not in text:
-            continue
-        source = f"{EXAMPLES_URL}#{header.get('id') if header else ''}"
-        try:
-            payload = lenient_json(text)
-        except json.JSONDecodeError as error:
-            print(f"  WARNING {source}: example is not JSON ({error})")
-            continue
-        if isinstance(payload, dict) and "event" in payload:
-            yield source, payload, event_anchor, condition_anchor
+    for entry in entries:
+        for text in entry.payload_examples:
+            try:
+                payload = lenient_json(text)
+            except json.JSONDecodeError as error:
+                print(f"  WARNING {entry.docs_url}: example is not JSON ({error})")
+                continue
+            if not isinstance(payload, dict) or ("event" not in payload and "events" not in payload):
+                continue
+            key = (entry.subscription_type, entry.version)
+            if subscription_key(payload) != key:
+                print(f"  WARNING {entry.docs_url}: example says {subscription_key(payload)}, documented as {key}")
+            yield entry.docs_url, payload, key
 
 
 def cli_payloads(versions):
@@ -244,31 +201,28 @@ def subscription_key(payload):
 def main():
     with open(OUTPUT_FILE, encoding="utf-8") as f:
         schemas = json.load(f)["components"]["schemas"]
-    anchors = component_for_anchor(schemas)
+    components = components_for_subscription(schemas)
+    entries = fetch_reference()
 
     failures = []
-    warnings = []
     unlinked = set()
     known_seen = set()
     checked = 0
-    event_for_type, condition_for_type, versions = {}, {}, {}
 
-    def validate(source, payload, event_anchor, condition_anchor):
+    def validate(source, payload, key=None):
         nonlocal checked
-        key = subscription_key(payload)
-        kind = source.split(" ", 1)[0] if source.startswith("twitch-cli") else \
-            "fixture" if source.startswith("fixtures/") else "docs"
-        for part, anchor in (("event", event_anchor), ("condition", condition_anchor)):
-            value = payload.get("event") if part == "event" else payload.get("subscription", {}).get("condition")
+        key = key or subscription_key(payload)
+        kind = "twitch-cli" if source.startswith("twitch-cli") else             "fixture" if source.startswith("fixtures/") else "docs"
+        # A batching subscription type (drop.entitlement.grant) sends its events as a list.
+        events = payload["events"] if isinstance(payload.get("events"), list) else [payload.get("event")]
+        parts = [("condition", payload.get("subscription", {}).get("condition"))] +                 [("event" if len(events) == 1 and "event" in payload else f"events[{index}]", event)
+                 for index, event in enumerate(events)]
+        for part, value in parts:
             if value is None:
                 continue
-            if anchor is None:
-                # The docs link no reference section (conditions of charity, shield mode, shoutout, guest star).
-                unlinked.add(f"{key[0]} {part}")
-                continue
-            component = anchors.get(anchor)
+            component = components.get(key, {}).get(part.split("[", 1)[0].rstrip("s"))
             if component is None:
-                warnings.append(f"{source}: no schema for the {part} of {key[0]} v{key[1]} (anchor {anchor})")
+                unlinked.add(f"{key[0]} v{key[1]} {part.split('[', 1)[0]}")
                 continue
             validator = Validator(schemas)
             validator.check(value, {"$ref": f"#/components/schemas/{component}"}, part)
@@ -280,21 +234,17 @@ def main():
                     continue
                 failures.append(f"{source} ({component}): {key[0]} v{key[1]} {path} {message}")
 
-    for source, payload, event_anchor, condition_anchor in example_payloads():
-        key = subscription_key(payload)
-        event_for_type.setdefault(key, event_anchor)
-        condition_for_type.setdefault(key, condition_anchor)
-        versions.setdefault(key[0], set()).add(key[1])
-        validate(source, payload, event_anchor, condition_anchor)
+    versions = {}
+    for entry in entries:
+        versions.setdefault(entry.subscription_type, set()).add(entry.version)
+    for source, payload, key in example_payloads(entries):
+        validate(source, payload, key)
     for source, payload in [*cli_payloads(versions), *fixture_payloads()]:
-        key = subscription_key(payload)
-        validate(source, payload, event_for_type.get(key), condition_for_type.get(key))
+        validate(source, payload)
 
     print(f"Validated {checked} payload parts against {OUTPUT_FILE}.")
-    if unlinked:
-        print(f"  Not checked, the docs link no schema: {', '.join(sorted(unlinked))}")
-    for line in warnings:
-        print(f"  WARNING {line}")
+    for line in sorted(unlinked):
+        failures.append(f"no schema for the payload of {line}")
     for known in sorted(set(KNOWN_PAYLOAD_ERRORS) - known_seen):
         failures.append(f"KNOWN_PAYLOAD_ERRORS entry no longer occurs, remove it: {known}")
     if failures:
