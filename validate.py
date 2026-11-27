@@ -28,17 +28,7 @@ FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
 # Mistakes in a payload source, not in the schema: (source, subscription type, version, path) -> reason, where
 # source is "docs", "twitch-cli" or "fixture" and array indices are written []. Only list a mismatch here when
 # another Twitch source contradicts the payload; an entry that no longer occurs fails the run.
-KNOWN_PAYLOAD_ERRORS = {
-    ("docs", "channel.ad_break.begin", "1", "event.duration_seconds"): "a string; the Twitch CLI sends an integer",
-    ("docs", "channel.ad_break.begin", "1", "event.is_automatic"): "a string; the Twitch CLI sends a boolean",
-    **{("docs", f"channel.prediction.{kind}", "1", "event.outcomes[].top_predictors[].user_id"):
-        "an integer; the Twitch CLI sends a string" for kind in ("progress", "lock", "end")},
-    **{("twitch-cli", f"channel.charity_campaign.{kind}", "1", f"event.broadcaster_user_{field}"):
-        "the reference and the docs example say broadcaster_" + field
-        for kind in ("start", "progress", "stop") for field in ("id", "login", "name")},
-    ("docs", "channel.chat.notification", "1", "event.resub.sub_plan"):
-        "sub_plan; the reference documents sub_tier and is_prime",
-}
+KNOWN_PAYLOAD_ERRORS = {}
 
 
 class Validator:
