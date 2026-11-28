@@ -20,7 +20,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator. This user must be have either moderator or broadcaster status for the channel specified in broadcaster_user_id."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. To subscribe as the broadcaster, set it to the same ID as broadcaster_user_id."
           }
         },
         "required": [
@@ -63,57 +63,20 @@
             "description": "The ID of the message that was flagged by AutoMod."
           },
           "message": {
-            "type": "object",
-            "description": "The body of the message.",
-            "properties": {
-              "text": {
-                "type": "string",
-                "description": "The contents of the message caught by AutoMod."
-              },
-              "fragments": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "text": {
-                      "type": "string",
-                      "description": "Message text within a fragment."
-                    },
-                    "emote": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Emote"
-                        }
-                      ],
-                      "nullable": true,
-                      "description": "Metadata pertaining to the emote."
-                    },
-                    "cheermote": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Cheermote"
-                        }
-                      ],
-                      "nullable": true,
-                      "description": "Metadata pertaining to the cheermote."
-                    }
-                  }
-                },
-                "description": "Metadata surrounding the potential inappropriate fragments of the message."
-              }
-            }
+            "$ref": "#/components/schemas/Message",
+            "description": "The body of the message."
           },
           "category": {
             "type": "string",
-            "description": "The category of the message."
+            "description": "The AutoMod category that caused the hold."
           },
           "level": {
             "type": "integer",
-            "description": "The level of severity. Measured between 1 to 4."
+            "description": "The level of severity, from 1 to 4, where 1 is the most severe. AutoMod holds a message when its level is at or below the channel's AutoMod level for that category. Is 0 if the message was held for another reason, such as a blocked term."
           },
           "held_at": {
             "type": "string",
-            "description": "The timestamp of when AutoMod saved the message."
+            "description": "The UTC date and time (in RFC3339 format) of when Twitch received the chat message."
           }
         }
       },
@@ -129,7 +92,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. To subscribe as the broadcaster, set it to the same ID as broadcaster_user_id."
           }
         },
         "required": [
@@ -153,7 +116,7 @@
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The user name of the broadcaster specified in the request."
+            "description": "The display name of the broadcaster specified in the request."
           },
           "user_id": {
             "type": "string",
@@ -177,11 +140,11 @@
           },
           "held_at": {
             "type": "string",
-            "description": "The timestamp of when automod saved the message."
+            "description": "The UTC date and time (in RFC3339 format) of when Twitch received the chat message."
           },
           "reason": {
             "type": "string",
-            "description": "Possible values: automod, blocked_term, blocked_link"
+            "description": "Possible values: automod, blocked_term, blocked_link, unknown: AutoMod held the message for a reason that isn't listed here."
           },
           "automod": {
             "allOf": [
@@ -190,7 +153,7 @@
               }
             ],
             "nullable": true,
-            "description": "If the message was caught by automod, this will be populated."
+            "description": "The details of the AutoMod check that caught the message. Is null unless reason is automod."
           },
           "blocked_term": {
             "allOf": [
@@ -199,7 +162,7 @@
               }
             ],
             "nullable": true,
-            "description": "If the message was caught due to a blocked term or blocked link, this will be populated."
+            "description": "The details of the blocked terms or blocked links that caught the message. Is null unless reason is blocked_term or blocked_link. At most one of automod and blocked_term is populated, even if the message also matched the other check."
           }
         }
       },
@@ -215,7 +178,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. The subscription isn't limited to this user's actions: it receives every approval or denial in the broadcaster's channel."
           }
         },
         "required": [
@@ -239,7 +202,7 @@
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The user name of the broadcaster specified in the request."
+            "description": "The display name of the broadcaster specified in the request."
           },
           "user_id": {
             "type": "string",
@@ -255,76 +218,39 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator."
+            "description": "The ID of the user who approved or denied the message. This is the broadcaster or one of the broadcaster's moderators, and may differ from the moderator_user_id in the subscription's condition."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "TThe moderator's user name."
+            "description": "The display name of the user who approved or denied the message."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The login of the moderator."
+            "description": "The login of the user who approved or denied the message."
           },
           "message_id": {
             "type": "string",
             "description": "The ID of the message that was flagged by automod."
           },
           "message": {
-            "type": "object",
-            "description": "The body of the message.",
-            "properties": {
-              "text": {
-                "type": "string",
-                "description": "The contents of the message caught by automod."
-              },
-              "fragments": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "text": {
-                      "type": "string",
-                      "description": "Message text in a fragment."
-                    },
-                    "emote": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Emote"
-                        }
-                      ],
-                      "nullable": true,
-                      "description": "Metadata pertaining to the emote."
-                    },
-                    "cheermote": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Cheermote"
-                        }
-                      ],
-                      "nullable": true,
-                      "description": "Metadata pertaining to the cheermote."
-                    }
-                  }
-                },
-                "description": "Metadata surrounding the potential inappropriate fragments of the message."
-              }
-            }
+            "$ref": "#/components/schemas/Message",
+            "description": "The body of the message."
           },
           "category": {
             "type": "string",
-            "description": "The category of the message."
+            "description": "The AutoMod category that caused the hold."
           },
           "level": {
             "type": "integer",
-            "description": "The level of severity. Measured between 1 to 4."
+            "description": "The level of severity, from 1 to 4, where 1 is the most severe. AutoMod holds a message when its level is at or below the channel's AutoMod level for that category. Is 0 if the message was held for another reason, such as a blocked term."
           },
           "status": {
             "type": "string",
-            "description": "The message's status. Possible values: Approved, Denied, Expired"
+            "description": "The message's status. Possible values: approved: A moderator or the broadcaster allowed the message., denied: A moderator or the broadcaster denied the message."
           },
           "held_at": {
             "type": "string",
-            "description": "The timestamp of when automod saved the message."
+            "description": "The UTC date and time (in RFC3339 format) of when Twitch received the chat message. It doesn't change when the message is approved or denied."
           }
         }
       },
@@ -340,7 +266,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. The subscription isn't limited to this user's actions: it receives every approval or denial in the broadcaster's channel."
           }
         },
         "required": [
@@ -364,7 +290,7 @@
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The user name of the broadcaster specified in the request."
+            "description": "The display name of the broadcaster specified in the request."
           },
           "user_id": {
             "type": "string",
@@ -380,15 +306,15 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator."
+            "description": "The ID of the user who approved or denied the message. This is the broadcaster or one of the broadcaster's moderators, and may differ from the moderator_user_id in the subscription's condition."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "TThe moderator's user name."
+            "description": "The display name of the user who approved or denied the message."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The login of the moderator."
+            "description": "The login of the user who approved or denied the message."
           },
           "message_id": {
             "type": "string",
@@ -413,7 +339,7 @@
                     },
                     "type": {
                       "type": "string",
-                      "description": "Possible values: text, emote, cheermote"
+                      "description": "The type of fragment. Any part of the message that isn't an emote or a Cheermote, such as a mention or a link, is text. Possible values: text, emote, cheermote"
                     },
                     "emote": {
                       "allOf": [
@@ -435,21 +361,21 @@
                     }
                   }
                 },
-                "description": "Metadata surrounding the potential inappropriate fragments of the message."
+                "description": "The message, split into text, emote and Cheermote fragments, in order. Together, the fragments make up the whole message. For the parts that caused the hold, see automod.boundaries and blocked_term.terms_found.boundary."
               }
             }
           },
           "status": {
             "type": "string",
-            "description": "The message's status. Possible values: Approved, Denied, Expired"
+            "description": "The message's status. Possible values: approved: A moderator or the broadcaster allowed the message., denied: A moderator or the broadcaster denied the message."
           },
           "held_at": {
             "type": "string",
-            "description": "The timestamp of when automod saved the message."
+            "description": "The UTC date and time (in RFC3339 format) of when Twitch received the chat message. It doesn't change when the message is approved or denied."
           },
           "reason": {
             "type": "string",
-            "description": "The reason why the message was caught. Possible values: automod, blocked_term, blocked_link"
+            "description": "The reason why the message was caught. Possible values: automod, blocked_term, blocked_link, unknown: AutoMod held the message for a reason that isn't listed here."
           },
           "automod": {
             "allOf": [
@@ -458,7 +384,7 @@
               }
             ],
             "nullable": true,
-            "description": "If the message was caught by automod, this will be populated."
+            "description": "The details of the AutoMod check that caught the message. Is null unless reason is automod."
           },
           "blocked_term": {
             "allOf": [
@@ -467,7 +393,7 @@
               }
             ],
             "nullable": true,
-            "description": "If the message was caught due to a blocked term or a blocked link, this will be populated."
+            "description": "The details of the blocked terms or blocked links that caught the message. Is null unless reason is blocked_term or blocked_link. At most one of automod and blocked_term is populated, even if the message also matched the other check."
           }
         }
       },
@@ -483,7 +409,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators."
           }
         },
         "required": [
@@ -511,15 +437,15 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator who changed the channel settings."
+            "description": "The ID of the user who changed the settings. This is the broadcaster or one of the broadcaster's moderators. If Twitch changed the settings automatically, such as when it turns on AutoMod for a channel that has never configured it, this is the ID of Twitch's own account (12826)."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The moderator's login."
+            "description": "The login of the user who changed the settings."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The moderator's user name."
+            "description": "The display name of the user who changed the settings."
           },
           "bullying": {
             "type": "integer",
@@ -528,7 +454,7 @@
           "overall_level": {
             "type": "integer",
             "nullable": true,
-            "description": "The default AutoMod level for the broadcaster. This field is null if the broadcaster has set one or more of the individual settings."
+            "description": "The default AutoMod level for the broadcaster. This field is null if the channel's AutoMod settings don't match one of the default levels, such as when the broadcaster has set one or more of the individual settings."
           },
           "disability": {
             "type": "integer",
@@ -572,7 +498,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "User ID of the moderator creating the subscription. Maximum:1"
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. Maximum: 1."
           }
         },
         "required": [
@@ -600,15 +526,15 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator who changed the channel settings."
+            "description": "The ID of the user who added or removed the term. This is the broadcaster or one of the broadcaster's moderators, and may differ from the moderator_user_id in the subscription's condition."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The moderator's login."
+            "description": "The login of the user who added or removed the term."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The moderator's user name."
+            "description": "The display name of the user who added or removed the term."
           },
           "action": {
             "type": "string",
@@ -616,7 +542,7 @@
           },
           "from_automod": {
             "type": "boolean",
-            "description": "Indicates whether this term was added due to an Automod message approve/deny action."
+            "description": "Indicates whether this term was added or removed due to an AutoMod message approve/deny action."
           },
           "terms": {
             "type": "array",
@@ -650,11 +576,11 @@
         "properties": {
           "duration_seconds": {
             "type": "integer",
-            "description": "Length in seconds of the mid-roll ad break requested"
+            "description": "The length of the ad break, in seconds. This can differ from the length that was requested; for example, Twitch shortens a request that's longer than the maximum allowed for the channel."
           },
           "started_at": {
             "type": "string",
-            "description": "The UTC timestamp of when the ad break began, in RFC3339 format. Note that there is potential delay between this event, when the streamer requested the ad break, and when the viewers will see ads."
+            "description": "The UTC date and time (in RFC3339 format) of when the ad break began. This can be several seconds after the ad break was requested, and viewers may start seeing ads later than this time."
           },
           "is_automatic": {
             "type": "boolean",
@@ -674,7 +600,7 @@
           },
           "requester_user_id": {
             "type": "string",
-            "description": "The ID of the user that requested the ad. For automatic ads, this will be the ID of the broadcaster."
+            "description": "The ID of the user that requested the ad. For automatic ads, this is the ID of the broadcaster. If the ad break was synchronized from another channel during a co-streamed event, this is the ID of the channel that ran the original ad break, and is_automatic reflects that ad break."
           },
           "requester_user_login": {
             "type": "string",
@@ -741,8 +667,7 @@
           },
           "message": {
             "type": "object",
-            "nullable": true,
-            "description": "An object that contains the user message and emote information needed to recreate the message.",
+            "description": "An object that contains the user message and emote information needed to recreate the message. If the user didn't include a message, text is an empty string. For example, On-Screen Celebration Power-ups and Custom Power-ups that don't require user input never include one.",
             "properties": {
               "text": {
                 "type": "string",
@@ -836,15 +761,15 @@
           "custom_power_up": {
             "type": "object",
             "nullable": true,
-            "description": "Data about a custom Power-up.",
+            "description": "Data about a Custom Power-up.",
             "properties": {
               "title": {
                 "type": "string",
-                "description": "The title of the custom Power-up."
+                "description": "The title of the Custom Power-up."
               },
               "reward_id": {
                 "type": "string",
-                "description": "The ID of the custom Power-up."
+                "description": "The ID of the Custom Power-up."
               }
             }
           }
@@ -904,7 +829,7 @@
           },
           "message": {
             "type": "string",
-            "description": "The message sent with the cheer."
+            "description": "The message sent with the cheer. It includes the Cheermote text, such as Cheer100."
           },
           "bits": {
             "type": "integer",
@@ -920,12 +845,12 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster user ID for the channel you want to receive custom Power-up redemption add notifications for."
+            "description": "The broadcaster user ID for the channel you want to receive Custom Power-up redemption add notifications for."
           },
           "reward_id": {
             "type": "string",
             "nullable": true,
-            "description": "Specify a reward id to only receive notifications for a specific custom Power-up."
+            "description": "Specify a reward id to only receive notifications for a specific Custom Power-up."
           }
         },
         "required": [
@@ -956,15 +881,15 @@
           },
           "user_id": {
             "type": "string",
-            "description": "User ID of the user that redeemed the custom Power-up."
+            "description": "User ID of the user that redeemed the Custom Power-up."
           },
           "user_login": {
             "type": "string",
-            "description": "Login of the user that redeemed the custom Power-up."
+            "description": "Login of the user that redeemed the Custom Power-up."
           },
           "user_name": {
             "type": "string",
-            "description": "Display name of the user that redeemed the custom Power-up."
+            "description": "Display name of the user that redeemed the Custom Power-up."
           },
           "user_input": {
             "type": "string",
@@ -972,11 +897,11 @@
           },
           "status": {
             "type": "string",
-            "description": "Defaults to unfulfilled. Possible values are unknown, unfulfilled, fulfilled, and canceled."
+            "description": "The redemption status. Custom Power-ups skip the redemption request queue, so this is fulfilled."
           },
           "custom_power_up": {
             "type": "object",
-            "description": "Basic information about the custom Power-up that was redeemed, at the time it was redeemed.",
+            "description": "Basic information about the Custom Power-up that was redeemed, at the time it was redeemed.",
             "properties": {
               "id": {
                 "type": "string",
@@ -988,7 +913,7 @@
               },
               "bits": {
                 "type": "integer",
-                "description": "The cost of the Custom Power-up to redeem."
+                "description": "The amount of Bits required for the Custom Power-up. No Bits are consumed when broadcasters redeem their own Power-up."
               },
               "prompt": {
                 "type": "string",
@@ -998,7 +923,7 @@
           },
           "redeemed_at": {
             "type": "string",
-            "description": "RFC3339 timestamp of when the custom Power-up was redeemed."
+            "description": "RFC3339 timestamp of when the Custom Power-up was redeemed."
           }
         }
       },
@@ -1066,7 +991,7 @@
         "properties": {
           "from_broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster user ID that created the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster raids another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id."
+            "description": "The ID of the broadcaster whose outgoing raids you want to get notifications for. Use this parameter if you want to know when a specific broadcaster raids another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id."
           },
           "to_broadcaster_user_id": {
             "type": "string",
@@ -1082,15 +1007,15 @@
         "properties": {
           "from_broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster ID that created the raid."
+            "description": "The ID of the broadcaster whose channel the raid came from. One of the broadcaster's editors may have started the raid."
           },
           "from_broadcaster_user_login": {
             "type": "string",
-            "description": "The broadcaster login that created the raid."
+            "description": "The login name of the broadcaster whose channel the raid came from."
           },
           "from_broadcaster_user_name": {
             "type": "string",
-            "description": "The broadcaster display name that created the raid."
+            "description": "The display name of the broadcaster whose channel the raid came from."
           },
           "to_broadcaster_user_id": {
             "type": "string",
@@ -1106,7 +1031,7 @@
           },
           "viewers": {
             "type": "integer",
-            "description": "The number of viewers in the raid."
+            "description": "The number of viewers in the raid. This is the number Twitch shows in the raid alert in the target channel's chat. It can include the raiding broadcaster."
           }
         }
       },
@@ -1122,7 +1047,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster that gave the Shoutout or one of the broadcaster's moderators."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. Notifications aren't filtered by this user: you receive every Shoutout sent from the broadcaster's channel, whether the broadcaster or a moderator sent it."
           }
         },
         "required": [
@@ -1246,7 +1171,7 @@
           },
           "started_at": {
             "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the moderator sent the Shoutout."
+            "description": "The UTC date and time (in RFC3339 format) of when the Shoutout was sent."
           }
         }
       },
@@ -1297,7 +1222,7 @@
           },
           "tier": {
             "type": "string",
-            "description": "The tier of the subscription. Valid values are 1000, 2000, and 3000."
+            "description": "The tier of the subscription. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
           },
           "is_gift": {
             "type": "boolean",
@@ -1352,7 +1277,7 @@
           },
           "tier": {
             "type": "string",
-            "description": "The tier of the subscription that ended. Valid values are 1000, 2000, and 3000."
+            "description": "The tier of the subscription that ended. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
           },
           "is_gift": {
             "type": "boolean",
@@ -1410,16 +1335,16 @@
           },
           "total": {
             "type": "integer",
-            "description": "The number of subscriptions in the subscription gift."
+            "description": "The number of subscriptions in the subscription gift. During some gift-matching promotions, this count also includes the subscriptions added to match the gift."
           },
           "tier": {
             "type": "string",
-            "description": "The tier of subscriptions in the subscription gift."
+            "description": "The tier of subscriptions in the subscription gift. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
           },
           "cumulative_total": {
             "type": "integer",
             "nullable": true,
-            "description": "The number of subscriptions gifted by this user in the channel. This value is null for anonymous gifts or if the gifter has opted out of sharing this information."
+            "description": "The total number of subscriptions this user has gifted in the channel, including the subscriptions in this gift. A multi-month gift subscription counts once for each month it lasts. This value is null for anonymous gifts, if the gifter is the broadcaster, or if the gifter has opted out of sharing this information."
           },
           "is_anonymous": {
             "type": "boolean",
@@ -1458,7 +1383,7 @@
           },
           "user_name": {
             "type": "string",
-            "description": "The user display name of the user who a resubscription chat message."
+            "description": "The user display name of the user who sent a resubscription chat message."
           },
           "broadcaster_user_id": {
             "type": "string",
@@ -1474,7 +1399,7 @@
           },
           "tier": {
             "type": "string",
-            "description": "The tier of the user's subscription."
+            "description": "The tier of the user's subscription. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
           },
           "message": {
             "type": "object",
@@ -1482,14 +1407,15 @@
             "properties": {
               "text": {
                 "type": "string",
-                "description": "The text of the resubscription chat message."
+                "description": "The text of the resubscription chat message. Is an empty string if the user didn't include a message, if AutoMod rejected the message, or if the notice was posted automatically."
               },
               "emotes": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/Emotes"
                 },
-                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
+                "nullable": true,
+                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text. Is null if the message contains no emotes."
               }
             }
           },
@@ -1543,19 +1469,19 @@
           },
           "title": {
             "type": "string",
-            "description": "The channel's stream title."
+            "description": "The channel's stream title. Is an empty string if the broadcaster hasn't set a title."
           },
           "language": {
             "type": "string",
-            "description": "The channel's broadcast language."
+            "description": "The channel's broadcast language, as a lowercase language code. This is usually an ISO 639-1 two-letter code, such as en, but can also be asl, zh-hk, or other. Is an empty string if no broadcast language is set."
           },
           "category_id": {
             "type": "string",
-            "description": "The channel's category ID."
+            "description": "The ID of the channel's category. Is an empty string if the channel has no category, for example after the broadcaster removes it."
           },
           "category_name": {
             "type": "string",
-            "description": "The category name."
+            "description": "The name of the channel's category. Is an empty string if the channel has no category."
           },
           "content_classification_labels": {
             "type": "array",
@@ -1707,19 +1633,19 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the issuer of the ban."
+            "description": "The user ID of the issuer of the ban. If Shield Mode banned the user automatically because their message contained a banned term, this is the user who added that term."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The user login of the issuer of the ban."
+            "description": "The user login of the issuer of the ban. If Shield Mode banned the user automatically because their message contained a banned term, this is the user who added that term."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The user name of the issuer of the ban."
+            "description": "The display name of the issuer of the ban. If Shield Mode banned the user automatically because their message contained a banned term, this is the user who added that term."
           },
           "reason": {
             "type": "string",
-            "description": "The reason behind the ban."
+            "description": "The reason behind the ban. Is an empty string if the ban or timeout has no reason."
           },
           "banned_at": {
             "type": "string",
@@ -1748,7 +1674,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. This user must have authorized your app with the required scopes. It doesn't filter notifications: you receive every moderation action in the broadcaster's channel, whoever performed it."
           }
         },
         "required": [
@@ -1776,11 +1702,13 @@
           },
           "source_broadcaster_user_id": {
             "type": "string",
-            "description": "The channel in which the action originally occurred. Is the same as the broadcaster_user_id if not in shared chat."
+            "nullable": true,
+            "description": "The ID of the channel where the action originally occurred. Is null unless the action happened in another channel in the broadcaster's Shared Chat session (the shared_chat_ban, shared_chat_timeout, shared_chat_unban, shared_chat_untimeout and shared_chat_delete actions)."
           },
           "source_broadcaster_user_login": {
             "type": "string",
-            "description": "The channel in which the action originally occurred. Is the same as the broadcaster_user_login if not in shared chat."
+            "nullable": true,
+            "description": "The login of the channel where the action originally occurred. Is null unless the action happened in another channel in the broadcaster's Shared Chat session (the shared_chat_ actions)."
           },
           "source_broadcaster_user_name": {
             "type": "string",
@@ -1789,15 +1717,15 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator who performed the action."
+            "description": "The ID of the user who performed the action. For raid and unraid, this is the broadcaster or one of the broadcaster's editors. For unvip, it can be the VIP who removed their own VIP status."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The login of the moderator."
+            "description": "The login of the user who performed the action."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The user name of the moderator."
+            "description": "The display name of the user who performed the action."
           },
           "action": {
             "type": "string",
@@ -1927,7 +1855,7 @@
               }
             ],
             "nullable": true,
-            "description": "Metadata associated with the automod terms changes."
+            "description": "Metadata associated with the automod terms changes. Changes to blocked terms that the broadcaster marks as private don't send a notification."
           },
           "unban_request": {
             "allOf": [
@@ -1997,7 +1925,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. This user must have authorized your app. The subscription receives moderation actions from every moderator in the channel, not only this user's."
           }
         },
         "required": [
@@ -2021,24 +1949,26 @@
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The user name of the broadcaster."
+            "description": "The broadcaster's display name."
           },
           "source_broadcaster_user_id": {
             "type": "string",
-            "description": "The channel in which the action originally occurred. Is the same as the broadcaster_user_id if not in shared chat."
+            "nullable": true,
+            "description": "The ID of the channel where the action originally took place. Is null unless action is shared_chat_ban, shared_chat_unban, shared_chat_timeout, shared_chat_untimeout or shared_chat_delete."
           },
           "source_broadcaster_user_login": {
             "type": "string",
-            "description": "The channel in which the action originally occurred. Is the same as the broadcaster_user_login if not in shared chat."
+            "nullable": true,
+            "description": "The login of the channel where the action originally took place. Is null unless action is one of the shared_chat_ actions."
           },
           "source_broadcaster_user_name": {
             "type": "string",
             "nullable": true,
-            "description": "The channel in which the action originally occurred. Is null when the moderator action happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster."
+            "description": "The display name of the channel where the action originally took place. Is null unless action is one of the shared_chat_ actions."
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator who performed the action."
+            "description": "The ID of the user who performed the action. For raid and unraid, this is the broadcaster or one of the broadcaster's editors. For the shared_chat_ actions, it's the user who performed the action in the channel where it originally occurred. For all other actions, it's the broadcaster or one of the broadcaster's moderators. For unvip, it can also be the VIP who removed their own VIP status."
           },
           "moderator_user_login": {
             "type": "string",
@@ -2046,7 +1976,7 @@
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The user name of the moderator."
+            "description": "The moderator's display name."
           },
           "action": {
             "type": "string",
@@ -2202,7 +2132,7 @@
               },
               "user_name": {
                 "type": "string",
-                "description": "The user name of the user being warned."
+                "description": "The display name of the user being warned."
               },
               "reason": {
                 "type": "string",
@@ -2368,7 +2298,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster that you want to receive notifications about when they activate Shield Mode."
+            "description": "The ID of the broadcaster that you want to receive notifications about when Shield Mode is activated in their channel."
           },
           "moderator_user_id": {
             "type": "string",
@@ -2413,10 +2343,6 @@
           "started_at": {
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the moderator activated Shield Mode. The object includes this field only for channel.shield_mode.begin events."
-          },
-          "ended_at": {
-            "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the moderator deactivated Shield Mode. The object includes this field only for channel.shield_mode.end events."
           }
         }
       },
@@ -2428,7 +2354,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster that you want to receive notifications about when they deactivate Shield Mode."
+            "description": "The ID of the broadcaster that you want to receive notifications about when Shield Mode is deactivated in their channel."
           },
           "moderator_user_id": {
             "type": "string",
@@ -2470,10 +2396,6 @@
             "type": "string",
             "description": "The moderator's display name."
           },
-          "started_at": {
-            "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the moderator activated Shield Mode. The object includes this field only for channel.shield_mode.begin events."
-          },
           "ended_at": {
             "type": "string",
             "description": "The UTC timestamp (in RFC3339 format) of when the moderator deactivated Shield Mode. The object includes this field only for channel.shield_mode.end events."
@@ -2508,15 +2430,15 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the channel where the treatment for a suspicious user was updated."
+            "description": "The ID of the channel where the suspicious user sent the message."
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The display name of the channel where the treatment for a suspicious user was updated."
+            "description": "The display name of the channel where the suspicious user sent the message."
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "The login of the channel where the treatment for a suspicious user was updated."
+            "description": "The login of the channel where the suspicious user sent the message."
           },
           "user_id": {
             "type": "string",
@@ -2524,7 +2446,7 @@
           },
           "user_name": {
             "type": "string",
-            "description": "The user name of the user that sent the message."
+            "description": "The display name of the user that sent the message."
           },
           "user_login": {
             "type": "string",
@@ -2532,25 +2454,26 @@
           },
           "low_trust_status": {
             "type": "string",
-            "description": "The status set for the suspicious user. Can be the following: \"none\", \"active_monitoring\", or \"restricted\""
+            "description": "The status set for the suspicious user. Possible values: active_monitoring: The user is being monitored. Their messages appear in chat., restricted: The user is restricted. Their messages are withheld from chat."
           },
           "shared_ban_channel_ids": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "A list of channel IDs where the suspicious user is also banned."
+            "nullable": true,
+            "description": "The IDs of the channels that share ban information with the broadcaster's channel and where the suspicious user is permanently banned. Is null if the user isn't banned in any of those channels."
           },
           "types": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "User types (if any) that apply to the suspicious user, can be \"manually_added\", \"ban_evader\", or \"banned_in_shared_channel\"."
+            "description": "The user types that apply to the suspicious user. Contains at least one of the following values. Possible values: manually_added, ban_evader, banned_in_shared_channel"
           },
           "ban_evasion_evaluation": {
             "type": "string",
-            "description": "A ban evasion likelihood value (if any) that as been applied to the user automatically by Twitch, can be \"unknown\", \"possible\", or \"likely\"."
+            "description": "A ban evasion likelihood value that Twitch applied to the user automatically. Possible values: possible: The user is possibly evading a ban., likely: The user is likely evading a ban., unknown: Twitch hasn't evaluated the user, or evaluated them as unlikely to be evading a ban."
           },
           "message": {
             "type": "object",
@@ -2615,7 +2538,7 @@
           },
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster you want to get chat unban request notifications for."
+            "description": "The ID of the broadcaster whose suspicious user status changes you want to get notifications for."
           }
         },
         "required": [
@@ -2643,15 +2566,15 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The ID of the moderator that updated the treatment for a suspicious user."
+            "description": "The ID of the broadcaster or moderator who changed the status."
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The display name of the moderator that updated the treatment for a suspicious user."
+            "description": "The display name of the user who changed the status."
           },
           "moderator_user_login": {
             "type": "string",
-            "description": "The login of the moderator that updated the treatment for a suspicious user."
+            "description": "The login name of the user who changed the status."
           },
           "user_id": {
             "type": "string",
@@ -2667,7 +2590,7 @@
           },
           "low_trust_status": {
             "type": "string",
-            "description": "The status set for the suspicious user. Can be the following: \"none\", \"active_monitoring\", or \"restricted\"."
+            "description": "The suspicious user status that the broadcaster or moderator set for the user. Possible values: active_monitoring: The user is marked as monitored., restricted: The user is marked as restricted., no_treatment: The user's suspicious user status was removed."
           }
         }
       },
@@ -2726,7 +2649,7 @@
           },
           "moderator_user_name": {
             "type": "string",
-            "description": "The user name of the issuer of the unban."
+            "description": "The user display name of the issuer of the unban."
           }
         }
       },
@@ -2786,11 +2709,11 @@
           },
           "text": {
             "type": "string",
-            "description": "Message sent in the unban request."
+            "description": "Message sent in the unban request. Is an empty string if the user didn't include a message."
           },
           "created_at": {
             "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the unban request was created."
+            "description": "The UTC timestamp (in RFC3339 format) of when the unban request was created. Twitch sets it when it processes the new request, so it can be slightly later than the created_at value that Get Unban Requests returns for the same request."
           }
         }
       },
@@ -2839,17 +2762,17 @@
           "moderator_user_id": {
             "type": "string",
             "nullable": true,
-            "description": "User ID of moderator who approved/denied the request."
+            "description": "The ID of the broadcaster or moderator who approved or denied the request. Is null if the user canceled the request, or if the request was approved automatically because the user was unbanned."
           },
           "moderator_user_login": {
             "type": "string",
             "nullable": true,
-            "description": "The moderator's login name"
+            "description": "The login name of the broadcaster or moderator who approved or denied the request. Is null in the same cases as moderator_user_id."
           },
           "moderator_user_name": {
             "type": "string",
             "nullable": true,
-            "description": "The moderator's display name"
+            "description": "The display name of the broadcaster or moderator who approved or denied the request. Is null in the same cases as moderator_user_id."
           },
           "user_id": {
             "type": "string",
@@ -2866,11 +2789,11 @@
           "resolution_text": {
             "type": "string",
             "nullable": true,
-            "description": "Resolution text supplied by the mod/broadcaster upon approval/denial of the request."
+            "description": "The text the broadcaster or moderator supplied when approving or denying the request. Is an empty string if they didn't supply any. Is null if the user canceled the request, or if the request was approved automatically because the user was unbanned."
           },
           "status": {
             "type": "string",
-            "description": "Dictates whether the unban request was approved or denied. Can be the following. Possible values: approved, canceled, denied"
+            "description": "The request's resolution. Possible values: approved: The broadcaster or a moderator approved the request, or the user was unbanned while the request was pending., canceled: The user canceled their request., denied: The broadcaster or a moderator denied the request."
           }
         }
       },
@@ -2886,7 +2809,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. This user must have authorized your app with the moderator:read:warnings or moderator:manage:warnings scope. To get notifications using the broadcaster's own authorization, set this field to the broadcaster's ID."
           }
         },
         "required": [
@@ -2938,7 +2861,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The User ID of the moderator."
+            "description": "The ID of the broadcaster or one of the broadcaster's moderators. To use the broadcaster's own authorization, specify the broadcaster's ID. The subscription receives every warning sent in the broadcaster's channel, not only the warnings this user sends."
           }
         },
         "required": [
@@ -2966,7 +2889,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator who sent the warning."
+            "description": "The user ID of the moderator who sent the warning. If the broadcaster sent the warning, this ID is the same as broadcaster_user_id."
           },
           "moderator_user_login": {
             "type": "string",
@@ -2986,12 +2909,12 @@
           },
           "user_name": {
             "type": "string",
-            "description": "The user name of the user being."
+            "description": "The user name of the user being warned."
           },
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "The reason given for the warning."
+            "description": "The reason given for the warning. Is null if the warning doesn't include a custom reason, in which case chat_rules_cited lists at least one rule."
           },
           "chat_rules_cited": {
             "type": "array",
@@ -2999,7 +2922,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "The chat rules cited for the warning."
+            "description": "The chat rules cited for the warning. Is null if the warning doesn't cite any rules (it's never an empty array), in which case reason is set."
           }
         }
       },
@@ -3011,7 +2934,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster user ID for the channel you want to receive channel points reward add notifications for."
+            "description": "The broadcaster user ID for the channel you want to receive channel points automatic reward redemption add notifications for."
           }
         },
         "required": [
@@ -3058,16 +2981,16 @@
             "properties": {
               "type": {
                 "type": "string",
-                "description": "The type of reward. Possible values: single_message_bypass_sub_mode, send_highlighted_message, random_sub_emote_unlock, chosen_sub_emote_unlock, chosen_modified_sub_emote_unlock, message_effect, gigantify_an_emote, celebration"
+                "description": "The type of reward. Possible values: single_message_bypass_sub_mode, send_highlighted_message, random_sub_emote_unlock, chosen_sub_emote_unlock, chosen_modified_sub_emote_unlock, message_effect: A built-in Power-up that the viewer redeemed with Bits., gigantify_an_emote: A built-in Power-up that the viewer redeemed with Bits., celebration: A built-in Power-up that the viewer redeemed with Bits."
               },
               "cost": {
                 "type": "integer",
-                "description": "The reward cost."
+                "description": "The reward's cost in Channel Points. For the Power-ups that viewers redeem with Bits (message_effect, gigantify_an_emote and celebration), cost is 0."
               },
               "unlocked_emote": {
                 "type": "object",
                 "nullable": true,
-                "description": "Emote that was unlocked.",
+                "description": "The emote that the viewer unlocked. Set only for random_sub_emote_unlock redemptions; null for every other reward type, including chosen_sub_emote_unlock and chosen_modified_sub_emote_unlock. To get the emote for chosen unlocks, use version 2.",
                 "properties": {
                   "id": {
                     "type": "string",
@@ -3083,25 +3006,26 @@
           },
           "message": {
             "type": "object",
-            "description": "An object that contains the user message and emote information needed to recreate the message.",
+            "description": "An object that contains the user message and emote information needed to recreate the message. The object is always present.",
             "properties": {
               "text": {
                 "type": "string",
-                "description": "The text of the chat message."
+                "description": "The text of the chat message that the redemption posted. Is an empty string if the redemption didn't post a chat message, such as an emote unlock or a celebration, or a message that AutoMod held for review. For gigantify_an_emote, the text ends with the code of the gigantified emote."
               },
               "emotes": {
                 "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/Emotes"
                 },
-                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text."
+                "nullable": true,
+                "description": "An array that includes the emote ID and start and end positions for where the emote appears in the text. Is null if the message contains no emotes or the redemption didn't post a chat message."
               }
             }
           },
           "user_input": {
             "type": "string",
             "nullable": true,
-            "description": "A string that the user entered if the reward requires input."
+            "description": "The message that the viewer entered when redeeming the reward. Is null if the viewer didn't enter a message. For gigantify_an_emote, this doesn't include the code of the gigantified emote, which message.text does include."
           },
           "redeemed_at": {
             "type": "string",
@@ -3117,7 +3041,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The broadcaster user ID for the channel you want to receive channel points reward add notifications for."
+            "description": "The broadcaster user ID for the channel you want to receive channel points automatic reward redemption add notifications for."
           }
         },
         "required": [
@@ -3168,7 +3092,7 @@
               },
               "channel_points": {
                 "type": "integer",
-                "description": "Number of channel points used."
+                "description": "The reward's cost in Channel Points. When broadcasters redeem a reward on their own channel, no points are used, but this field still contains the reward's cost."
               },
               "emote": {
                 "type": "object",
@@ -3190,7 +3114,7 @@
           "message": {
             "type": "object",
             "nullable": true,
-            "description": "An object that contains the user message and emote information needed to recreate the message.",
+            "description": "An object that contains the user message and emote information needed to recreate the message. Is null for the emote unlock rewards (random_sub_emote_unlock, chosen_sub_emote_unlock and chosen_modified_sub_emote_unlock), and when AutoMod holds the viewer's message for review.",
             "properties": {
               "text": {
                 "type": "string",
@@ -3292,7 +3216,7 @@
           },
           "status": {
             "type": "string",
-            "description": "Defaults to unfulfilled. Possible values are unknown, unfulfilled, fulfilled, and canceled."
+            "description": "The redemption's status. Is fulfilled if the reward skips the request queue (the reward's should_redemptions_skip_request_queue setting is true); otherwise, unfulfilled. Possible values are unknown, unfulfilled, fulfilled, and canceled."
           },
           "redeemed_at": {
             "type": "string",
@@ -3423,7 +3347,7 @@
           },
           "is_in_stock": {
             "type": "boolean",
-            "description": "Is the reward currently in stock. If false, viewers can't redeem."
+            "description": "Is the reward currently in stock. If false, viewers can't redeem. Also false if max_per_stream is enabled and the broadcaster isn't live."
           },
           "title": {
             "type": "string",
@@ -3455,7 +3379,7 @@
           },
           "background_color": {
             "type": "string",
-            "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
+            "description": "Custom background color for the reward, as a hex color code with a \\# prefix. Example: #FA1ED2. Is an empty string if the reward was created without a background color."
           },
           "image": {
             "allOf": [
@@ -3464,7 +3388,7 @@
               }
             ],
             "nullable": true,
-            "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
+            "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Always null in this notification, because a custom image can be uploaded only after the reward is created. The channel.channel_points_custom_reward.update notification reports the image once it's uploaded."
           },
           "default_image": {
             "$ref": "#/components/schemas/DefaultImage",
@@ -3570,7 +3494,7 @@
           },
           "background_color": {
             "type": "string",
-            "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
+            "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2. Is an empty string if the reward doesn't have a background color."
           },
           "image": {
             "allOf": [
@@ -3579,7 +3503,7 @@
               }
             ],
             "nullable": true,
-            "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded."
+            "description": "Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded. When a reward is removed, its custom image files are deleted, so these URLs might no longer load."
           },
           "default_image": {
             "$ref": "#/components/schemas/DefaultImage",
@@ -3685,7 +3609,7 @@
           },
           "background_color": {
             "type": "string",
-            "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2."
+            "description": "Custom background color for the reward. Format: Hex with \\# prefix. Example: #FA1ED2. Is an empty string if the reward doesn't have a background color."
           },
           "image": {
             "allOf": [
@@ -3779,29 +3703,15 @@
           },
           "charity_logo": {
             "type": "string",
-            "description": "A URL to an image of the charity's logo. The image's type is PNG and its size is 100px X 100px."
+            "description": "A URL to an image of the charity's logo. The image is typically a PNG that's 100px X 100px. If larger, it is recommended to squash the image and present as a square size."
           },
           "charity_website": {
             "type": "string",
-            "description": "A URL to the charity's website."
+            "description": "A URL to the charity's website. Is an empty string if the charity doesn't have a website."
           },
           "amount": {
-            "type": "object",
-            "description": "An object that contains the amount of money that the user donated.",
-            "properties": {
-              "value": {
-                "type": "integer",
-                "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
-              },
-              "decimal_places": {
-                "type": "integer",
-                "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
-              },
-              "currency": {
-                "type": "string",
-                "description": "The ISO-4217 three-letter currency code that identifies the type of currency in value."
-              }
-            }
+            "$ref": "#/components/schemas/Amount",
+            "description": "An object that contains the amount of money that the user donated."
           }
         }
       },
@@ -3830,15 +3740,15 @@
             "type": "string",
             "description": "An ID that identifies the charity campaign."
           },
-          "broadcaster_id": {
+          "broadcaster_user_id": {
             "type": "string",
             "description": "An ID that identifies the broadcaster that's running the campaign."
           },
-          "broadcaster_login": {
+          "broadcaster_user_login": {
             "type": "string",
             "description": "The broadcaster's login name."
           },
-          "broadcaster_name": {
+          "broadcaster_user_name": {
             "type": "string",
             "description": "The broadcaster's display name."
           },
@@ -3852,11 +3762,11 @@
           },
           "charity_logo": {
             "type": "string",
-            "description": "A URL to an image of the charity's logo. The image's type is PNG and its size is 100px X 100px."
+            "description": "A URL to an image of the charity's logo. The image is typically a PNG that's 100px X 100px. If larger, it is recommended to squash the image and present as a square size."
           },
           "charity_website": {
             "type": "string",
-            "description": "A URL to the charity's website."
+            "description": "A URL to the charity's website. Is an empty string if the charity doesn't have a website."
           },
           "current_amount": {
             "$ref": "#/components/schemas/CurrentAmount",
@@ -3864,7 +3774,7 @@
           },
           "target_amount": {
             "$ref": "#/components/schemas/TargetAmount",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal. If the broadcaster didn't set a goal, value is 0."
           }
         }
       },
@@ -3893,15 +3803,15 @@
             "type": "string",
             "description": "An ID that identifies the charity campaign."
           },
-          "broadcaster_id": {
+          "broadcaster_user_id": {
             "type": "string",
             "description": "An ID that identifies the broadcaster that's running the campaign."
           },
-          "broadcaster_login": {
+          "broadcaster_user_login": {
             "type": "string",
             "description": "The broadcaster's login name."
           },
-          "broadcaster_name": {
+          "broadcaster_user_name": {
             "type": "string",
             "description": "The broadcaster's display name."
           },
@@ -3915,11 +3825,11 @@
           },
           "charity_logo": {
             "type": "string",
-            "description": "A URL to an image of the charity's logo. The image's type is PNG and its size is 100px X 100px."
+            "description": "A URL to an image of the charity's logo. The image is typically a PNG that's 100px X 100px. If larger, it is recommended to squash the image and present as a square size."
           },
           "charity_website": {
             "type": "string",
-            "description": "A URL to the charity's website."
+            "description": "A URL to the charity's website. Is an empty string if the charity doesn't have a website."
           },
           "current_amount": {
             "$ref": "#/components/schemas/CurrentAmount",
@@ -3927,11 +3837,11 @@
           },
           "target_amount": {
             "$ref": "#/components/schemas/TargetAmount",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal. If the broadcaster didn't set a goal, value is 0."
           },
           "started_at": {
             "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the broadcaster started the campaign."
+            "description": "The UTC date and time (in RFC3339 format) of when the broadcaster started the campaign, or most recently resumed it."
           }
         }
       },
@@ -3943,7 +3853,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster that you want to receive notifications about when they stop a charity campaign."
+            "description": "The ID of the broadcaster that you want to receive notifications about when their charity campaign stops."
           }
         },
         "required": [
@@ -3960,15 +3870,15 @@
             "type": "string",
             "description": "An ID that identifies the charity campaign."
           },
-          "broadcaster_id": {
+          "broadcaster_user_id": {
             "type": "string",
             "description": "An ID that identifies the broadcaster that ran the campaign."
           },
-          "broadcaster_login": {
+          "broadcaster_user_login": {
             "type": "string",
             "description": "The broadcaster's login name."
           },
-          "broadcaster_name": {
+          "broadcaster_user_name": {
             "type": "string",
             "description": "The broadcaster's display name."
           },
@@ -3982,23 +3892,23 @@
           },
           "charity_logo": {
             "type": "string",
-            "description": "A URL to an image of the charity's logo. The image's type is PNG and its size is 100px X 100px."
+            "description": "A URL to an image of the charity's logo. The image is typically a PNG that's 100px X 100px. If larger, it is recommended to squash the image and present as a square size."
           },
           "charity_website": {
             "type": "string",
-            "description": "A URL to the charity's website."
+            "description": "A URL to the charity's website. Is an empty string if the charity doesn't have a website."
           },
           "current_amount": {
             "$ref": "#/components/schemas/CurrentAmount",
-            "description": "An object that contains the final amount of donations that the campaign received."
+            "description": "An object that contains the amount of donations that the campaign received as of when it stopped."
           },
           "target_amount": {
             "$ref": "#/components/schemas/TargetAmount",
-            "description": "An object that contains the campaign's target fundraising goal."
+            "description": "An object that contains the campaign's target fundraising goal. If the broadcaster didn't set a goal, value is 0."
           },
           "stopped_at": {
             "type": "string",
-            "description": "The UTC timestamp (in RFC3339 format) of when the broadcaster stopped the campaign."
+            "description": "The UTC date and time (in RFC3339 format) of when the campaign stopped."
           }
         }
       },
@@ -4224,7 +4134,7 @@
             "properties": {
               "text": {
                 "type": "string",
-                "description": "The chat message in plain text."
+                "description": "The chat message in plain text. If the message was sent with the /me command, the text begins with \\u0001ACTION and ends with \\u0001, and fragments contain only the message itself. If the message is a reply, the text and fragments begin with @ and the display name of the parent message's sender (parent_user_name), followed by a space."
               },
               "fragments": {
                 "type": "array",
@@ -4306,7 +4216,7 @@
           },
           "message_type": {
             "type": "string",
-            "description": "The type of message. Possible values: text, channel_points_highlighted, channel_points_sub_only, user_intro, power_ups_message_effect, power_ups_gigantified_emote"
+            "description": "The type of message. In a shared chat session, copies of the message delivered to other participants' channels always have text. Possible values: text, channel_points_highlighted, channel_points_sub_only, power_ups_message_effect, power_ups_gigantified_emote"
           },
           "badges": {
             "type": "array",
@@ -4378,6 +4288,11 @@
             "nullable": true,
             "description": "The ID of a channel points custom reward that was redeemed."
           },
+          "channel_points_animation_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "An ID for the type of animation selected as part of a Power-ups message effect. Is null unless message_type is power_ups_message_effect."
+          },
           "source_broadcaster_user_id": {
             "type": "string",
             "nullable": true,
@@ -4409,7 +4324,7 @@
           "is_source_only": {
             "type": "boolean",
             "nullable": true,
-            "description": "Determines if a message delivered during a shared chat session is only sent to the source channel. Has no effect if the message is not sent during a shared chat session."
+            "description": "Whether a message sent during a shared chat session was sent only to the source channel. Can be true only in the source channel's own notification, where the source_* fields are null. Copies delivered to the other channels in the session always have false. Is null if the message isn't sent during a shared chat session."
           }
         }
       },
@@ -4509,15 +4424,18 @@
           },
           "chatter_user_id": {
             "type": "string",
-            "description": "The user ID of the user that sent the message."
+            "nullable": true,
+            "description": "The user ID of the user that sent the message. Is null if chatter_is_anonymous is true."
           },
           "chatter_user_name": {
             "type": "string",
-            "description": "The display name of the user that sent the message."
+            "nullable": true,
+            "description": "The display name of the user that sent the message. Is null if chatter_is_anonymous is true."
           },
           "chatter_user_login": {
             "type": "string",
-            "description": "The user login of the user that sent the message."
+            "nullable": true,
+            "description": "The user login of the user that sent the message. Is null if chatter_is_anonymous is true."
           },
           "chatter_is_anonymous": {
             "type": "boolean",
@@ -4532,11 +4450,11 @@
             "items": {
               "$ref": "#/components/schemas/Badges"
             },
-            "description": "The list of chat badges for the chatter in the channel the message was sent from."
+            "description": "The list of chat badges for the chatter in the broadcaster's channel. For a notice from another channel in a shared chat session, source_badges contains the chatter's badges in that channel."
           },
           "system_message": {
             "type": "string",
-            "description": "The message Twitch shows in the chat room for this notice."
+            "description": "The message Twitch shows in the chat room for this notice. Is an empty string for announcements; the announcement's text is in message."
           },
           "message_id": {
             "type": "string",
@@ -4557,20 +4475,16 @@
                   "properties": {
                     "type": {
                       "type": "string",
-                      "description": "The type of message fragment. Possible values: text, cheermote, emote, mention"
+                      "description": "The type of message fragment. Possible values: text, emote, mention"
                     },
                     "text": {
                       "type": "string",
                       "description": "Message text in fragment."
                     },
                     "cheermote": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/Cheermote"
-                        }
-                      ],
+                      "type": "object",
                       "nullable": true,
-                      "description": "Metadata pertaining to the cheermote."
+                      "description": "Always null. Notification messages don't contain Cheermotes."
                     },
                     "emote": {
                       "type": "object",
@@ -4615,7 +4529,7 @@
           },
           "notice_type": {
             "type": "string",
-            "description": "The type of notice. Possible values: sub, resub, sub_gift, community_sub_gift, gift_paid_upgrade, prime_paid_upgrade, raid, unraid, pay_it_forward, announcement, bits_badge_tier, charity_donation, watch_streak, modiversary, gifted_drops_summary, shared_chat_sub, shared_chat_resub, shared_chat_sub_gift, shared_chat_community_sub_gift, shared_chat_gift_paid_upgrade, shared_chat_prime_paid_upgrade, shared_chat_raid, shared_chat_pay_it_forward, shared_chat_announcement, shared_chat_modiversary, shared_chat_gifted_drops_summary, unknown"
+            "description": "The type of notice. Possible values: sub, resub, sub_gift, community_sub_gift, gift_paid_upgrade, prime_paid_upgrade, raid, unraid, pay_it_forward, announcement, bits_badge_tier, charity_donation, watch_streak, modiversary, gifted_drops_summary, shared_chat_sub, shared_chat_resub, shared_chat_sub_gift, shared_chat_community_sub_gift, shared_chat_gift_paid_upgrade, shared_chat_prime_paid_upgrade, shared_chat_raid, shared_chat_pay_it_forward, shared_chat_announcement, shared_chat_modiversary, shared_chat_gifted_drops_summary, unknown: A notice type that this version of the subscription type doesn't describe. Every notice object is null."
           },
           "sub": {
             "type": "object",
@@ -4652,7 +4566,7 @@
               "streak_months": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The total number of months the user has subscribed."
+                "description": "The number of consecutive months the user has been subscribed. Is null if the user chose not to share their streak."
               },
               "sub_tier": {
                 "type": "string",
@@ -4660,7 +4574,6 @@
               },
               "is_prime": {
                 "type": "boolean",
-                "nullable": true,
                 "description": "Whether or not this subscription is a Prime subscription."
               },
               "is_gift": {
@@ -4670,22 +4583,22 @@
               "gifter_is_anonymous": {
                 "type": "boolean",
                 "nullable": true,
-                "description": "Whether or not the gift was anonymous."
+                "description": "Whether the gift was anonymous. Is null if is_gift is false."
               },
               "gifter_user_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user ID of the subscription gifter. Null if anonymous."
+                "description": "The user ID of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               },
               "gifter_user_name": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user name of the subscription gifter. Null if anonymous."
+                "description": "The user name of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               },
               "gifter_user_login": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user login of the subscription gifter. Null if anonymous."
+                "description": "The user login of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               }
             }
           },
@@ -4701,7 +4614,7 @@
               "cumulative_total": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The amount of gifts the gifter has given in this channel. Null if anonymous."
+                "description": "The number of gifts the gifter has given in this channel. Is null if the gifter is anonymous. Is 0 if the gifter chose not to share their gift count or the count isn't available."
               },
               "recipient_user_id": {
                 "type": "string",
@@ -4746,46 +4659,14 @@
               "cumulative_total": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The amount of gifts the gifter has given in this channel. Null if anonymous."
+                "description": "The number of gifts the gifter has given in this channel. Is null if the gifter is anonymous. Is 0 if the gifter chose not to share their gift count or the count isn't available."
               }
             }
           },
           "gift_paid_upgrade": {
             "type": "object",
             "nullable": true,
-            "description": "Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade.",
-            "properties": {
-              "gifter_is_anonymous": {
-                "type": "boolean",
-                "description": "Whether the gift was given anonymously."
-              },
-              "gifter_user_id": {
-                "type": "string",
-                "nullable": true,
-                "description": "The user ID of the user who gifted the subscription. Null if anonymous."
-              },
-              "gifter_user_name": {
-                "type": "string",
-                "nullable": true,
-                "description": "The user name of the user who gifted the subscription. Null if anonymous."
-              }
-            }
-          },
-          "prime_paid_upgrade": {
-            "type": "object",
-            "nullable": true,
-            "description": "Information about the Prime gift paid upgrade event. Null if notice_type is not prime_paid_upgrade",
-            "properties": {
-              "sub_tier": {
-                "type": "string",
-                "description": "The type of subscription plan being used. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
-              }
-            }
-          },
-          "pay_it_forward": {
-            "type": "object",
-            "nullable": true,
-            "description": "Information about the pay it forward event. Null if notice_type is not pay_it_forward",
+            "description": "Information about the gift paid upgrade event, where a user who received a gift subscription continues it as a paid subscription. Null if notice_type is not gift_paid_upgrade.",
             "properties": {
               "gifter_is_anonymous": {
                 "type": "boolean",
@@ -4805,6 +4686,58 @@
                 "type": "string",
                 "nullable": true,
                 "description": "The user login of the user who gifted the subscription. Null if anonymous."
+              }
+            }
+          },
+          "prime_paid_upgrade": {
+            "type": "object",
+            "nullable": true,
+            "description": "Information about the Prime paid upgrade event, where a user converts a Prime subscription to a paid subscription. Null if notice_type is not prime_paid_upgrade.",
+            "properties": {
+              "sub_tier": {
+                "type": "string",
+                "description": "The type of subscription plan being used. Possible values: 1000: First level of paid or Prime subscription., 2000: Second level of paid subscription., 3000: Third level of paid subscription."
+              }
+            }
+          },
+          "pay_it_forward": {
+            "type": "object",
+            "nullable": true,
+            "description": "Information about the pay it forward event. Null if notice_type is not pay_it_forward",
+            "properties": {
+              "recipient_user_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user ID of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
+              "recipient_user_name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user name of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
+              "recipient_user_login": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user login of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
+              "gifter_is_anonymous": {
+                "type": "boolean",
+                "description": "Whether the user who originally gifted the chatter's subscription did so anonymously."
+              },
+              "gifter_user_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user ID of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
+              },
+              "gifter_user_name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user name of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user login of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
               }
             }
           },
@@ -4847,7 +4780,7 @@
             "properties": {
               "color": {
                 "type": "string",
-                "description": "Color of the announcement."
+                "description": "The color used to highlight the announcement. Is an empty string if the announcement was sent without a color. Possible values: PRIMARY: The default if a Send Chat Announcement request doesn't specify a color., BLUE, GREEN, ORANGE, PURPLE"
               }
             }
           },
@@ -4865,7 +4798,7 @@
           "charity_donation": {
             "type": "object",
             "nullable": true,
-            "description": "Information about the announcement event. Null if notice_type is not charity_donation",
+            "description": "Information about the charity donation event. Null if notice_type is not charity_donation.",
             "properties": {
               "charity_name": {
                 "type": "string",
@@ -4982,7 +4915,7 @@
               "streak_months": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The total number of months the user has subscribed."
+                "description": "The number of consecutive months the user has been subscribed. Is null if the user chose not to share their streak."
               },
               "sub_tier": {
                 "type": "string",
@@ -4990,7 +4923,6 @@
               },
               "is_prime": {
                 "type": "boolean",
-                "nullable": true,
                 "description": "Whether or not this subscription is a Prime subscription."
               },
               "is_gift": {
@@ -5000,29 +4932,29 @@
               "gifter_is_anonymous": {
                 "type": "boolean",
                 "nullable": true,
-                "description": "Whether or not the gift was anonymous."
+                "description": "Whether the gift was anonymous. Is null if is_gift is false."
               },
               "gifter_user_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user ID of the subscription gifter. Null if anonymous."
+                "description": "The user ID of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               },
               "gifter_user_name": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user name of the subscription gifter. Null if anonymous."
+                "description": "The user name of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               },
               "gifter_user_login": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user login of the subscription gifter. Null if anonymous."
+                "description": "The user login of the subscription gifter. Is null if is_gift is false or the gift was anonymous."
               }
             }
           },
           "shared_chat_sub_gift": {
             "type": "object",
             "nullable": true,
-            "description": "Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift. This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "description": "Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift. This field has the same information as the sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
             "properties": {
               "duration_months": {
                 "type": "integer",
@@ -5031,7 +4963,7 @@
               "cumulative_total": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The amount of gifts the gifter has given in this channel. Null if anonymous."
+                "description": "The number of gifts the gifter has given in this channel. Is null if the gifter is anonymous. Is 0 if the gifter chose not to share their gift count or the count isn't available."
               },
               "recipient_user_id": {
                 "type": "string",
@@ -5076,7 +5008,7 @@
               "cumulative_total": {
                 "type": "integer",
                 "nullable": true,
-                "description": "The amount of gifts the gifter has given in this channel. Null if anonymous."
+                "description": "The number of gifts the gifter has given in this channel. Is null if the gifter is anonymous. Is 0 if the gifter chose not to share their gift count or the count isn't available."
               }
             }
           },
@@ -5098,13 +5030,18 @@
                 "type": "string",
                 "nullable": true,
                 "description": "The user name of the user who gifted the subscription. Null if anonymous."
+              },
+              "gifter_user_login": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user login of the user who gifted the subscription. Null if anonymous."
               }
             }
           },
           "shared_chat_prime_paid_upgrade": {
             "type": "object",
             "nullable": true,
-            "description": "Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade. This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
+            "description": "Information about the shared_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade. This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
             "properties": {
               "sub_tier": {
                 "type": "string",
@@ -5117,24 +5054,39 @@
             "nullable": true,
             "description": "Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward. This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.",
             "properties": {
+              "recipient_user_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user ID of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
+              "recipient_user_name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user name of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
+              "recipient_user_login": {
+                "type": "string",
+                "nullable": true,
+                "description": "The user login of the user who received the chatter's gift subscription. Is null if the gift was paid forward to the community."
+              },
               "gifter_is_anonymous": {
                 "type": "boolean",
-                "description": "Whether the gift was given anonymously."
+                "description": "Whether the user who originally gifted the chatter's subscription did so anonymously."
               },
               "gifter_user_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user ID of the user who gifted the subscription. Null if anonymous."
+                "description": "The user ID of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
               },
               "gifter_user_name": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user name of the user who gifted the subscription. Null if anonymous."
+                "description": "The user name of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
               },
               "gifter_user_login": {
                 "type": "string",
                 "nullable": true,
-                "description": "The user login of the user who gifted the subscription. Null if anonymous."
+                "description": "The user login of the user who originally gifted the subscription that the chatter is paying forward. Is null if that gift was anonymous."
               }
             }
           },
@@ -5172,7 +5124,7 @@
             "properties": {
               "color": {
                 "type": "string",
-                "description": "Color of the announcement."
+                "description": "The color used to highlight the announcement. Is an empty string if the announcement was sent without a color. Possible values: PRIMARY: The default if a Send Chat Announcement request doesn't specify a color., BLUE, GREEN, ORANGE, PURPLE"
               }
             }
           },
@@ -5243,7 +5195,7 @@
           },
           "user_id": {
             "type": "string",
-            "description": "The user ID to read chat as."
+            "description": "The ID of the user whose held messages you want to be notified about. Only messages that this user sends in the broadcaster's chat trigger a notification."
           }
         },
         "required": [
@@ -5409,7 +5361,7 @@
             "items": {
               "$ref": "#/components/schemas/Participants"
             },
-            "description": "The list of participants in the session."
+            "description": "The list of channels that are active in the session, including the host and the channel in the subscription condition. Channels that were invited but haven't joined, or that left the session, aren't included."
           }
         }
       },
@@ -5518,7 +5470,7 @@
             "items": {
               "$ref": "#/components/schemas/Participants"
             },
-            "description": "The list of participants in the session."
+            "description": "The list of channels that are active in the session after the change, including the host and the channel in the subscription condition. Channels that were invited but haven't joined, or that left the session, aren't included. The payload doesn't say which channel joined or left."
           }
         }
       },
@@ -5534,7 +5486,7 @@
           },
           "conduit_id": {
             "type": "string",
-            "description": "The conduit ID to receive events for. If omitted, events for all of this client's conduits are sent."
+            "description": "The ID of one of your conduits to receive events for. If it isn't one of your conduits, the subscription never receives notifications. If omitted, events for all of this client's conduits are sent."
           }
         },
         "required": [
@@ -5557,11 +5509,11 @@
           },
           "status": {
             "type": "string",
-            "description": "The new status of the transport."
+            "description": "The shard's new status. Possible values: webhook_callback_verification_pending: The shard is pending verification of the specified callback URL. You get this status when you, webhook_callback_verification_failed: The specified callback URL failed verification., notification_failures_exceeded: The notification delivery failure rate was too high., websocket_disconnected: The client closed the connection., websocket_failed_ping_pong: The client failed to respond to a ping message., websocket_received_inbound_traffic: The client sent a non-pong message., websocket_internal_error: The Twitch WebSocket server experienced an unexpected error. Please report this issue, websocket_network_timeout: The Twitch WebSocket server timed out writing the message to the client., websocket_network_error: The Twitch WebSocket server experienced a network error writing the message to the client., websocket_failed_to_reconnect: The client failed to reconnect to the Twitch WebSocket server within the required time"
           },
           "transport": {
             "type": "object",
-            "description": "The disabled transport.",
+            "description": "The shard's transport. If the shard was disabled because its WebSocket session disconnected or its webhook callback failed, this is that transport. If you assigned the shard a new webhook callback, this is the new callback.",
             "properties": {
               "method": {
                 "type": "string",
@@ -5599,7 +5551,7 @@
         "properties": {
           "organization_id": {
             "type": "string",
-            "description": "The organization ID of the organization that owns the game on the developer portal."
+            "description": "The ID of the organization that owns the game. Your application must belong to this organization."
           },
           "category_id": {
             "type": "string",
@@ -5634,7 +5586,7 @@
               },
               "category_id": {
                 "type": "string",
-                "description": "Twitch category ID of the game that was being played when this benefit was entitled."
+                "description": "The ID of the category (game) that the Drop's benefit is for."
               },
               "category_name": {
                 "type": "string",
@@ -5666,7 +5618,7 @@
               },
               "created_at": {
                 "type": "string",
-                "description": "UTC timestamp in ISO format when this entitlement was granted on Twitch."
+                "description": "The UTC date and time (in RFC3339 format) of when the user earned the Drop. The notification is sent when the user claims the Drop, so this can be earlier than the notification."
               }
             }
           }
@@ -5743,7 +5695,7 @@
               },
               "in_development": {
                 "type": "boolean",
-                "description": "Flag indicating if the product is in development. If in_development is true, bits will be 0."
+                "description": "A Boolean value that indicates whether this was a test transaction in which no Bits were used. Is true if the product is in development, or if the broadcaster used the product in their own channel while the extension version installed there is still being tested or reviewed. If in_development is true, bits is 0."
               }
             }
           }
@@ -5757,7 +5709,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster to get notified about. The ID must match the user_id in the OAuth access token."
+            "description": "The ID of the broadcaster to get notified about. If you use a user access token, the ID must match the user ID in the token. If you use an app access token, the broadcaster must have authorized your app with the channel:read:goals scope."
           }
         },
         "required": [
@@ -5772,7 +5724,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "An ID that identifies this event."
+            "description": "An ID that identifies the goal. The channel.goal.progress and channel.goal.end events for this goal carry the same ID, and it matches the id that Get Creator Goals returns."
           },
           "broadcaster_user_id": {
             "type": "string",
@@ -5788,19 +5740,15 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the net increase or decrease in tier points associated with the subscriptions., subscription_count: The goal is to increase subscriptions. This type shows the net increase or decrease in the number of subscriptions., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
+            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the broadcaster's total tier points from subscriptions, which increase and decrease as users subscribe and unsubscribe., subscription_count: The goal is to increase subscriptions. This type shows the broadcaster's total number of subscriptions, which increases and decreases as users subscribe and unsubscribe., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
           },
           "description": {
             "type": "string",
-            "description": "A description of the goal, if specified. The description may contain a maximum of 40 characters."
-          },
-          "is_achieved": {
-            "type": "boolean",
-            "description": "A Boolean value that indicates whether the broadcaster achieved their goal. Is true if the goal was achieved; otherwise, false. Only the channel.goal.end event includes this field."
+            "description": "A description of the goal. Is an empty string if not specified. The description may contain a maximum of 40 characters. Goals whose type is new_bit or new_cheerer don't have a description, so this field is always an empty string for them."
           },
           "current_amount": {
             "type": "integer",
-            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field is increased by 1 for each new subscription."
+            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field is increased by 1 for each new subscription., If type is new_bit, this field is increased by the number of Bits used on the channel., If type is new_cheerer, this field is increased by 1 the first time each user Cheers on the channel after the goal starts. Other ways of using Bits don't count. In the Begin event, this field is the goal's starting value: the broadcaster's current number of followers for follow goals, the channel's current subscription points or number of subscriptions for subscription and subscription_count goals, and 0 for new_subscription, new_subscription_count, new_bit and new_cheerer goals."
           },
           "target_amount": {
             "type": "integer",
@@ -5808,11 +5756,7 @@
           },
           "started_at": {
             "type": "string",
-            "description": "The UTC timestamp in RFC 3339 format, which indicates when the broadcaster created the goal."
-          },
-          "ended_at": {
-            "type": "string",
-            "description": "The UTC timestamp in RFC 3339 format, which indicates when the broadcaster ended the goal. Only the channel.goal.end event includes this field."
+            "description": "The UTC timestamp in RFC 3339 format, which indicates when the goal began."
           }
         }
       },
@@ -5824,7 +5768,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster to get notified about. The ID must match the user_id in the OAuth access token."
+            "description": "The ID of the broadcaster to get notified about. If you use a user access token, the ID must match the user ID in the token. If you use an app access token, the broadcaster must have authorized your app with the channel:read:goals scope."
           }
         },
         "required": [
@@ -5839,7 +5783,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "An ID that identifies this event."
+            "description": "An ID that identifies the goal. The channel.goal.begin and channel.goal.progress events for this goal carry the same ID, and it matches the id that Get Creator Goals returns."
           },
           "broadcaster_user_id": {
             "type": "string",
@@ -5855,19 +5799,19 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the net increase or decrease in tier points associated with the subscriptions., subscription_count: The goal is to increase subscriptions. This type shows the net increase or decrease in the number of subscriptions., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
+            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the broadcaster's total tier points from subscriptions, which increase and decrease as users subscribe and unsubscribe., subscription_count: The goal is to increase subscriptions. This type shows the broadcaster's total number of subscriptions, which increases and decreases as users subscribe and unsubscribe., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
           },
           "description": {
             "type": "string",
-            "description": "A description of the goal, if specified. The description may contain a maximum of 40 characters."
+            "description": "A description of the goal. Is an empty string if not specified. The description may contain a maximum of 40 characters. Goals whose type is new_bit or new_cheerer don't have a description, so this field is always an empty string for them."
           },
           "is_achieved": {
             "type": "boolean",
-            "description": "A Boolean value that indicates whether the broadcaster achieved their goal. Is true if the goal was achieved; otherwise, false. Only the channel.goal.end event includes this field."
+            "description": "A Boolean value that indicates whether the broadcaster achieved their goal. Is true if current_amount was greater than or equal to target_amount when the goal ended; otherwise, false. For follow, subscription and subscription_count goals, this is false if unfollows or unsubscriptions brought current_amount back below target_amount before the goal ended. Only the channel.goal.end event includes this field."
           },
           "current_amount": {
             "type": "integer",
-            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field is increased by 1 for each new subscription."
+            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field starts at the broadcaster's current total of subscription points when the goal begins, and is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field starts at the broadcaster's current number of subscriptions when the goal begins, and is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field starts at 0 and is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field starts at 0 and is increased by 1 for each new subscription., If type is new_bit, this field starts at 0 and is increased by the number of Bits used on the channel., If type is new_cheerer, this field starts at 0 and is increased by 1 the first time each user Cheers on the channel after the goal starts. Other ways of using Bits don't count."
           },
           "target_amount": {
             "type": "integer",
@@ -5891,7 +5835,7 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The ID of the broadcaster to get notified about. The ID must match the user_id in the OAuth access token."
+            "description": "The ID of the broadcaster to get notified about. If you use a user access token, the ID must match the user ID in the token. If you use an app access token, the broadcaster must have authorized your app with the channel:read:goals scope."
           }
         },
         "required": [
@@ -5906,7 +5850,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "An ID that identifies this event."
+            "description": "An ID that identifies the goal. Every channel.goal.begin, channel.goal.progress and channel.goal.end notification for the goal has the same ID, which is also the id that Get Creator Goals returns. To identify an individual notification, use the notification's message ID."
           },
           "broadcaster_user_id": {
             "type": "string",
@@ -5922,19 +5866,15 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the net increase or decrease in tier points associated with the subscriptions., subscription_count: The goal is to increase subscriptions. This type shows the net increase or decrease in the number of subscriptions., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
+            "description": "The type of goal. Possible values: follow: The goal is to increase followers., subscription: The goal is to increase subscriptions. This type shows the broadcaster's total tier points from subscriptions, which increase and decrease as users subscribe and unsubscribe., subscription_count: The goal is to increase subscriptions. This type shows the broadcaster's total number of subscriptions, which increases and decreases as users subscribe and unsubscribe., new_subscription: The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started)., new_subscription_count: The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started)., new_bit: The goal is to increase the amount of Bits used on the channel., new_cheerer: The goal is to increase the number of unique Cheerers to Cheer on the channel."
           },
           "description": {
             "type": "string",
-            "description": "A description of the goal, if specified. The description may contain a maximum of 40 characters."
-          },
-          "is_achieved": {
-            "type": "boolean",
-            "description": "A Boolean value that indicates whether the broadcaster achieved their goal. Is true if the goal was achieved; otherwise, false. Only the channel.goal.end event includes this field."
+            "description": "A description of the goal. Is an empty string if not specified. The description may contain a maximum of 40 characters. Goals whose type is new_bit or new_cheerer don't have a description, so this field is always an empty string for them."
           },
           "current_amount": {
             "type": "integer",
-            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field is increased by 1 for each new subscription."
+            "description": "The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster., If type is subscription, this field starts at the broadcaster's current total of subscription points when the goal begins, and is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1., If type is subscription_count, this field starts at the broadcaster's current number of subscriptions when the goal begins, and is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes., If type is new_subscription, this field starts at 0 and is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1., If type is new_subscription_count, this field starts at 0 and is increased by 1 for each new subscription., If type is new_bit, this field starts at 0 and is increased by the number of Bits used on the channel., If type is new_cheerer, this field starts at 0 and is increased by 1 the first time each user Cheers on the channel after the goal starts. Other ways of using Bits don't count. If the broadcaster resets the goal's progress, this field is set to 0."
           },
           "target_amount": {
             "type": "integer",
@@ -5943,10 +5883,6 @@
           "started_at": {
             "type": "string",
             "description": "The UTC timestamp in RFC 3339 format, which indicates when the broadcaster created the goal."
-          },
-          "ended_at": {
-            "type": "string",
-            "description": "The UTC timestamp in RFC 3339 format, which indicates when the broadcaster ended the goal. Only the channel.goal.end event includes this field."
           }
         }
       },
@@ -5962,7 +5898,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator or broadcaster of the specified channel."
+            "description": "The user ID of the broadcaster or of one of the broadcaster's Guest Star moderators. A chat moderator who isn't a Guest Star moderator can't be used."
           }
         },
         "required": [
@@ -5978,15 +5914,15 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The non-host broadcaster user ID."
+            "description": "The ID of the broadcaster whose channel the notification is for, as given in broadcaster_user_id in the subscription's condition. This is the host or another participant in the session; compare it with host_user_id."
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The non-host broadcaster display name."
+            "description": "The display name of the broadcaster whose channel the notification is for."
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "The non-host broadcaster login."
+            "description": "The login of the broadcaster whose channel the notification is for."
           },
           "session_id": {
             "type": "string",
@@ -5995,17 +5931,17 @@
           "moderator_user_id": {
             "type": "string",
             "nullable": true,
-            "description": "The user ID of the moderator who updated the guest's state (could be the host). null if the update was performed by the guest."
+            "description": "The user ID of the user who made the change: the host, one of the host's Guest Star moderators, or another participant in the session. When Twitch makes the change automatically, such as moving a disconnected guest back to the invite queue, this is the host. null if the guest made the change themselves."
           },
           "moderator_user_name": {
             "type": "string",
             "nullable": true,
-            "description": "The moderator display name.null if the update was performed by the guest."
+            "description": "The display name of the user who made the change. null if the guest made the change themselves."
           },
           "moderator_user_login": {
             "type": "string",
             "nullable": true,
-            "description": "The moderator login. null if the update was performed by the guest."
+            "description": "The login of the user who made the change. null if the guest made the change themselves."
           },
           "guest_user_id": {
             "type": "string",
@@ -6025,12 +5961,12 @@
           "slot_id": {
             "type": "string",
             "nullable": true,
-            "description": "The ID of the slot assignment the guest is assigned to. null if the guest is in the INVITED, REMOVED, READY, or ACCEPTED state."
+            "description": "The ID of the slot, as numbered in the layout of the channel in broadcaster_user_id: 0 is that broadcaster's own slot, the other slots are numbered consecutively from 1, and SCREENSHARE is the screen-share slot. The same slot can have different IDs in notifications for different channels. null if the guest doesn't have a slot, as in invited and removed notifications. A slot is reserved as soon as a guest accepts an invite, so accepted notifications may include a slot ID."
           },
           "state": {
             "type": "string",
             "nullable": true,
-            "description": "The current state of the user after the update has taken place. null if the slot is now empty. Possible values: invited: The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue., accepted: The guest has accepted the invite and is currently in the process of setting up to join the session., ready: The guest has signaled they are ready and can be assigned a slot., backstage: The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software., live: The guest is now live in the host's broadcasting software."
+            "description": "The current state of the user after the update has taken place. null if the slot is now empty. Possible values: invited: The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue., accepted: The guest accepted an invite and is setting up to join the session., backstage: The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software., live: The guest is now live in the host's broadcasting software., removed: The guest was removed from their slot or left the session, or their invite was removed."
           },
           "host_user_id": {
             "type": "string",
@@ -6057,7 +5993,7 @@
           "host_volume": {
             "type": "integer",
             "nullable": true,
-            "description": "Value between 0-100 that represents the slot's audio level as heard by participants within the session. null if the guest is not slotted."
+            "description": "Value from 0 to 200 that represents the slot's audio level as heard by participants within the session. The default is 100. Is null if the guest is not slotted."
           }
         }
       },
@@ -6073,7 +6009,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator or broadcaster of the specified channel."
+            "description": "The user ID of the broadcaster or of one of the broadcaster's Guest Star moderators. A chat moderator who isn't a Guest Star moderator can't be used."
           }
         },
         "required": [
@@ -6113,7 +6049,7 @@
           },
           "session_id": {
             "type": "string",
-            "description": "ID representing the unique session that was started."
+            "description": "ID representing the session that was started. A session that begins after an earlier one ended can have the same ID."
           },
           "started_at": {
             "type": "string",
@@ -6133,7 +6069,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator or broadcaster of the specified channel."
+            "description": "The user ID of the broadcaster or of one of the broadcaster's Guest Star moderators. A chat moderator who isn't a Guest Star moderator can't be used."
           }
         },
         "required": [
@@ -6149,15 +6085,15 @@
         "properties": {
           "broadcaster_user_id": {
             "type": "string",
-            "description": "The non-host broadcaster user ID."
+            "description": "The ID of the broadcaster whose channel the notification is for. This is the session's host or another broadcaster collaborating with the host when the session ended. It matches host_user_id when the channel is the host's."
           },
           "broadcaster_user_name": {
             "type": "string",
-            "description": "The non-host broadcaster display name."
+            "description": "The display name of the broadcaster whose channel the notification is for."
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "The non-host broadcaster login."
+            "description": "The login of the broadcaster whose channel the notification is for."
           },
           "moderator_user_id": {
             "type": "string",
@@ -6173,7 +6109,7 @@
           },
           "session_id": {
             "type": "string",
-            "description": "ID representing the unique session that was started."
+            "description": "The ID of the session that ended. It matches the session_id in the session's channel.guest_star_session.begin notification. A later session can have the same ID."
           },
           "started_at": {
             "type": "string",
@@ -6209,7 +6145,7 @@
           },
           "moderator_user_id": {
             "type": "string",
-            "description": "The user ID of the moderator or broadcaster of the specified channel."
+            "description": "The user ID of the broadcaster or of one of the broadcaster's Guest Star moderators. A chat moderator who isn't a Guest Star moderator can't be used."
           }
         },
         "required": [
@@ -6233,11 +6169,11 @@
           },
           "broadcaster_user_login": {
             "type": "string",
-            "description": "he broadcaster login."
+            "description": "The broadcaster login."
           },
           "is_moderator_send_live_enabled": {
             "type": "boolean",
-            "description": "Flag determining if Guest Star moderators have access to control whether a guest is live once assigned to a slot."
+            "description": "Flag determining if Guest Star moderators can make a guest live once the guest is assigned to a slot."
           },
           "slot_count": {
             "type": "integer",
@@ -6307,7 +6243,7 @@
             "items": {
               "$ref": "#/components/schemas/TopContributions"
             },
-            "description": "The contributors with the most points contributed."
+            "description": "For each contribution type used, the contributor with the most points, counting only the contributions that started the Hype Train. There is one entry per contribution type, in no particular order. For a shared Hype Train, only contributions made in this broadcaster's channel count, so the array may be empty."
           },
           "level": {
             "type": "integer",
@@ -6315,11 +6251,11 @@
           },
           "all_time_high_level": {
             "type": "integer",
-            "description": "The all-time high level this type of Hype Train has reached for this broadcaster."
+            "description": "The level of the highest-scoring earlier Hype Train on this broadcaster's channel that wasn't shared. For a shared Hype Train, the level of the highest-scoring earlier shared Hype Train that this broadcaster's channel contributed to. The level is based on that Hype Train's total points and this Hype Train's level goals. Is 1 if there's no such Hype Train."
           },
           "all_time_high_total": {
             "type": "integer",
-            "description": "The all-time high total this type of Hype Train has reached for this broadcaster."
+            "description": "The total points of the highest-scoring earlier Hype Train on this broadcaster's channel that wasn't shared. For a shared Hype Train, the total points of the highest-scoring earlier shared Hype Train that this broadcaster's channel contributed to. Is 0 if there's no such Hype Train."
           },
           "shared_train_participants": {
             "type": "array",
@@ -6327,7 +6263,7 @@
               "$ref": "#/components/schemas/SharedTrainParticipants"
             },
             "nullable": true,
-            "description": "Non-null for a shared Hype Train. Contains the list of broadcasters in the shared Hype Train."
+            "description": "Non-null for a shared Hype Train. The broadcasters whose channels have contributed to the shared Hype Train, in no particular order. When the Hype Train begins, only the channels where the contributions that started it were made are listed, so other participating broadcasters, including the one this notification is for, may be missing."
           },
           "started_at": {
             "type": "string",
@@ -6339,11 +6275,11 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, regular"
+            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, mythic, regular"
           },
           "is_shared_train": {
             "type": "boolean",
-            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants will contain the list of broadcasters the train is shared with."
+            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants lists the broadcasters whose channels have contributed to it."
           }
         }
       },
@@ -6393,7 +6329,7 @@
             "items": {
               "$ref": "#/components/schemas/TopContributions"
             },
-            "description": "The contributors with the most points contributed."
+            "description": "The top contributor for each contribution type, with at most one bits entry and one subscription entry. The top contributor of a type is the user who used the most Bits, or who bought or gifted the most subscriptions whatever their tier. Anonymous contributions aren't listed, so the array may be empty. For a shared Hype Train, the array is computed separately for each broadcaster, so it can differ between their notifications."
           },
           "level": {
             "type": "integer",
@@ -6405,7 +6341,7 @@
               "$ref": "#/components/schemas/SharedTrainParticipants"
             },
             "nullable": true,
-            "description": "Non-null for a shared Hype Train. Contains the list of broadcasters in the shared Hype Train."
+            "description": "Non-null for a shared Hype Train. The broadcasters whose channels have contributed to the shared Hype Train, in no particular order, including broadcasters who have since left the shared chat. A broadcaster in the shared chat whose channel hasn't had any contributions isn't listed, even in that broadcaster's own notification."
           },
           "started_at": {
             "type": "string",
@@ -6421,11 +6357,11 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, regular"
+            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, mythic, regular"
           },
           "is_shared_train": {
             "type": "boolean",
-            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants will contain the list of broadcasters the train is shared with."
+            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants lists the broadcasters whose channels have contributed to it."
           }
         }
       },
@@ -6483,7 +6419,7 @@
             "items": {
               "$ref": "#/components/schemas/TopContributions"
             },
-            "description": "The contributors with the most points contributed."
+            "description": "The top contributor for each contribution type, with at most one entry per type. For example, the user who used the most Bits and the user who contributed the most subscriptions, counted by number of subscriptions regardless of tier. The array is empty until there's a top contributor, and the entries are in no particular order. Anonymous contributors are never listed. For a shared Hype Train, the array lists only the top contributors in this broadcaster's channel."
           },
           "level": {
             "type": "integer",
@@ -6495,7 +6431,7 @@
               "$ref": "#/components/schemas/SharedTrainParticipants"
             },
             "nullable": true,
-            "description": "Non-null for a shared Hype Train. Contains the list of broadcasters in the shared Hype Train."
+            "description": "Non-null for a shared Hype Train. Lists the broadcasters whose channels have contributed to the shared Hype Train so far, in no particular order. A broadcaster in the shared chat whose channel hasn't had a contribution yet isn't listed."
           },
           "started_at": {
             "type": "string",
@@ -6507,11 +6443,11 @@
           },
           "type": {
             "type": "string",
-            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, regular"
+            "description": "The type of the Hype Train. Possible values: treasure, golden_kappa, mythic, regular"
           },
           "is_shared_train": {
             "type": "boolean",
-            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants will contain the list of broadcasters the train is shared with."
+            "description": "Indicates if the Hype Train is shared. When true, shared_train_participants lists the broadcasters whose channels have contributed to the train."
           }
         }
       },
@@ -6559,9 +6495,19 @@
           "choices": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Choices"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ID for the choice."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Text displayed for the choice."
+                }
+              }
             },
-            "description": "An array of choices for the poll."
+            "description": "An array of the poll's choices. Each choice contains only its id and title. Vote counts are sent in channel.poll.progress and channel.poll.end notifications."
           },
           "bits_voting": {
             "$ref": "#/components/schemas/BitsVoting",
@@ -6639,7 +6585,7 @@
           },
           "status": {
             "type": "string",
-            "description": "The status of the poll. Valid values are completed, archived, and terminated."
+            "description": "The status of the poll. Possible values: completed: The poll ran for its full duration., terminated: The poll was ended before its scheduled end., archived: The poll was archived and is no longer visible on the channel. Also sent shortly after a completed or terminated notification for the same poll."
           },
           "started_at": {
             "type": "string",
@@ -6761,7 +6707,21 @@
           "outcomes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Outcomes"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The outcome ID."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The outcome title."
+                },
+                "color": {
+                  "type": "string",
+                  "description": "The color for the outcome. Valid values are blue and pink. If the Prediction has two outcomes, one is blue and the other is pink. If it has more than two outcomes, all of them are blue."
+                }
+              }
             },
             "description": "An array of outcomes for the Channel Points Prediction."
           },
@@ -6818,12 +6778,63 @@
           },
           "winning_outcome_id": {
             "type": "string",
-            "description": "ID of the winning outcome."
+            "description": "ID of the winning outcome. If status is canceled, this is an empty string."
           },
           "outcomes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Outcomes"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The outcome ID."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The outcome title."
+                },
+                "color": {
+                  "type": "string",
+                  "description": "The color for the outcome. Valid values are blue and pink. If the Prediction has two outcomes, one is blue and the other is pink. If it has more than two outcomes, all of them are blue."
+                },
+                "users": {
+                  "type": "integer",
+                  "description": "The number of users who chose this outcome. This includes viewers who took part without spending Channel Points, which happens where Channel Points can't be used on Predictions."
+                },
+                "channel_points": {
+                  "type": "integer",
+                  "description": "The total number of Channel Points used on this outcome."
+                },
+                "top_predictors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string",
+                        "description": "The ID of the user."
+                      },
+                      "user_login": {
+                        "type": "string",
+                        "description": "The login of the user."
+                      },
+                      "user_name": {
+                        "type": "string",
+                        "description": "The display name of the user."
+                      },
+                      "channel_points_won": {
+                        "type": "integer",
+                        "description": "The number of Channel Points paid out to the user, including the Channel Points they used. This value is 0 if the outcome did not win or if the Prediction was canceled and Channel Points were refunded."
+                      },
+                      "channel_points_used": {
+                        "type": "integer",
+                        "description": "The number of Channel Points used to participate in the Prediction."
+                      }
+                    }
+                  },
+                  "description": "An array of the users who used the most Channel Points on this outcome, highest first. A viewer who took part without spending Channel Points can appear with a channel_points_used of 0."
+                }
+              }
             },
             "description": "An array of outcomes for the Channel Points Prediction. Includes top_predictors."
           },
@@ -7109,17 +7120,17 @@
           },
           "user_id": {
             "type": "string",
-            "description": "The user id for the user who has revoked authorization for your client id."
+            "description": "The ID of the user whose authorization for your client ID was revoked."
           },
           "user_login": {
             "type": "string",
             "nullable": true,
-            "description": "The user login for the user who has revoked authorization for your client id. This is null if the user no longer exists."
+            "description": "The login name of the user whose authorization for your client ID was revoked. This is null if the user's account was permanently removed before Twitch sent the notification. When a user deletes their account, the notification still includes their login name."
           },
           "user_name": {
             "type": "string",
             "nullable": true,
-            "description": "The user display name for the user who has revoked authorization for your client id. This is null if the user no longer exists."
+            "description": "The display name of the user whose authorization for your client ID was revoked. This is null if the user's account was permanently removed before Twitch sent the notification. When a user deletes their account, the notification still includes their display name."
           }
         }
       },
@@ -7158,7 +7169,7 @@
           },
           "email": {
             "type": "string",
-            "description": "The user's email address. The event includes the user's email address only if the app used to request this event type includes the user:read:email scope for the user; otherwise, the field is set to an empty string. See Create EventSub Subscription."
+            "description": "The user's email address. The event includes the user's email address only if the app used to request this event type includes the user:read:email scope for the user; otherwise, the field is set to an empty string. For a WebSocket subscription, the user access token you used to create the subscription must also belong to the user identified by user_id. The field is also an empty string if the user's account doesn't have an email address. See Create EventSub Subscription."
           },
           "email_verified": {
             "type": "boolean",
@@ -7261,31 +7272,27 @@
           },
           "created_at": {
             "type": "string",
-            "description": "The time the notification was created."
+            "description": "The UTC date and time (in RFC3339 format) of when the subscription was created."
           },
           "transport": {
             "type": "object",
-            "description": "Transport-specific parameters.",
+            "description": "The transport that the notification was sent over.",
             "properties": {
               "method": {
                 "type": "string",
-                "description": "The transport method for EventSub. Possible values: webhook, websocket, conduit"
+                "description": "The transport method. Possible values: webhook, websocket, conduit"
               },
               "callback": {
                 "type": "string",
-                "description": "The callback URL where notifications are sent. The URL must use the HTTPS protocol and port 443. See Processing an Event. Specify this field only if method is set to webhook. NOTE: Redirects are not followed."
-              },
-              "secret": {
-                "type": "string",
-                "description": "The secret used to verify the signature. The secret must be an ASCII string that's a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message. Specify this field only if the method is set to webhook."
+                "description": "The callback URL where notifications are sent. Included only if method is webhook."
               },
               "session_id": {
                 "type": "string",
-                "description": "An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if the method is set to websocket."
+                "description": "The ID of the WebSocket session that notifications are sent to. Included only if method is websocket."
               },
               "conduit_id": {
                 "type": "string",
-                "description": "An ID that identifies the conduit to send this notification to. When you create a conduit, the server returns the ID in the API response. Specify this field only if the method is set to conduit."
+                "description": "The ID of the conduit that notifications are sent to. Included only if method is conduit."
               }
             }
           }
@@ -7301,19 +7308,19 @@
           },
           "callback": {
             "type": "string",
-            "description": "The callback URL where notifications are sent. The URL must use the HTTPS protocol and port 443. See Processing an Event. Specify this field only if method is set to webhook. NOTE: Redirects are not followed."
+            "description": "The callback URL where notifications are sent. The URL must use the HTTPS protocol and port 443, and its host must resolve to a public IPv4 address. Hosts that resolve only to IPv6 addresses aren't supported. See Processing an Event. Required if method is webhook. Don't specify it for other methods. NOTE: Redirects are not followed."
           },
           "secret": {
             "type": "string",
-            "description": "The secret used to verify the signature. The secret must be an ASCII string that's a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message. Specify this field only if the method is set to webhook."
+            "description": "The secret used to verify the signature. The secret must be an ASCII string that's a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message. Required if method is webhook. Don't specify it for other methods."
           },
           "session_id": {
             "type": "string",
-            "description": "An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if the method is set to websocket."
+            "description": "An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Required if method is websocket. Don't specify it for other methods."
           },
           "conduit_id": {
             "type": "string",
-            "description": "An ID that identifies the conduit to send this notification to. When you create a conduit, the server returns the ID in the API response. Specify this field only if the method is set to conduit."
+            "description": "An ID that identifies the conduit to send this notification to. When you create a conduit, the server returns the ID in the API response. Required if method is conduit. Don't specify it for other methods."
           }
         },
         "required": [
@@ -7327,9 +7334,9 @@
             "type": "integer",
             "description": "The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550."
           },
-          "decimal_place": {
+          "decimal_places": {
             "type": "integer",
-            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places."
+            "description": "The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places"
           },
           "currency": {
             "type": "string",
@@ -7346,7 +7353,7 @@
           },
           "level": {
             "type": "integer",
-            "description": "The level of severity (1-4)."
+            "description": "The level of severity, from 1 to 4, where 1 is the most severe. AutoMod holds a message when its level is at or below the channel's AutoMod level for that category. Is 0 if AutoMod couldn't determine the category."
           },
           "boundaries": {
             "type": "array",
@@ -7394,7 +7401,7 @@
           },
           "info": {
             "type": "string",
-            "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+            "description": "Contains metadata related to the badge, or an empty string if the badge has none. For example, the number of months the user has been subscribed for the subscriber and founder badges, the number of years for the user-anniversary badge, or the title of the outcome the user predicted for the predictions badge."
           }
         }
       },
@@ -7416,7 +7423,7 @@
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "Reason given for the ban."
+            "description": "The reason given for the ban. Is an empty string if no reason was given."
           }
         }
       },
@@ -7441,7 +7448,7 @@
             "items": {
               "$ref": "#/components/schemas/TermsFound"
             },
-            "description": "The list of blocked terms found in the message."
+            "description": "The blocked terms and blocked links found in the message, one entry per occurrence. A term that appears more than once in the message has an entry for each occurrence."
           }
         }
       },
@@ -7450,11 +7457,11 @@
         "properties": {
           "start_pos": {
             "type": "integer",
-            "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
+            "description": "The position of the first character of the problem text. Positions start at 0 and count Unicode code points, not bytes or UTF-16 code units."
           },
           "end_pos": {
             "type": "integer",
-            "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+            "description": "The position of the last character of the problem text (inclusive). Positions start at 0 and count Unicode code points, not bytes or UTF-16 code units."
           }
         }
       },
@@ -7463,11 +7470,11 @@
         "properties": {
           "start_pos": {
             "type": "integer",
-            "description": "Index in the message for the start of the problem (0 indexed, inclusive)."
+            "description": "The position of the first character of the problem text. Positions start at 0 and count Unicode code points, not bytes or UTF-16 code units."
           },
           "end_pos": {
             "type": "integer",
-            "description": "Index in the message for the end of the problem (0 indexed, inclusive)."
+            "description": "The position of the last character of the problem text (inclusive). Positions start at 0 and count Unicode code points, not bytes or UTF-16 code units."
           }
         }
       },
@@ -7497,7 +7504,7 @@
           },
           "tier": {
             "type": "integer",
-            "description": "The tier level of the cheermote."
+            "description": "The minimum number of Bits for the Cheermote tier that the cheer reached. For example, if a Cheermote's tiers start at 1, 100, 1000, 5000 and 10000 Bits, cheer150 has a tier of 100."
           }
         }
       },
@@ -7603,11 +7610,11 @@
         "properties": {
           "begin": {
             "type": "integer",
-            "description": "The index of where the Emote starts in the text."
+            "description": "The zero-based byte offset in the UTF-8 encoded text where the emote starts."
           },
           "end": {
             "type": "integer",
-            "description": "The index of where the Emote ends in the text."
+            "description": "The zero-based byte offset in the UTF-8 encoded text of the emote's last byte. The range is inclusive."
           },
           "id": {
             "type": "string",
@@ -7629,11 +7636,11 @@
         "properties": {
           "type": {
             "type": "string",
-            "description": "Possible values: text, emote, cheermote"
+            "description": "The type of fragment. Any part of the message that isn't an emote or a Cheermote, such as a mention or a link, is text. Possible values: text, emote, cheermote"
           },
           "text": {
             "type": "string",
-            "description": "Message text in a fragment."
+            "description": "Message text within a fragment."
           },
           "emote": {
             "allOf": [
@@ -7733,14 +7740,14 @@
         "properties": {
           "text": {
             "type": "string",
-            "description": "The contents of the message caught by automod."
+            "description": "The contents of the message caught by AutoMod."
           },
           "fragments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Fragments"
             },
-            "description": "Metadata surrounding the potential inappropriate fragments of the message."
+            "description": "The message, split into text, emote and Cheermote fragments, in order. Together, the fragments make up the whole message, not only the parts that caused the hold."
           }
         }
       },
@@ -7774,11 +7781,11 @@
           },
           "color": {
             "type": "string",
-            "description": "The color for the outcome. Valid values are pink and blue."
+            "description": "The color for the outcome. Valid values are blue and pink. If the Prediction has two outcomes, one is blue and the other is pink. If it has more than two outcomes, all of them are blue."
           },
           "users": {
             "type": "integer",
-            "description": "The number of users who used Channel Points on this outcome."
+            "description": "The number of users who chose this outcome. This includes viewers who took part without spending Channel Points, which happens where Channel Points can't be used on Predictions."
           },
           "channel_points": {
             "type": "integer",
@@ -7789,7 +7796,7 @@
             "items": {
               "$ref": "#/components/schemas/TopPredictors"
             },
-            "description": "An array of users who used the most Channel Points on this outcome."
+            "description": "An array of the users who used the most Channel Points on this outcome, highest first. A viewer who took part without spending Channel Points can appear with a channel_points_used of 0."
           }
         }
       },
@@ -7870,7 +7877,7 @@
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "Reason given for the ban."
+            "description": "The reason given for the ban. Is an empty string if no reason was given."
           }
         }
       },
@@ -7917,7 +7924,7 @@
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "The reason given for the timeout."
+            "description": "The reason given for the timeout. Is an empty string if no reason was given."
           },
           "expires_at": {
             "type": "string",
@@ -7998,7 +8005,7 @@
           },
           "info": {
             "type": "string",
-            "description": "Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber."
+            "description": "Contains metadata related to the badge, or an empty string if the badge has none. For example, the number of months the user has been subscribed for the subscriber and founder badges, or the number of years for the user-anniversary badge. predictions badges aren't included in source_badges."
           }
         }
       },
@@ -8040,7 +8047,7 @@
           },
           "owner_broadcaster_user_name": {
             "type": "string",
-            "description": "The username of the broadcaster that owns the blocked term."
+            "description": "The display name of the broadcaster that owns the blocked term."
           }
         }
       },
@@ -8062,7 +8069,7 @@
           "reason": {
             "type": "string",
             "nullable": true,
-            "description": "The reason given for the timeout."
+            "description": "The reason given for the timeout. Is an empty string if no reason was given."
           },
           "expires_at": {
             "type": "string",
@@ -8075,7 +8082,7 @@
         "properties": {
           "user_id": {
             "type": "string",
-            "description": "The ID of the user that made the contribution."
+            "description": "The ID of the user that made the contribution. If the contribution was anonymous, this is the ID of one of the Twitch accounts that stand in for anonymous contributors (one for anonymous cheers and one for anonymous gifted subscriptions), and user_login and user_name are that account's names."
           },
           "user_login": {
             "type": "string",
@@ -8091,7 +8098,7 @@
           },
           "total": {
             "type": "integer",
-            "description": "The total amount contributed. If type is bits, total represents the amount of Bits used. If type is subscription, total is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively."
+            "description": "The total points the user contributed with this contribution type. If type is bits, total is the number of Bits used. If type is subscription, each subscription (or each month of a multi-month gift) counts as 500, 1000, or 2500 points for a Tier 1, 2, or 3 subscription, and total is the sum for all of the user's subscriptions and gifted subscriptions. For example, five gifted Tier 1 subscriptions give a total of 2500."
           }
         }
       },
