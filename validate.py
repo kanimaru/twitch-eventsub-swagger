@@ -28,17 +28,7 @@ FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
 # Mistakes in a payload source, not in the schema: (source, subscription type, version, path) -> reason, where
 # source is "docs", "twitch-cli" or "fixture" and array indices are written []. Only list a mismatch here when
 # another Twitch source contradicts the payload; an entry that no longer occurs fails the run.
-KNOWN_PAYLOAD_ERRORS = {
-    ("docs", "channel.ad_break.begin", "1", "event.duration_seconds"): "a string; the Twitch CLI sends an integer",
-    ("docs", "channel.ad_break.begin", "1", "event.is_automatic"): "a string; the Twitch CLI sends a boolean",
-    **{("docs", f"channel.prediction.{kind}", "1", "event.outcomes[].top_predictors[].user_id"):
-        "an integer; the Twitch CLI sends a string" for kind in ("progress", "lock", "end")},
-    **{("twitch-cli", f"channel.charity_campaign.{kind}", "1", f"event.broadcaster_user_{field}"):
-        "the reference and the docs example say broadcaster_" + field
-        for kind in ("start", "progress", "stop") for field in ("id", "login", "name")},
-    ("docs", "channel.chat.notification", "1", "event.resub.sub_plan"):
-        "sub_plan; the reference documents sub_tier and is_prime",
-}
+KNOWN_PAYLOAD_ERRORS = {}
 
 
 class Validator:
@@ -198,55 +188,97 @@ def subscription_key(payload):
     return subscription.get("type"), subscription.get("version")
 
 
+def source_kind(source):
+    """The payload source a source label belongs to, as KNOWN_PAYLOAD_ERRORS names it."""
+    if source.startswith("twitch-cli"):
+        return "twitch-cli"
+    if source.startswith("fixtures/"):
+        return "fixture"
+    return "docs"
+
+
+def payload_parts(payload):
+    """(part, value) of the condition and every event of a notification; a missing part has the value None.
+
+    A batching subscription type (drop.entitlement.grant) sends its events as a list, named events[0], events[1], ...
+    """
+    events = payload["events"] if isinstance(payload.get("events"), list) else [payload.get("event")]
+    single = len(events) == 1 and "event" in payload
+    return [("condition", payload.get("subscription", {}).get("condition"))] + [
+        ("event" if single else f"events[{index}]", event) for index, event in enumerate(events)
+    ]
+
+
+def known_error_key(kind, key, path):
+    """The KNOWN_PAYLOAD_ERRORS key of a mismatch: array indices of the path are written []."""
+    return kind, key[0], key[1], re.sub(r"\[\d+\]", "[]", path)
+
+
+class PayloadReport:
+    """Validates notification payloads against the schemas and collects what the run fails on.
+
+    A mismatch listed in known_errors is not a failure, but a known_errors entry that no mismatch matched is: the
+    payload source was fixed, so the entry has to go.
+    """
+
+    def __init__(self, schemas, known_errors):
+        self.schemas = schemas
+        self.components = components_for_subscription(schemas)
+        self.known_errors = known_errors
+        self.mismatches = []
+        self.unlinked = set()
+        self.known_seen = set()
+        self.checked = 0
+
+    def validate(self, source, payload, key=None):
+        key = key or subscription_key(payload)
+        kind = source_kind(source)
+        for part, value in payload_parts(payload):
+            if value is None:
+                continue
+            name = part.split("[", 1)[0]
+            component = self.components.get(key, {}).get(name.rstrip("s"))
+            if component is None:
+                self.unlinked.add(f"{key[0]} v{key[1]} {name}")
+                continue
+            validator = Validator(self.schemas)
+            validator.check(value, {"$ref": f"#/components/schemas/{component}"}, part)
+            self.checked += 1
+            for path, message in validator.errors:
+                known = known_error_key(kind, key, path)
+                if known in self.known_errors:
+                    self.known_seen.add(known)
+                    continue
+                self.mismatches.append(f"{source} ({component}): {key[0]} v{key[1]} {path} {message}")
+
+    def stale_known_errors(self):
+        return sorted(set(self.known_errors) - self.known_seen)
+
+    def failures(self):
+        return [
+            *self.mismatches,
+            *(f"no schema for the payload of {line}" for line in sorted(self.unlinked)),
+            *(f"KNOWN_PAYLOAD_ERRORS entry no longer occurs, remove it: {known}"
+              for known in self.stale_known_errors()),
+        ]
+
+
 def main():
     with open(OUTPUT_FILE, encoding="utf-8") as f:
         schemas = json.load(f)["components"]["schemas"]
-    components = components_for_subscription(schemas)
     entries = fetch_reference()
-
-    failures = []
-    unlinked = set()
-    known_seen = set()
-    checked = 0
-
-    def validate(source, payload, key=None):
-        nonlocal checked
-        key = key or subscription_key(payload)
-        kind = "twitch-cli" if source.startswith("twitch-cli") else             "fixture" if source.startswith("fixtures/") else "docs"
-        # A batching subscription type (drop.entitlement.grant) sends its events as a list.
-        events = payload["events"] if isinstance(payload.get("events"), list) else [payload.get("event")]
-        parts = [("condition", payload.get("subscription", {}).get("condition"))] +                 [("event" if len(events) == 1 and "event" in payload else f"events[{index}]", event)
-                 for index, event in enumerate(events)]
-        for part, value in parts:
-            if value is None:
-                continue
-            component = components.get(key, {}).get(part.split("[", 1)[0].rstrip("s"))
-            if component is None:
-                unlinked.add(f"{key[0]} v{key[1]} {part.split('[', 1)[0]}")
-                continue
-            validator = Validator(schemas)
-            validator.check(value, {"$ref": f"#/components/schemas/{component}"}, part)
-            checked += 1
-            for path, message in validator.errors:
-                known = (kind, key[0], key[1], re.sub(r"\[\d+\]", "[]", path))
-                if known in KNOWN_PAYLOAD_ERRORS:
-                    known_seen.add(known)
-                    continue
-                failures.append(f"{source} ({component}): {key[0]} v{key[1]} {path} {message}")
+    report = PayloadReport(schemas, KNOWN_PAYLOAD_ERRORS)
 
     versions = {}
     for entry in entries:
         versions.setdefault(entry.subscription_type, set()).add(entry.version)
     for source, payload, key in example_payloads(entries):
-        validate(source, payload, key)
+        report.validate(source, payload, key)
     for source, payload in [*cli_payloads(versions), *fixture_payloads()]:
-        validate(source, payload)
+        report.validate(source, payload)
 
-    print(f"Validated {checked} payload parts against {OUTPUT_FILE}.")
-    for line in sorted(unlinked):
-        failures.append(f"no schema for the payload of {line}")
-    for known in sorted(set(KNOWN_PAYLOAD_ERRORS) - known_seen):
-        failures.append(f"KNOWN_PAYLOAD_ERRORS entry no longer occurs, remove it: {known}")
+    print(f"Validated {report.checked} payload parts against {OUTPUT_FILE}.")
+    failures = report.failures()
     if failures:
         print(f"{len(failures)} mismatches between the schema and real payloads:")
         for line in failures:
